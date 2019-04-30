@@ -6,7 +6,7 @@ namespace NaturalLanguageApp
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hi from nlAPP");
+            Console.WriteLine("Natural Language Tools");
         }
     }
 }
