@@ -5,11 +5,12 @@ pool:
   vmImage: 'windows-2019'
 
 variables:
-  solution: '**/src/NaturalLangugeTools.sln'
+  solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
 steps:
+- script: dotnet --version
 - script: dotnet build --configuration $(buildConfiguration) '$(solution)'
 - script: dotnet test '$(solution)' --logger trx --collect "Code coverage"
 - task: PublishTestResults@2
