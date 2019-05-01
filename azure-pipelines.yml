@@ -10,9 +10,8 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-- script: ls
 - script: dotnet --version
-- script: dotnet build --configuration $(buildConfiguration) '$(solution)'
+- script: ls ; dotnet build --configuration $(buildConfiguration) '$(solution)'
 - script: dotnet test '$(solution)' --logger trx --collect "Code coverage"
 - task: PublishTestResults@2
   inputs:
