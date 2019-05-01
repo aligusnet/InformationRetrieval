@@ -10,9 +10,15 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-- script: dotnet --version
+- powershell: dotnet --version
+  displayName: .NET Core Version
+
 - script: dotnet build --configuration $(buildConfiguration) $(solution)
+  displayName: Build the project
+
 - script: dotnet test --logger trx --collect "Code coverage" $(solution)
+  displayName: Run the tests
+
 - task: PublishTestResults@2
   inputs:
     testRunner: VSTest
