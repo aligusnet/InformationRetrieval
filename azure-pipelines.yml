@@ -7,14 +7,18 @@ trigger:
 - master
 
 pool:
-  vmImage: 'windows-latest'
+  vmImage: 'windows-2019'
 
 variables:
+  dotnetCoreVersion: '2.2.106'
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
 steps:
+- task: DotNetCoreInstaller@0
+  inputs:
+    version: '$(dotnetCoreVersion)'
 - task: NuGetToolInstaller@0
 
 - task: NuGetCommand@2
