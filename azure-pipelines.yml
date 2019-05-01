@@ -6,7 +6,6 @@ pool:
 
 variables:
   solution: 'src/NaturalLangugeTools.sln'
-  buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
 steps:
