@@ -10,28 +10,14 @@ pool:
   vmImage: 'windows-2019'
 
 variables:
-  dotnetCoreVersion: '2.2.106'
-  solution: '**/*.sln'
+  solution: 'src/NaturalLangugeTools.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
 steps:
-- task: DotNetCoreInstaller@0
+- script: dotnet build --configuration $(buildConfiguration) '$(solution)'
+- script: dotnet test '$(solution)' --logger trx --collect "Code coverage"
+- task: PublishTestResults@2
   inputs:
-    version: '$(dotnetCoreVersion)'
-- task: NuGetToolInstaller@0
-
-- task: NuGetCommand@2
-  inputs:
-    restoreSolution: '$(solution)'
-
-- task: VSBuild@1
-  inputs:
-    solution: '$(solution)'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-
-- task: VSTest@2
-  inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    testRunner: VSTest
+    testResultsFiles: '**/*.trx'
