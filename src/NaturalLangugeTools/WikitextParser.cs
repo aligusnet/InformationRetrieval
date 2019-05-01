@@ -13,7 +13,7 @@ namespace NaturalLangugeTools
 
         static readonly Parser<IEnumerable<IWikitextElement>> TermList =
             from first in Sprache.Parse.WhiteSpace.Many().Optional()
-            from terms in FormattedText.DelimitedBy(Sprache.Parse.LineEnd)
+            from terms in FormattedText.DelimitedBy(Sprache.Parse.LineEnd.Repeat(2))
             from rest in Sprache.Parse.WhiteSpace.Many().Optional().End()
             select terms;
 

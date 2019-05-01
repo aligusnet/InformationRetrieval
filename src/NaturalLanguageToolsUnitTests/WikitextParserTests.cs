@@ -38,7 +38,7 @@ namespace NaturalLanguageToolsUnitTests
         public void ParseBadText()
         {
             var wiki = @"
-                          = Hello ==
+                          = Hello =
                           blah-blah. OK!";
             Assert.Throws<Sprache.ParseException>(() => WikitextParser.Parse(wiki));
         }
