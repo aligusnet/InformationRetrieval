@@ -11,8 +11,8 @@ variables:
 
 steps:
 - script: dotnet --version
-- script: ls ; dotnet build --configuration $(buildConfiguration) '$(solution)'
-- script: dotnet test '$(solution)' --logger trx --collect "Code coverage"
+- script: dotnet build --configuration $(buildConfiguration) $(solution)
+- script: dotnet test --logger trx --collect "Code coverage" $(solution)
 - task: PublishTestResults@2
   inputs:
     testRunner: VSTest
