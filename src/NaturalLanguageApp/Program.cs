@@ -3,14 +3,17 @@ using System.Diagnostics;
 using System.IO;
 using NaturalLangugeTools;
 using Wikipedia;
+using static Wikidump.WikiDumpTransformer;
 
 namespace NaturalLanguageApp
 {
     class Program
     {
+        static readonly string basePath = @"F:\wikipedia";
+
         static void Main(string[] args)
         {
-            TokenizeWikipedia();
+            TransformWikiDump();
         }
 
         static void TokenizeWikipedia()
@@ -18,7 +21,6 @@ namespace NaturalLanguageApp
             var timer = new Stopwatch();
             timer.Start();
 
-            var basePath = @"F:\wikipedia";
             var inputWikipediaPath = Path.Combine(basePath, "enwiki.raw.test");
             var outputWikipediaPath = Path.Combine(basePath, "enwiki.tokenized");
 
@@ -34,6 +36,18 @@ namespace NaturalLanguageApp
             var wikipediaTokenizer = new WikipediaTokenizer(new WordRegexTokenizer());
             wikipediaTokenizer.Tokenize(storage, inputWikipediaPath, storage, outputWikipediaPath);
 
+            timer.Stop();
+            Console.WriteLine("Finished in {0}", timer.Elapsed);
+        }
+
+        static void TransformWikiDump()
+        {
+            string dumpFilePath = Path.Combine(basePath, "enwiki-20190101-pages-articles-multistream.xml");
+            string pathToSave = Path.Combine(basePath, "enwiki");
+
+            var timer = new Stopwatch();
+            timer.Start();
+            Transform(dumpFilePath, pathToSave, count: 5000);
             timer.Stop();
             Console.WriteLine("Finished in {0}", timer.Elapsed);
         }
