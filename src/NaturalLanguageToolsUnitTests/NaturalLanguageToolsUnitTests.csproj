@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
@@ -15,5 +15,9 @@
   <ItemGroup>
     <ProjectReference Include="..\NaturalLangugeTools\NaturalLangugeTools.csproj" />
   </ItemGroup>
+
+  <PropertyGroup>
+	  <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
 
 </Project>
