@@ -41,7 +41,7 @@ namespace Wikidump
             }
         }
 
-        public IEnumerable<WikiPage> ReadPages()
+        public IEnumerable<WikiDumpPage> ReadPages()
         {
             using (XmlReader reader = XmlReader.Create(stream))
             {
@@ -60,9 +60,9 @@ namespace Wikidump
             }
         }
 
-        private WikiPage CreatePage(XElement element)
+        private WikiDumpPage CreatePage(XElement element)
         {
-            return new WikiPage(GetValue(element, TitlePath), GetValue(element, TextPath))
+            return new WikiDumpPage(GetValue(element, TitlePath), GetValue(element, TextPath))
             {
                 RedirectTitle = GetAttributeValue(element, RedirectTitlePath),
             };

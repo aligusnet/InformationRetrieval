@@ -5,6 +5,6 @@ namespace Wikidump
 {
     public interface IWikiDumpReader : IDisposable
     {
-        IEnumerable<WikiPage> ReadPages();
+        IEnumerable<WikiDumpPage> ReadPages();
     }
 }

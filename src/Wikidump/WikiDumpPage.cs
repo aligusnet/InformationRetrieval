@@ -4,14 +4,14 @@ using System.Text.RegularExpressions;
 
 namespace Wikidump
 {
-    public class WikiPage
+    public class WikiDumpPage
     {
         private static readonly Regex reSpecial = new Regex(@"^(?<key>[\w\d]+):[\w\d]+", RegexOptions.Compiled);
         private static ISet<string> specialKeys = new HashSet<string> { "Category", "Wikipedia", "File", "Template", "Portal", "MediaWiki", "Help", "Draft" };
 
         private readonly Lazy<bool> isSpecialPage;
 
-        public WikiPage(string title, string text)
+        public WikiDumpPage(string title, string text)
         {
             Title = title;
             Text = text;

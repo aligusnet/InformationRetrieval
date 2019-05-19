@@ -7,6 +7,6 @@ namespace Wikipedia
     /// </summary>
     public interface IWikipediaWriter
     {
-        void Write(IEnumerable<WikiCollection> wikipedia, string path);
+        void Write(IEnumerable<WikiCollection> wikipedia);
     }
 }

@@ -6,25 +6,22 @@ using System.IO.Compression;
 namespace Wikipedia
 {
     /// <summary>
-    /// Implementation of Wikipedia Storage
+    /// Implementation of Wikipedia Reader
     /// </summary>
-    public class WikipediaZipStorage : IWikipediaReader, IWikipediaWriter
+    public class WikipediaZipReader : IWikipediaReader
     {
-        private const string CONTENT_ENTRY_NAME = "_CONTENTS_.tsv";
+        private const string CONTENT_ENTRY_NAME = WikipediaZipWriter.CONTENT_ENTRY_NAME;
 
-        public IEnumerable<WikiCollection> Read(string path)
+        private readonly string path;
+
+        public WikipediaZipReader(string path)
         {
-            return Read(Directory.GetFiles(path, "*.zip"));
+            this.path = path;
         }
 
-        public void Write(IEnumerable<WikiCollection> wikipedia, string path)
+        public IEnumerable<WikiCollection> Read()
         {
-            int index = 0;
-            foreach (var collection in wikipedia)
-            {
-                var collectionPath = Path.Combine(path, $"wiki{index++}.zip");
-                SaveCollection(collection, collectionPath);
-            }
+            return Read(Directory.GetFiles(path, "*.zip"));
         }
 
         private IEnumerable<WikiCollection> Read(IEnumerable<string> archives)
@@ -91,40 +88,6 @@ namespace Wikipedia
             using (var reader = new StreamReader(entry.Open()))
             {
                 return reader.ReadToEnd();
-            }
-        }
-
-        private void SaveCollection(WikiCollection collection, string path)
-        {
-            using (var archive = ZipFile.Open(path, ZipArchiveMode.Create))
-            {
-                SaveContent(archive, collection.Contents);
-                SavePages(archive, collection.Pages);
-            }
-        }
-
-        private void SaveContent(ZipArchive archive, IDictionary<Guid, string> content)
-        {
-            ZipArchiveEntry contentsEntry = archive.CreateEntry(CONTENT_ENTRY_NAME);
-            using (StreamWriter writer = new StreamWriter(contentsEntry.Open()))
-            {
-                foreach (var entry in content)
-                {
-                    writer.WriteLine($"{entry.Value}\t{entry.Key}.txt");
-                }
-
-            }
-        }
-
-        private void SavePages(ZipArchive archive, IEnumerable<WikiPage> pages)
-        {
-            foreach (var page in pages)
-            {
-                var entry = archive.CreateEntry(page.Id.ToString() + ".txt");
-                using (var stream = new StreamWriter(entry.Open()))
-                {
-                    stream.Write(page.Data);
-                }
             }
         }
     }

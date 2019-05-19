@@ -7,6 +7,6 @@ namespace Wikipedia
     /// </summary>
     public interface IWikipediaReader
     {
-        IEnumerable<WikiCollection> Read(string path);
+        IEnumerable<WikiCollection> Read();
     }
 }

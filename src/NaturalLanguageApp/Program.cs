@@ -2,8 +2,8 @@
 using System.Diagnostics;
 using System.IO;
 using NaturalLangugeTools;
+using Wikidump;
 using Wikipedia;
-using static Wikidump.WikiDumpTransformer;
 
 namespace NaturalLanguageApp
 {
@@ -31,10 +31,11 @@ namespace NaturalLanguageApp
 
             Directory.CreateDirectory(outputWikipediaPath);
 
-            var storage = new WikipediaZipStorage();
+            var reader = new WikipediaZipReader(inputWikipediaPath);
+            var writer = new WikipediaZipWriter(outputWikipediaPath);
 
             var wikipediaTokenizer = new WikipediaTokenizer(new WordRegexTokenizer());
-            wikipediaTokenizer.Tokenize(storage, inputWikipediaPath, storage, outputWikipediaPath);
+            wikipediaTokenizer.Tokenize(reader, writer);
 
             timer.Stop();
             Console.WriteLine("Finished in {0}", timer.Elapsed);
@@ -42,12 +43,27 @@ namespace NaturalLanguageApp
 
         static void TransformWikiDump()
         {
+            var timer = new Stopwatch();
+            timer.Start();
+
             string dumpFilePath = Path.Combine(basePath, "enwiki-20190101-pages-articles-multistream.xml");
             string pathToSave = Path.Combine(basePath, "enwiki");
 
-            var timer = new Stopwatch();
-            timer.Start();
-            Transform(dumpFilePath, pathToSave, count: 5000);
+            if (Directory.Exists(pathToSave))
+            {
+                Directory.Delete(pathToSave, recursive: true);
+            }
+
+            Directory.CreateDirectory(pathToSave);
+
+            using (var xmlReader = new WikiDumpXmlReader(dumpFilePath))
+            {
+                var reader = new WikipediaReader(xmlReader, WikipediaReader.DefaultFilter, 1000, 5000);
+                var writer = new WikipediaZipWriter(pathToSave);
+
+                writer.Write(reader.Read());
+            }
+
             timer.Stop();
             Console.WriteLine("Finished in {0}", timer.Elapsed);
         }

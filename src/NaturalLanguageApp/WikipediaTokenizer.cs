@@ -14,12 +14,11 @@ namespace NaturalLanguageApp
             this.tokenizer = tokenizer;
         }
 
-        public void Tokenize(IWikipediaReader reader, string inputPath, 
-                             IWikipediaWriter writer, string outputPath)
+        public void Tokenize(IWikipediaReader reader, IWikipediaWriter writer)
         {
-            var wikipedia = reader.Read(inputPath);
+            var wikipedia = reader.Read();
             var processedWikipedia = ProcessWikipedia(wikipedia);
-            writer.Write(processedWikipedia, outputPath);
+            writer.Write(processedWikipedia);
         }
 
         private IEnumerable<WikiCollection> ProcessWikipedia(IEnumerable<WikiCollection> wikipedia)
