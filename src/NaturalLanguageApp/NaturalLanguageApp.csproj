@@ -8,7 +8,6 @@
   <ItemGroup>
     <ProjectReference Include="..\NaturalLangugeTools\NaturalLangugeTools.csproj" />
     <ProjectReference Include="..\Wikidump\Wikidump.csproj" />
-    <ProjectReference Include="..\Wikipedia\Wikipedia.csproj" />
   </ItemGroup>
 
 </Project>

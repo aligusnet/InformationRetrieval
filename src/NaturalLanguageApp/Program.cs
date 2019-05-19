@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using NaturalLangugeTools;
 using Wikidump;
-using Wikipedia;
+using DocumentStorage;
 
 namespace NaturalLanguageApp
 {
@@ -31,8 +31,8 @@ namespace NaturalLanguageApp
 
             Directory.CreateDirectory(outputWikipediaPath);
 
-            var reader = new WikipediaZipReader(inputWikipediaPath);
-            var writer = new WikipediaZipWriter(outputWikipediaPath);
+            IStorageReader reader = new StorageZipReader(inputWikipediaPath);
+            IStorageWriter writer = new StorageZipWriter(outputWikipediaPath);
 
             var wikipediaTokenizer = new WikipediaTokenizer(new WordRegexTokenizer());
             wikipediaTokenizer.Tokenize(reader, writer);
@@ -58,8 +58,8 @@ namespace NaturalLanguageApp
 
             using (var xmlReader = new WikiDumpXmlReader(dumpFilePath))
             {
-                var reader = new WikipediaReader(xmlReader, WikipediaReader.DefaultFilter, 1000, 5000);
-                var writer = new WikipediaZipWriter(pathToSave);
+                IStorageReader reader = new WikipediaReader(xmlReader, WikipediaReader.DefaultFilter, 1000, 5000);
+                IStorageWriter writer = new StorageZipWriter(pathToSave);
 
                 writer.Write(reader.Read());
             }

@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace Wikipedia
+namespace DocumentStorage
 {
     /// <summary>
-    /// Wikipedia Page
+    /// Class represents text document
     /// </summary>
-    public class WikiPage
+    public class Document
     {
         /// <summary>
         /// Gets/sets unique ID of the page
@@ -13,12 +13,12 @@ namespace Wikipedia
         public Guid Id { get; set; }
 
         /// <summary>
-        /// Gets/sets title of the page
+        /// Gets/sets title of the document
         /// </summary>
         public string Title { get; set; }
 
         /// <summary>
-        /// Gets/sets text data of the page
+        /// Gets/sets text data of the document
         /// </summary>
         public string Data { get; set; }
     }

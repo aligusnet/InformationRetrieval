@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using NaturalLangugeTools;
-using Wikipedia;
+using DocumentStorage;
 
 namespace NaturalLanguageApp
 {
@@ -14,41 +14,41 @@ namespace NaturalLanguageApp
             this.tokenizer = tokenizer;
         }
 
-        public void Tokenize(IWikipediaReader reader, IWikipediaWriter writer)
+        public void Tokenize(IStorageReader reader, IStorageWriter writer)
         {
             var wikipedia = reader.Read();
             var processedWikipedia = ProcessWikipedia(wikipedia);
             writer.Write(processedWikipedia);
         }
 
-        private IEnumerable<WikiCollection> ProcessWikipedia(IEnumerable<WikiCollection> wikipedia)
+        private IEnumerable<DocumentCollection> ProcessWikipedia(IEnumerable<DocumentCollection> wikipedia)
         {
             foreach (var collection in wikipedia)
             {
-                yield return ProcessWikiCollection(collection);
+                yield return ProcessDocCollection(collection);
             }
         }
 
-        private WikiCollection ProcessWikiCollection(WikiCollection collection)
+        private DocumentCollection ProcessDocCollection(DocumentCollection collection)
         {
-            return new WikiCollection
+            return new DocumentCollection
             {
                 Contents = collection.Contents,
-                Pages = ProcessWikiPages(collection.Pages),
+                Pages = ProcessDocuments(collection.Pages),
             };
         }
 
-        private IEnumerable<WikiPage> ProcessWikiPages(IEnumerable<WikiPage> pages)
+        private IEnumerable<Document> ProcessDocuments(IEnumerable<Document> docs)
         {
-            foreach (var page in pages)
+            foreach (var doc in docs)
             {
-                var data = string.Join(' ', tokenizer.Tokenize(page.Data));
-                var title = string.Join(' ', tokenizer.Tokenize(page.Title));
+                var data = string.Join(' ', tokenizer.Tokenize(doc.Data));
+                var title = string.Join(' ', tokenizer.Tokenize(doc.Title));
 
-                yield return new WikiPage
+                yield return new Document
                 {
-                    Id = page.Id,
-                    Title = page.Title,
+                    Id = doc.Id,
+                    Title = doc.Title,
                     Data = string.Join(Environment.NewLine, title, data)
                 };
             }

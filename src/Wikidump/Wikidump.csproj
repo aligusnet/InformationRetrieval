@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Wikipedia\Wikipedia.csproj" />
+    <ProjectReference Include="..\DocumentStorage\DocumentStorage.csproj" />
   </ItemGroup>
 
 </Project>

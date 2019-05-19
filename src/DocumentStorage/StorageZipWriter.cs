@@ -3,33 +3,33 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 
-namespace Wikipedia
+namespace DocumentStorage
 {
     /// <summary>
-    /// Implementation of Wikipedia Writer
+    /// Implementation of Storage Writer
     /// </summary>
-    public class WikipediaZipWriter : IWikipediaWriter
+    public class StorageZipWriter : IStorageWriter
     {
         internal const string CONTENT_ENTRY_NAME = "_CONTENTS_.tsv";
 
         private readonly string path;
 
-        public WikipediaZipWriter(string path)
+        public StorageZipWriter(string path)
         {
             this.path = path;
         }
 
-        public void Write(IEnumerable<WikiCollection> wikipedia)
+        public void Write(IEnumerable<DocumentCollection> storage)
         {
             int index = 0;
-            foreach (var collection in wikipedia)
+            foreach (var collection in storage)
             {
                 var collectionPath = Path.Combine(path, $"wiki{index++}.zip");
                 SaveCollection(collection, collectionPath);
             }
         }
 
-        private void SaveCollection(WikiCollection collection, string path)
+        private void SaveCollection(DocumentCollection collection, string path)
         {
             using (var archive = ZipFile.Open(path, ZipArchiveMode.Create))
             {
@@ -51,7 +51,7 @@ namespace Wikipedia
             }
         }
 
-        private void SavePages(ZipArchive archive, IEnumerable<WikiPage> pages)
+        private void SavePages(ZipArchive archive, IEnumerable<Document> pages)
         {
             foreach (var page in pages)
             {

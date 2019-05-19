@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Wikipedia
+namespace DocumentStorage
 {
     /// <summary>
-    /// Represents a collection of wikipedia pages
+    /// Represents a collection of documents
     /// </summary>
-    public class WikiCollection
+    public class DocumentCollection
     {
         /// <summary>
         /// Contents (ID -> Title map) of the collection
@@ -14,8 +14,8 @@ namespace Wikipedia
         public IDictionary<Guid, string> Contents { get; set; }
 
         /// <summary>
-        /// List of Wikipedia pages in the collection
+        /// List of documents in the collection
         /// </summary>
-        public IEnumerable<WikiPage> Pages { get; set; }
+        public IEnumerable<Document> Pages { get; set; }
     }
 }

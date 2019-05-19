@@ -3,28 +3,28 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 
-namespace Wikipedia
+namespace DocumentStorage
 {
     /// <summary>
-    /// Implementation of Wikipedia Reader
+    /// Implementation of Storage Reader
     /// </summary>
-    public class WikipediaZipReader : IWikipediaReader
+    public class StorageZipReader : IStorageReader
     {
-        private const string CONTENT_ENTRY_NAME = WikipediaZipWriter.CONTENT_ENTRY_NAME;
+        private const string CONTENT_ENTRY_NAME = StorageZipWriter.CONTENT_ENTRY_NAME;
 
         private readonly string path;
 
-        public WikipediaZipReader(string path)
+        public StorageZipReader(string path)
         {
             this.path = path;
         }
 
-        public IEnumerable<WikiCollection> Read()
+        public IEnumerable<DocumentCollection> Read()
         {
             return Read(Directory.GetFiles(path, "*.zip"));
         }
 
-        private IEnumerable<WikiCollection> Read(IEnumerable<string> archives)
+        private IEnumerable<DocumentCollection> Read(IEnumerable<string> archives)
         {
             foreach (var archivePath in archives)
             {
@@ -35,11 +35,11 @@ namespace Wikipedia
             }
         }
 
-        private WikiCollection ReadArchive(ZipArchive archive)
+        private DocumentCollection ReadArchive(ZipArchive archive)
         {
             var content = ReadContent(archive);
 
-            return new WikiCollection
+            return new DocumentCollection
             {
                 Contents = content,
                 Pages = ReadPages(archive, content),
@@ -64,7 +64,7 @@ namespace Wikipedia
             return content;
         }
 
-        private IEnumerable<WikiPage> ReadPages(ZipArchive archive, IDictionary<Guid, string> content)
+        private IEnumerable<Document> ReadPages(ZipArchive archive, IDictionary<Guid, string> content)
         {
             foreach (var entry in archive.Entries)
             {
@@ -73,7 +73,7 @@ namespace Wikipedia
                     var data = ReadZipEntry(entry);
                     var id = Guid.Parse(Path.GetFileNameWithoutExtension(entry.Name));
 
-                    yield return new WikiPage
+                    yield return new Document
                     {
                         Id = id,
                         Title = content[id],
