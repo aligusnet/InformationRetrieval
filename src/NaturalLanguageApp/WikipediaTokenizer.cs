@@ -33,7 +33,7 @@ namespace NaturalLanguageApp
         {
             return new DocumentCollection
             {
-                Contents = collection.Contents,
+                Metadata = collection.Metadata,
                 Pages = ProcessDocuments(collection.Pages),
             };
         }

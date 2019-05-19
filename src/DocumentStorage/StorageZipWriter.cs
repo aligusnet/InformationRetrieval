@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using Newtonsoft.Json;
 
 namespace DocumentStorage
 {
@@ -10,7 +11,7 @@ namespace DocumentStorage
     /// </summary>
     public class StorageZipWriter : IStorageWriter
     {
-        internal const string CONTENT_ENTRY_NAME = "_CONTENTS_.tsv";
+        internal const string METADATA_ENTRY_NAME = "_METADATA_.json";
 
         private readonly string path;
 
@@ -33,21 +34,18 @@ namespace DocumentStorage
         {
             using (var archive = ZipFile.Open(path, ZipArchiveMode.Create))
             {
-                SaveContent(archive, collection.Contents);
+                WriteMetadata(archive, collection.Metadata);
                 SavePages(archive, collection.Pages);
             }
         }
 
-        private void SaveContent(ZipArchive archive, IDictionary<Guid, string> content)
+        private void WriteMetadata(ZipArchive archive, IDictionary<Guid, DocumentProperties> metadata)
         {
-            ZipArchiveEntry contentsEntry = archive.CreateEntry(CONTENT_ENTRY_NAME);
+            string json = JsonConvert.SerializeObject(metadata, Formatting.Indented);
+            ZipArchiveEntry contentsEntry = archive.CreateEntry(METADATA_ENTRY_NAME);
             using (StreamWriter writer = new StreamWriter(contentsEntry.Open()))
             {
-                foreach (var entry in content)
-                {
-                    writer.WriteLine($"{entry.Value}\t{entry.Key}.txt");
-                }
-
+                writer.Write(json);
             }
         }
 

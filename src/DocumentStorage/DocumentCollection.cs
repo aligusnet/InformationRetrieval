@@ -9,9 +9,9 @@ namespace DocumentStorage
     public class DocumentCollection
     {
         /// <summary>
-        /// Contents (ID -> Title map) of the collection
+        /// Document properties of the collection
         /// </summary>
-        public IDictionary<Guid, string> Contents { get; set; }
+        public IDictionary<Guid, DocumentProperties> Metadata { get; set; }
 
         /// <summary>
         /// List of documents in the collection

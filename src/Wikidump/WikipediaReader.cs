@@ -35,16 +35,16 @@ namespace Wikidump
 
         private static DocumentCollection ToCollection(IEnumerable<WikiDumpPage> dumpPages)
         {
-            var pages = dumpPages.Select(ToWikiPage).ToList();
+            var pages = dumpPages.Select(ToDocument).ToList();
 
             return new DocumentCollection
             {
-                Contents = BuildContents(pages),
+                Metadata = BuildMetada(pages),
                 Pages = pages,
             };
         }
 
-        private static Document ToWikiPage(WikiDumpPage dp)
+        private static Document ToDocument(WikiDumpPage dp)
         {
             return new Document
             {
@@ -54,9 +54,18 @@ namespace Wikidump
             };
         }
 
-        private static IDictionary<Guid, string> BuildContents(IList<Document> pages)
+        private static IDictionary<Guid, DocumentProperties> BuildMetada(IList<Document> docs)
         {
-            return pages.ToDictionary(p => p.Id, p => p.Title);
+            return docs.Select(ToProperties).ToDictionary(p => p.Id);
+        }
+
+        public static DocumentProperties ToProperties(Document doc)
+        {
+            return new DocumentProperties
+            {
+                Id = doc.Id,
+                Title = doc.Title,
+            };
         }
     }
 }
