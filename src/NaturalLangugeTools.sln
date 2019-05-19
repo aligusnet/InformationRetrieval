@@ -7,10 +7,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NaturalLangugeTools", "Natu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NaturalLanguageApp", "NaturalLanguageApp\NaturalLanguageApp.csproj", "{294DEB40-1D8F-44B1-A545-53FD8D44CAE3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NaturalLanguageToolsUnitTests", "NaturalLanguageToolsUnitTests\NaturalLanguageToolsUnitTests.csproj", "{5FDF1543-6575-4670-AAC2-1A1017F91E32}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NaturalLanguageToolsUnitTests", "NaturalLanguageToolsUnitTests\NaturalLanguageToolsUnitTests.csproj", "{5FDF1543-6575-4670-AAC2-1A1017F91E32}"
 	ProjectSection(ProjectDependencies) = postProject
 		{EDFDF48E-0458-4DFC-8559-8C6D20AFBB6A} = {EDFDF48E-0458-4DFC-8559-8C6D20AFBB6A}
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wikipedia", "Wikipedia\Wikipedia.csproj", "{31778A0F-1496-4BA2-B34D-AD8CFA61A207}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,6 +32,10 @@ Global
 		{5FDF1543-6575-4670-AAC2-1A1017F91E32}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5FDF1543-6575-4670-AAC2-1A1017F91E32}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5FDF1543-6575-4670-AAC2-1A1017F91E32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31778A0F-1496-4BA2-B34D-AD8CFA61A207}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31778A0F-1496-4BA2-B34D-AD8CFA61A207}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31778A0F-1496-4BA2-B34D-AD8CFA61A207}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31778A0F-1496-4BA2-B34D-AD8CFA61A207}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
