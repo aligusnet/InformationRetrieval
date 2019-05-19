@@ -10,6 +10,7 @@ variables:
 
 steps:
 - task: DotNetCoreInstaller@0
+  displayName: Install .NET Core
   inputs:
     version: '3.0.100-preview5-011568'
 
