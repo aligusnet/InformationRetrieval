@@ -1,0 +1,76 @@
+﻿using DocumentStorage;
+using NaturalLangugeTools;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.Json;
+
+namespace NaturalLanguageApp
+{
+    public static class VocabularyAssisstant
+    {
+        public static IList<(string Word, int Count)> CountWords(
+            IStorageReader reader,
+            ITokenizer tokenizer,
+            Func<string, string> wordTRansformer)
+        {
+            var counter = new Dictionary<string, int>();
+
+            foreach (var collection in reader.Read())
+            {
+                foreach (var doc in collection.Documents)
+                {
+                    foreach (var word in tokenizer.Tokenize(doc.Data).Select(wordTRansformer))
+                    {
+                        counter.TryGetValue(word, out int count);
+                        counter[word] = count + 1;
+                    }
+                }
+            }
+
+            return counter.OrderByDescending(p => p.Value).Select(p => (Word: p.Key, Count: p.Value)).ToArray();
+        }
+
+        public static void SerializeWordCounts(IList<(string Word, int Count)> wordCounts, Stream stream)
+        {
+            using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = true });
+
+            writer.WriteStartArray();
+            foreach (var (word, count) in wordCounts)
+            {
+                writer.WriteStartObject();
+                writer.WriteString("word", word);
+                writer.WriteNumber("count", count);
+                writer.WriteEndObject();
+            }
+            writer.WriteEndArray();
+        }
+
+        public static IList<(string Word, int Count)> DeserializeWordCounts(Stream stream)
+        {
+            var reader = new Utf8JsonStreamReader(stream);
+
+            var wordCounts = new List<(string Word, int Count)>();
+            string word = string.Empty;
+            int count = 0;
+            while (reader.Read())
+            {
+                switch (reader.TokenType)
+                {
+                    case JsonTokenType.EndObject:
+                        wordCounts.Add((word, count));
+                        break;
+                    case JsonTokenType.String:
+                        word = reader.GetString();
+                        break;
+                    case JsonTokenType.Number:
+                        count = reader.GetInt32();
+                        break;
+                }
+            }
+
+            return wordCounts;
+        }
+    }
+}
