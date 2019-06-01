@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Abstractions;
 using System.IO.Compression;
 using System.Linq;
 using Newtonsoft.Json;
@@ -16,26 +17,32 @@ namespace DocumentStorage
 
         private readonly string path;
         private readonly IDocumentDataSerializer<T> dataSerializer;
+        private readonly IFileSystem fileSystem;
 
-        public StorageZipReader(string path, IDocumentDataSerializer<T> dataSerializer)
+        public StorageZipReader(string path, IDocumentDataSerializer<T> dataSerializer) : this (path, dataSerializer, new FileSystem())
+        {
+        }
+
+        public StorageZipReader(string path, IDocumentDataSerializer<T> dataSerializer, IFileSystem fileSystem)
         {
             this.path = path;
             this.dataSerializer = dataSerializer;
+            this.fileSystem = fileSystem;
         }
 
         public IEnumerable<DocumentCollection<T>> Read()
         {
-            return Read(Directory.GetFiles(path, "*.zip"));
+            return Read(fileSystem.Directory.GetFiles(path, "*.zip"));
         }
 
         private IEnumerable<DocumentCollection<T>> Read(IEnumerable<string> archives)
         {
             foreach (var archivePath in archives)
             {
-                using (var archive = ZipFile.OpenRead(archivePath))
-                {
-                    yield return ReadArchive(archive);
-                }
+                using var stream = fileSystem.File.OpenRead(archivePath);
+                using var archive = new ZipArchive(stream, ZipArchiveMode.Read);
+
+                yield return ReadArchive(archive);
             }
         }
 
@@ -63,7 +70,9 @@ namespace DocumentStorage
             {
                 if (entry.Name != METADATA_ENTRY_NAME)
                 {
-                    var data = dataSerializer.Deserialize(entry.Open());
+                    using var stream = entry.Open();
+
+                    var data = dataSerializer.Deserialize(stream);
                     var id = Guid.Parse(Path.GetFileNameWithoutExtension(entry.Name));
 
                     yield return new Document<T>

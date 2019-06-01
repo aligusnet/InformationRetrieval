@@ -6,16 +6,18 @@ namespace DocumentStorage
     {
         public string Deserialize(Stream stream)
         {
-            using var reader = new StreamReader(stream);
+            var reader = new StreamReader(stream);
 
             return reader.ReadToEnd();
         }
 
         public void Serialize(Stream stream, string data)
         {
-            using var writer = new StreamWriter(stream);
+            var writer = new StreamWriter(stream);
 
             writer.Write(data);
+
+            writer.Flush();
         }
     }
 }
