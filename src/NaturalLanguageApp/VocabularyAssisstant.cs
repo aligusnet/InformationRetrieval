@@ -1,5 +1,4 @@
 ﻿using DocumentStorage;
-using NaturalLangugeTools;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,9 +10,8 @@ namespace NaturalLanguageApp
     public static class VocabularyAssisstant
     {
         public static IList<(string Word, int Count)> CountWords(
-            IStorageReader reader,
-            ITokenizer tokenizer,
-            Func<string, string> wordTRansformer)
+            IStorageReader<IEnumerable<string>> reader,
+            Func<string, string> wordTransformer)
         {
             var counter = new Dictionary<string, int>();
 
@@ -21,7 +19,7 @@ namespace NaturalLanguageApp
             {
                 foreach (var doc in collection.Documents)
                 {
-                    foreach (var word in tokenizer.Tokenize(doc.Data).Select(wordTRansformer))
+                    foreach (var word in doc.Data.Select(wordTransformer))
                     {
                         counter.TryGetValue(word, out int count);
                         counter[word] = count + 1;

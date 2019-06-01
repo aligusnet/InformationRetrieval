@@ -6,7 +6,7 @@ namespace DocumentStorage
     /// <summary>
     /// Represents a collection of documents
     /// </summary>
-    public class DocumentCollection
+    public class DocumentCollection<T>
     {
         /// <summary>
         /// Document properties of the collection
@@ -16,6 +16,6 @@ namespace DocumentStorage
         /// <summary>
         /// List of documents in the collection
         /// </summary>
-        public IList<Document> Documents { get; set; }
+        public IList<Document<T>> Documents { get; set; }
     }
 }

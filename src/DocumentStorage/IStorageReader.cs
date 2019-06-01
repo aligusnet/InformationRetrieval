@@ -5,8 +5,8 @@ namespace DocumentStorage
     /// <summary>
     /// Document Storage reader interface
     /// </summary>
-    public interface IStorageReader
+    public interface IStorageReader<T>
     {
-        IEnumerable<DocumentCollection> Read();
+        IEnumerable<DocumentCollection<T>> Read();
     }
 }

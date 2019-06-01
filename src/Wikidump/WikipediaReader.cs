@@ -7,7 +7,7 @@ using static MoreLinq.Extensions.BatchExtension;
 
 namespace Wikidump
 {
-    public class WikipediaReader : IStorageReader
+    public class WikipediaReader : IStorageReader<string>
     {
         public static readonly Func<WikiDumpPage, bool> DefaultFilter = p => p.IsContent;
 
@@ -28,25 +28,25 @@ namespace Wikidump
         {
         }
 
-        public IEnumerable<DocumentCollection> Read()
+        public IEnumerable<DocumentCollection<string>> Read()
         {
             return reader.ReadPages().Where(filter).Take(count).Batch(collectionSize).Select(ToCollection);
         }
 
-        private static DocumentCollection ToCollection(IEnumerable<WikiDumpPage> dumpPages)
+        private static DocumentCollection<string> ToCollection(IEnumerable<WikiDumpPage> dumpPages)
         {
             var docs = dumpPages.Select(ToDocument).ToList();
 
-            return new DocumentCollection
+            return new DocumentCollection<string>
             {
                 Metadata = BuildMetada(docs),
                 Documents = docs,
             };
         }
 
-        private static Document ToDocument(WikiDumpPage dp)
+        private static Document<string> ToDocument(WikiDumpPage dp)
         {
-            return new Document
+            return new Document<string>
             {
                 Id = Guid.NewGuid(),
                 Title = dp.Title,
@@ -54,12 +54,12 @@ namespace Wikidump
             };
         }
 
-        private static IDictionary<Guid, DocumentProperties> BuildMetada(IList<Document> docs)
+        private static IDictionary<Guid, DocumentProperties> BuildMetada(IList<Document<string>> docs)
         {
             return docs.Select(ToProperties).ToDictionary(p => p.Id);
         }
 
-        public static DocumentProperties ToProperties(Document doc)
+        public static DocumentProperties ToProperties(Document<string> doc)
         {
             return new DocumentProperties
             {

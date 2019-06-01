@@ -9,18 +9,20 @@ namespace DocumentStorage
     /// <summary>
     /// Implementation of Storage Writer
     /// </summary>
-    public class StorageZipWriter : IStorageWriter
+    public class StorageZipWriter<T> : IStorageWriter<T>
     {
         internal const string METADATA_ENTRY_NAME = "_METADATA_.json";
 
         private readonly string path;
+        private readonly IDocumentDataSerializer<T> dataSerializer;
 
-        public StorageZipWriter(string path)
+        public StorageZipWriter(string path, IDocumentDataSerializer<T> dataSerializer)
         {
             this.path = path;
+            this.dataSerializer = dataSerializer;
         }
 
-        public void Write(IEnumerable<DocumentCollection> storage)
+        public void Write(IEnumerable<DocumentCollection<T>> storage)
         {
             int index = 0;
             foreach (var collection in storage)
@@ -30,7 +32,7 @@ namespace DocumentStorage
             }
         }
 
-        private void SaveCollection(DocumentCollection collection, string path)
+        private void SaveCollection(DocumentCollection<T> collection, string path)
         {
             using (var archive = ZipFile.Open(path, ZipArchiveMode.Create))
             {
@@ -49,16 +51,14 @@ namespace DocumentStorage
             }
         }
 
-        private void SaveDocuments(ZipArchive archive, IEnumerable<Document> docs)
+        private void SaveDocuments(ZipArchive archive, IEnumerable<Document<T>> docs)
         {
             foreach (var doc in docs)
             {
                 var entry = archive.CreateEntry(doc.Id.ToString() + ".txt");
-                using (var stream = new StreamWriter(entry.Open()))
-                {
-                    stream.Write(doc.Data);
-                }
+                dataSerializer.Serialize(entry.Open(), doc.Data);
             }
         }
+
     }
 }

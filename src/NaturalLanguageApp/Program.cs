@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -12,9 +13,13 @@ namespace NaturalLanguageApp
     class Program
     {
         static readonly string basePath = @"F:\wikipedia";
+        static readonly string wikiDumpFilePath = Path.Combine(basePath, "enwiki-20190101-pages-articles-multistream.xml");
         static readonly string wikiPath = Path.Combine(basePath, "enwiki");
         static readonly string tokenizedPath = Path.Combine(basePath, "enwiki.tokenized");
         static readonly string wordCountsPath = Path.Combine(basePath, "word_counts.json");
+
+        static readonly IDocumentDataSerializer<string> stringDataSerializer = new StringDocumentDataSerializer();
+        static readonly IDocumentDataSerializer<IEnumerable<string>> tokenizedDataSerializer = new TokenizedDocumentDataSerializer();
 
         static void Main(string[] args)
         {
@@ -31,12 +36,10 @@ namespace NaturalLanguageApp
 
         static void CountWords()
         {
-            var reader = new StorageZipReader(tokenizedPath);
-            var tokenizer = new WordSpaceTokenizer();
+            var reader = new StorageZipReader<IEnumerable<string>>(tokenizedPath, tokenizedDataSerializer);
 
             var wordCounts = VocabularyAssisstant.CountWords(
                 reader,
-                tokenizer,
                 s => s.ToLower());
 
             using var stream = CreateOutputStream(wordCountsPath);
@@ -60,8 +63,8 @@ namespace NaturalLanguageApp
 
             PrepareOutputDirectory(outputWikipediaPath);
 
-            IStorageReader reader = new StorageZipReader(wikiPath);
-            IStorageWriter writer = new StorageZipWriter(outputWikipediaPath);
+            var reader = new StorageZipReader<string>(wikiPath, stringDataSerializer);
+            var writer = new StorageZipWriter<IEnumerable<string>>(outputWikipediaPath, tokenizedDataSerializer);
 
             var wikipediaTokenizer = new WikipediaTokenizer(new WordRegexTokenizer());
             wikipediaTokenizer.Tokenize(reader, writer);
@@ -69,15 +72,14 @@ namespace NaturalLanguageApp
 
         static void TransformWikiDump()
         {
-            string dumpFilePath = Path.Combine(basePath, "enwiki-20190101-pages-articles-multistream.xml");
             string pathToSave = wikiPath;
 
             PrepareOutputDirectory(pathToSave);
 
-            using (var xmlReader = new WikiDumpXmlReader(dumpFilePath))
+            using (var xmlReader = new WikiDumpXmlReader(wikiDumpFilePath))
             {
-                IStorageReader reader = new WikipediaReader(xmlReader, WikipediaReader.DefaultFilter, 1000);
-                IStorageWriter writer = new StorageZipWriter(pathToSave);
+                IStorageReader<string> reader = new WikipediaReader(xmlReader, WikipediaReader.DefaultFilter, 1000);
+                IStorageWriter<string> writer = new StorageZipWriter<string>(pathToSave, stringDataSerializer);
 
                 writer.Write(reader.Read());
             }

@@ -6,6 +6,8 @@ using System.Linq;
 
 namespace NaturalLanguageApp
 {
+    using Tokens = IEnumerable<string>;
+
     public class WikipediaTokenizer
     {
         private readonly ITokenizer tokenizer;
@@ -15,14 +17,14 @@ namespace NaturalLanguageApp
             this.tokenizer = tokenizer;
         }
 
-        public void Tokenize(IStorageReader reader, IStorageWriter writer)
+        public void Tokenize(IStorageReader<string> reader, IStorageWriter<IEnumerable<string>> writer)
         {
             var wikipedia = reader.Read();
             var processedWikipedia = ProcessWikipedia(wikipedia);
             writer.Write(processedWikipedia);
         }
 
-        private IEnumerable<DocumentCollection> ProcessWikipedia(IEnumerable<DocumentCollection> wikipedia)
+        private IEnumerable<DocumentCollection<Tokens>> ProcessWikipedia(IEnumerable<DocumentCollection<string>> wikipedia)
         {
             foreach (var collection in wikipedia)
             {
@@ -30,27 +32,24 @@ namespace NaturalLanguageApp
             }
         }
 
-        private DocumentCollection ProcessDocCollection(DocumentCollection collection)
+        private DocumentCollection<Tokens> ProcessDocCollection(DocumentCollection<string> collection)
         {
-            return new DocumentCollection
+            return new DocumentCollection<Tokens>
             {
                 Metadata = collection.Metadata,
                 Documents = ProcessDocuments(collection.Documents).ToList(),
             };
         }
 
-        private IEnumerable<Document> ProcessDocuments(IEnumerable<Document> docs)
+        private IEnumerable<Document<Tokens>> ProcessDocuments(IEnumerable<Document<string>> docs)
         {
             foreach (var doc in docs)
             {
-                var data = string.Join(' ', tokenizer.Tokenize(doc.Data));
-                var title = string.Join(' ', tokenizer.Tokenize(doc.Title));
-
-                yield return new Document
+                yield return new Document<IEnumerable<string>>
                 {
                     Id = doc.Id,
                     Title = doc.Title,
-                    Data = string.Join(Environment.NewLine, title, data)
+                    Data = tokenizer.Tokenize(doc.Data),
                 };
             }
         }

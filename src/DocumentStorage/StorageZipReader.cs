@@ -10,23 +10,25 @@ namespace DocumentStorage
     /// <summary>
     /// Implementation of Storage Reader
     /// </summary>
-    public class StorageZipReader : IStorageReader
+    public class StorageZipReader<T> : IStorageReader<T>
     {
-        private const string METADATA_ENTRY_NAME = StorageZipWriter.METADATA_ENTRY_NAME;
+        private const string METADATA_ENTRY_NAME = StorageZipWriter<T>.METADATA_ENTRY_NAME;
 
         private readonly string path;
+        private readonly IDocumentDataSerializer<T> dataSerializer;
 
-        public StorageZipReader(string path)
+        public StorageZipReader(string path, IDocumentDataSerializer<T> dataSerializer)
         {
             this.path = path;
+            this.dataSerializer = dataSerializer;
         }
 
-        public IEnumerable<DocumentCollection> Read()
+        public IEnumerable<DocumentCollection<T>> Read()
         {
             return Read(Directory.GetFiles(path, "*.zip"));
         }
 
-        private IEnumerable<DocumentCollection> Read(IEnumerable<string> archives)
+        private IEnumerable<DocumentCollection<T>> Read(IEnumerable<string> archives)
         {
             foreach (var archivePath in archives)
             {
@@ -37,11 +39,11 @@ namespace DocumentStorage
             }
         }
 
-        private DocumentCollection ReadArchive(ZipArchive archive)
+        private DocumentCollection<T> ReadArchive(ZipArchive archive)
         {
             var metadata = ReadMetadata(archive);
 
-            return new DocumentCollection
+            return new DocumentCollection<T>
             {
                 Metadata = metadata,
                 Documents = ReadDocuments(archive, metadata).ToList(),
@@ -52,19 +54,19 @@ namespace DocumentStorage
         {
             var entry = archive.GetEntry(METADATA_ENTRY_NAME);
 
-            return JsonConvert.DeserializeObject<IDictionary<Guid, DocumentProperties>>(ReadZipEntry(entry));
+            return JsonConvert.DeserializeObject<IDictionary<Guid, DocumentProperties>>(ReadStringZipEntry(entry));
         }
 
-        private IEnumerable<Document> ReadDocuments(ZipArchive archive, IDictionary<Guid, DocumentProperties> metadata)
+        private IEnumerable<Document<T>> ReadDocuments(ZipArchive archive, IDictionary<Guid, DocumentProperties> metadata)
         {
             foreach (var entry in archive.Entries)
             {
                 if (entry.Name != METADATA_ENTRY_NAME)
                 {
-                    var data = ReadZipEntry(entry);
+                    var data = dataSerializer.Deserialize(entry.Open());
                     var id = Guid.Parse(Path.GetFileNameWithoutExtension(entry.Name));
 
-                    yield return new Document
+                    yield return new Document<T>
                     {
                         Id = id,
                         Title = metadata[id].Title,
@@ -74,7 +76,7 @@ namespace DocumentStorage
             }
         }
 
-        private string ReadZipEntry(ZipArchiveEntry entry)
+        protected string ReadStringZipEntry(ZipArchiveEntry entry)
         {
             using (var reader = new StreamReader(entry.Open()))
             {

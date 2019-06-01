@@ -5,7 +5,7 @@ namespace DocumentStorage
     /// <summary>
     /// Class represents text document
     /// </summary>
-    public class Document
+    public class Document<T>
     {
         /// <summary>
         /// Gets/sets unique ID of the page
@@ -20,6 +20,6 @@ namespace DocumentStorage
         /// <summary>
         /// Gets/sets text data of the document
         /// </summary>
-        public string Data { get; set; }
+        public T Data { get; set; }
     }
 }
