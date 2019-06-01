@@ -35,12 +35,12 @@ namespace Wikidump
 
         private static DocumentCollection ToCollection(IEnumerable<WikiDumpPage> dumpPages)
         {
-            var pages = dumpPages.Select(ToDocument).ToList();
+            var docs = dumpPages.Select(ToDocument).ToList();
 
             return new DocumentCollection
             {
-                Metadata = BuildMetada(pages),
-                Pages = pages,
+                Metadata = BuildMetada(docs),
+                Documents = docs,
             };
         }
 

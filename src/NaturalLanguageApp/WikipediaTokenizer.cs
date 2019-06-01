@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using NaturalLangugeTools;
 using DocumentStorage;
+using System.Linq;
 
 namespace NaturalLanguageApp
 {
@@ -34,7 +35,7 @@ namespace NaturalLanguageApp
             return new DocumentCollection
             {
                 Metadata = collection.Metadata,
-                Pages = ProcessDocuments(collection.Pages),
+                Documents = ProcessDocuments(collection.Documents).ToList(),
             };
         }
 

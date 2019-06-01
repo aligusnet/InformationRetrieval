@@ -35,7 +35,7 @@ namespace DocumentStorage
             using (var archive = ZipFile.Open(path, ZipArchiveMode.Create))
             {
                 WriteMetadata(archive, collection.Metadata);
-                SavePages(archive, collection.Pages);
+                SaveDocuments(archive, collection.Documents);
             }
         }
 
@@ -49,14 +49,14 @@ namespace DocumentStorage
             }
         }
 
-        private void SavePages(ZipArchive archive, IEnumerable<Document> pages)
+        private void SaveDocuments(ZipArchive archive, IEnumerable<Document> docs)
         {
-            foreach (var page in pages)
+            foreach (var doc in docs)
             {
-                var entry = archive.CreateEntry(page.Id.ToString() + ".txt");
+                var entry = archive.CreateEntry(doc.Id.ToString() + ".txt");
                 using (var stream = new StreamWriter(entry.Open()))
                 {
-                    stream.Write(page.Data);
+                    stream.Write(doc.Data);
                 }
             }
         }

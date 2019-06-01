@@ -16,6 +16,6 @@ namespace DocumentStorage
         /// <summary>
         /// List of documents in the collection
         /// </summary>
-        public IEnumerable<Document> Pages { get; set; }
+        public IList<Document> Documents { get; set; }
     }
 }

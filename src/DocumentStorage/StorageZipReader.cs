@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using Newtonsoft.Json;
 
 namespace DocumentStorage
@@ -43,15 +44,13 @@ namespace DocumentStorage
             return new DocumentCollection
             {
                 Metadata = metadata,
-                Pages = ReadDocuments(archive, metadata),
+                Documents = ReadDocuments(archive, metadata).ToList(),
             };
         }
 
         private IDictionary<Guid, DocumentProperties> ReadMetadata(ZipArchive archive)
         {
             var entry = archive.GetEntry(METADATA_ENTRY_NAME);
-
-            var content = new Dictionary<Guid, string>();
 
             return JsonConvert.DeserializeObject<IDictionary<Guid, DocumentProperties>>(ReadZipEntry(entry));
         }
