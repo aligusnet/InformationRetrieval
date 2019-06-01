@@ -18,6 +18,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocumentStorage", "Document
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentStorageUnitTests", "DocumentStorageUnitTests\DocumentStorageUnitTests.csproj", "{3003364B-24DB-40DC-B4BE-956A70C38F2C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WikidumpUnitTests", "WikidumpUnitTests\WikidumpUnitTests.csproj", "{8773EBE7-535D-498A-A942-5154598E3392}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,6 +50,10 @@ Global
 		{3003364B-24DB-40DC-B4BE-956A70C38F2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3003364B-24DB-40DC-B4BE-956A70C38F2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3003364B-24DB-40DC-B4BE-956A70C38F2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8773EBE7-535D-498A-A942-5154598E3392}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8773EBE7-535D-498A-A942-5154598E3392}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8773EBE7-535D-498A-A942-5154598E3392}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8773EBE7-535D-498A-A942-5154598E3392}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
