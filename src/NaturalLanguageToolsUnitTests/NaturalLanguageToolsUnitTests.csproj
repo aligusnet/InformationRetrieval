@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NaturalLangugeTools\NaturalLangugeTools.csproj" />
+    <ProjectReference Include="..\NaturalLanguageTools\NaturalLanguageTools.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

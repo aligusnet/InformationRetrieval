@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Xunit;
 
-using NaturalLangugeTools;
+using NaturalLanguageTools;
 
 
 namespace NaturalLanguageToolsUnitTests

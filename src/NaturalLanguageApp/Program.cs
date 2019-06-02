@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 
 using DocumentStorage;
-using NaturalLangugeTools;
+using NaturalLanguageTools;
 using Wikidump;
 
 namespace NaturalLanguageApp

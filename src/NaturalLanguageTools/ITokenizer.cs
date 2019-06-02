@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace NaturalLangugeTools
+namespace NaturalLanguageTools
 {
     /// <summary>
     /// Generic Tokenizer Interface

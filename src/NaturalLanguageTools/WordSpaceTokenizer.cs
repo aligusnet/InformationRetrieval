@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace NaturalLangugeTools
+namespace NaturalLanguageTools
 {
     public class WordSpaceTokenizer : ITokenizer
     {

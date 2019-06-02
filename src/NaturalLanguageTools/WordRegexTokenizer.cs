@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace NaturalLangugeTools
+namespace NaturalLanguageTools
 {
     /// <summary>
     /// Tokenizer implementation that uses predefined regex to split text into words

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using NaturalLangugeTools;
+using NaturalLanguageTools;
 using DocumentStorage;
 using System.Linq;
 
