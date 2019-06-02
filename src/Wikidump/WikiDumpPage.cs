@@ -21,7 +21,7 @@ namespace Wikidump
 
         public string Title { get; }
 
-        public string RedirectTitle { get; set; }
+        public string? RedirectTitle { get; set; }
 
         public string Text { get; }
 

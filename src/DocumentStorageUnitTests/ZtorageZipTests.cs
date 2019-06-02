@@ -15,34 +15,30 @@ namespace DocumentStorageUnitTests
         {
             var docs1 = new List<Document<string>>
             {
-                new Document<string>
-                {
-                    Id = Guid.NewGuid(),
-                    Title = "Title 1",
-                    Data = "Title 1. This is the first document",
-                },
-                new Document<string>
-                {
-                    Id = Guid.NewGuid(),
-                    Title = "Title 2",
-                    Data = "Title 2. This is the second document",
-                },
-                new Document<string>
-                {
-                    Id = Guid.NewGuid(),
-                    Title = "Title 3",
-                    Data = "Title 3. This is thethirs document",
-                },
+                new Document<string> (
+                    Guid.NewGuid(),
+                    "Title 1",
+                    "Title 1. This is the first document"
+                ),
+                new Document<string> (
+                    Guid.NewGuid(),
+                    "Title 2",
+                    "Title 2. This is the second document"
+                ),
+                new Document<string> (
+                    Guid.NewGuid(),
+                    "Title 3",
+                    "Title 3. This is thethirs document"
+                ),
             };
 
             var docs2 = new List<Document<string>>
             {
-                new Document<string>
-                {
-                    Id = Guid.NewGuid(),
-                    Title = "Title 4",
-                    Data = "Title 4. This is the first document from the second collection",
-                },
+                new Document<string> (
+                    Guid.NewGuid(),
+                    "Title 4",
+                    "Title 4. This is the first document from the second collection"
+                ),
             };
 
             var storage = new List<DocumentCollection<string>>

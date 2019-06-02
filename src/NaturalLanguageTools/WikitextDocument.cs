@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace NaturalLanguageTools
 {
@@ -7,7 +8,7 @@ namespace NaturalLanguageTools
     /// </summary>
     public class WikitextDocument
     {
-        public IEnumerable<IWikitextElement> Elements { get; set; }
+        public IEnumerable<IWikitextElement> Elements { get; set; } = Array.Empty<IWikitextElement>();
     }
 
     /// <summary>
@@ -27,11 +28,11 @@ namespace NaturalLanguageTools
 
     public class WikitextHeader1 : IWikitextValue
     {
-        public string Value { get; set; }
+        public string Value { get; set; } = string.Empty;
     }
 
     public class WikitextPlainText : IWikitextValue
     {
-        public string Value { get; set; }
+        public string Value { get; set; } = string.Empty;
     }
 }

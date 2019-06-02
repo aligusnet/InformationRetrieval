@@ -12,12 +12,18 @@ namespace DocumentStorage
         /// <summary>
         /// Document properties of the collection
         /// </summary>
-        public IDictionary<Guid, DocumentProperties> Metadata { get; set; }
+        public IDictionary<Guid, DocumentProperties> Metadata { get; }
 
         /// <summary>
         /// List of documents in the collection
         /// </summary>
-        public IList<Document<T>> Documents { get; set; }
+        public IList<Document<T>> Documents { get; }
+
+        public DocumentCollection(IList<Document<T>> docs, IDictionary<Guid, DocumentProperties> metadata)
+        {
+            Documents = docs;
+            Metadata = metadata;
+        }
 
         /// <summary>
         /// Make new Document collection from a list of documents
@@ -26,11 +32,7 @@ namespace DocumentStorage
         /// <returns>The new collection</returns>
         public static DocumentCollection<T> Make(IList<Document<T>> docs)
         {
-            return new DocumentCollection<T>
-            {
-                Metadata = BuildMetadata(docs),
-                Documents = docs,
-            };
+            return new DocumentCollection<T>(docs, BuildMetadata(docs));
         }
 
         private static IDictionary<Guid, DocumentProperties> BuildMetadata(IList<Document<T>> docs)
@@ -40,11 +42,7 @@ namespace DocumentStorage
 
         private static DocumentProperties ToProperties(Document<T> doc)
         {
-            return new DocumentProperties
-            {
-                Id = doc.Id,
-                Title = doc.Title,
-            };
+            return new DocumentProperties(doc.Id, doc.Title);
         }
     }
 }

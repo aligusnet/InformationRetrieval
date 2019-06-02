@@ -10,16 +10,23 @@ namespace DocumentStorage
         /// <summary>
         /// Gets/sets unique ID of the page
         /// </summary>
-        public Guid Id { get; set; }
+        public Guid Id { get; }
 
         /// <summary>
         /// Gets/sets title of the document
         /// </summary>
-        public string Title { get; set; }
+        public string Title { get; }
 
         /// <summary>
         /// Gets/sets text data of the document
         /// </summary>
-        public T Data { get; set; }
+        public T Data { get; }
+
+        public Document(Guid id, string title, T data)
+        {
+            Id = id;
+            Title = title;
+            Data = data;
+        }
     }
 }

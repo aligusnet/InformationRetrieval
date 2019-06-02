@@ -50,11 +50,7 @@ namespace DocumentStorage
         {
             var metadata = ReadMetadata(archive);
 
-            return new DocumentCollection<T>
-            {
-                Metadata = metadata,
-                Documents = ReadDocuments(archive, metadata).ToList(),
-            };
+            return new DocumentCollection<T>(ReadDocuments(archive, metadata).ToList(), metadata);
         }
 
         private IDictionary<Guid, DocumentProperties> ReadMetadata(ZipArchive archive)
@@ -75,12 +71,7 @@ namespace DocumentStorage
                     var data = dataSerializer.Deserialize(stream);
                     var id = Guid.Parse(Path.GetFileNameWithoutExtension(entry.Name));
 
-                    yield return new Document<T>
-                    {
-                        Id = id,
-                        Title = metadata[id].Title,
-                        Data = data,
-                    };
+                    yield return new Document<T>(id, metadata[id].Title, data);
                 }
             }
         }

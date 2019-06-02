@@ -37,35 +37,12 @@ namespace Wikidump
         {
             var docs = dumpPages.Select(ToDocument).ToList();
 
-            return new DocumentCollection<string>
-            {
-                Metadata = BuildMetada(docs),
-                Documents = docs,
-            };
+            return DocumentCollection<string>.Make(docs);
         }
 
         private static Document<string> ToDocument(WikiDumpPage dp)
         {
-            return new Document<string>
-            {
-                Id = Guid.NewGuid(),
-                Title = dp.Title,
-                Data = dp.Text,
-            };
-        }
-
-        private static IDictionary<Guid, DocumentProperties> BuildMetada(IList<Document<string>> docs)
-        {
-            return docs.Select(ToProperties).ToDictionary(p => p.Id);
-        }
-
-        public static DocumentProperties ToProperties(Document<string> doc)
-        {
-            return new DocumentProperties
-            {
-                Id = doc.Id,
-                Title = doc.Title,
-            };
+            return new Document<string>(Guid.NewGuid(), dp.Title, dp.Text);
         }
     }
 }

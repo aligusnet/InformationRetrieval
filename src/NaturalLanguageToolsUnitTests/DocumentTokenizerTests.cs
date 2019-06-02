@@ -20,18 +20,16 @@ namespace NaturalLanguageToolsUnitTests
         {
             var docs = new List<Document<string>>
             {
-                new Document<string>
-                {
-                    Id = Guid.NewGuid(),
-                    Title = "Title 1",
-                    Data = "Title 1. This is, the first document",
-                },
-                new Document<string>
-                {
-                    Id = Guid.NewGuid(),
-                    Title = "Title 2",
-                    Data = "Title 2; This is the second. document",
-                },
+                new Document<string> (
+                    Guid.NewGuid(),
+                    "Title 1",
+                    "Title 1. This is, the first document"
+                ),
+                new Document<string> (
+                    Guid.NewGuid(),
+                    "Title 2",
+                    "Title 2; This is the second. document"
+                ),
             };
 
             var storage = new List<DocumentCollection<string>>

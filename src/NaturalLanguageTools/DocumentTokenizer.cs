@@ -33,23 +33,19 @@ namespace NaturalLanguageTools
 
         private DocumentCollection<Tokens> ProcessDocCollection(DocumentCollection<string> collection)
         {
-            return new DocumentCollection<Tokens>
-            {
-                Metadata = collection.Metadata,
-                Documents = ProcessDocuments(collection.Documents).ToList(),
-            };
+            return new DocumentCollection<Tokens>(
+                ProcessDocuments(collection.Documents).ToList(), 
+                collection.Metadata);
         }
 
         private IEnumerable<Document<Tokens>> ProcessDocuments(IEnumerable<Document<string>> docs)
         {
             foreach (var doc in docs)
             {
-                yield return new Document<IEnumerable<string>>
-                {
-                    Id = doc.Id,
-                    Title = doc.Title,
-                    Data = tokenizer.Tokenize(doc.Data),
-                };
+                yield return new Document<IEnumerable<string>>(
+                    doc.Id, 
+                    doc.Title, 
+                    tokenizer.Tokenize(doc.Data));
             }
         }
     }

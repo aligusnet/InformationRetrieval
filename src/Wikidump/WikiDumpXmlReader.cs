@@ -15,7 +15,7 @@ namespace Wikidump
         private const string RedirectTitlePath = "./x:redirect/@title";
         private const string TextPath = "./x:revision/x:text";
 
-        private Stream stream = null;
+        private Stream stream;
 
         private IXmlNamespaceResolver namespaceResolver;
 
@@ -62,18 +62,20 @@ namespace Wikidump
 
         private WikiDumpPage CreatePage(XElement element)
         {
-            return new WikiDumpPage(GetValue(element, TitlePath), GetValue(element, TextPath))
+            return new WikiDumpPage(
+                GetValue(element, TitlePath) ?? string.Empty
+                , GetValue(element, TextPath) ?? string.Empty)
             {
                 RedirectTitle = GetAttributeValue(element, RedirectTitlePath),
             };
         }
 
-        private string GetValue(XElement element, string path)
+        private string? GetValue(XElement element, string path)
         {
             return element.XPathSelectElement(path, this.namespaceResolver)?.Value;
         }
 
-        private string GetAttributeValue(XElement element, string path)
+        private string? GetAttributeValue(XElement element, string path)
         {
             var attrs = element.XPathEvaluate(path, this.namespaceResolver) as IEnumerable;
 
