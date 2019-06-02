@@ -10,7 +10,7 @@ namespace DocumentStorage
 
         public DocumentProperties(Guid id, string title)
         {
-            Id = Id;
+            Id = id;
             Title = title;
         }
     }
