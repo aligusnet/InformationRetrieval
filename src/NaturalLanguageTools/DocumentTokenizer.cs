@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using NaturalLanguageTools;
-using DocumentStorage;
+﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace NaturalLanguageApp
+using DocumentStorage;
+
+namespace NaturalLanguageTools
 {
     using Tokens = IEnumerable<string>;
 
-    public class WikipediaTokenizer
+    public class DocumentTokenizer
     {
         private readonly ITokenizer tokenizer;
 
-        public WikipediaTokenizer(ITokenizer tokenizer)
+        public DocumentTokenizer(ITokenizer tokenizer)
         {
             this.tokenizer = tokenizer;
         }

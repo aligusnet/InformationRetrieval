@@ -8,6 +8,10 @@
     <PackageReference Include="Sprache" Version="2.2.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DocumentStorage\DocumentStorage.csproj" />
+  </ItemGroup>
+
   <PropertyGroup>
 	  <LangVersion>8.0</LangVersion>
   </PropertyGroup>

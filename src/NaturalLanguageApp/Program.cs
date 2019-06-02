@@ -66,7 +66,7 @@ namespace NaturalLanguageApp
             var reader = new StorageZipReader<string>(wikiPath, stringDataSerializer);
             var writer = new StorageZipWriter<IEnumerable<string>>(outputWikipediaPath, tokenizedDataSerializer);
 
-            var wikipediaTokenizer = new WikipediaTokenizer(new WordRegexTokenizer());
+            var wikipediaTokenizer = new DocumentTokenizer(new WordRegexTokenizer());
             wikipediaTokenizer.Tokenize(reader, writer);
         }
 
