@@ -63,8 +63,8 @@ namespace Wikidump
         private WikiDumpPage CreatePage(XElement element)
         {
             return new WikiDumpPage(
-                GetValue(element, TitlePath) ?? string.Empty
-                , GetValue(element, TextPath) ?? string.Empty)
+                GetValue(element, TitlePath) ?? string.Empty,
+                GetValue(element, TextPath) ?? string.Empty)
             {
                 RedirectTitle = GetAttributeValue(element, RedirectTitlePath),
             };
