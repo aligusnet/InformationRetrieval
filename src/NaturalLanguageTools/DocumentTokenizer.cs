@@ -4,12 +4,9 @@ using NaturalLanguageTools.Transformers;
 
 namespace NaturalLanguageTools
 {
-    using Tokens = IEnumerable<string>;
-
-    public class DocumentTokenizer : StorageTransformer<string, Tokens>
+    public class DocumentTokenizer : StorageTransformer<string, IEnumerable<string>>
     {
-        public DocumentTokenizer(ITokenizer tokenizer) : 
-            base(new DocumentTransformer<string, Tokens>(d => tokenizer.Tokenize(d)))
+        public DocumentTokenizer(ITokenizer tokenizer) : base(d => tokenizer.Tokenize(d))
         {
         }
     }
