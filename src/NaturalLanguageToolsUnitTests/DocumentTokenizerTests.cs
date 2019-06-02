@@ -47,7 +47,7 @@ namespace NaturalLanguageToolsUnitTests
                   .Callback((IEnumerable<TokenizedCollection> d) => tokenized.Add(d));
 
             var tokenizer = new DocumentTokenizer(new WordRegexTokenizer());
-            tokenizer.Tokenize(reader.Object, writer.Object);
+            tokenizer.Transform(reader.Object, writer.Object);
 
             Assert.Single(tokenized);
             var tokenizedCollection = tokenized[0].First();

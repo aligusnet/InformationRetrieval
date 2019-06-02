@@ -1,51 +1,34 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 using DocumentStorage;
+using NaturalLanguageTools.Transformers;
 
 namespace NaturalLanguageTools
 {
     using Tokens = IEnumerable<string>;
 
-    public class DocumentTokenizer
+    public class DocumentTokenizer : StorageTransformer<string, Tokens>
     {
-        private readonly ITokenizer tokenizer;
 
-        public DocumentTokenizer(ITokenizer tokenizer)
+        public DocumentTokenizer(ITokenizer tokenizer) : base(new Transformer(tokenizer))
         {
-            this.tokenizer = tokenizer;
         }
 
-        public void Tokenize(IStorageReader<string> reader, IStorageWriter<IEnumerable<string>> writer)
+        private class Transformer : IDocumentTransformer<string, Tokens>
         {
-            var wikipedia = reader.Read();
-            var processedWikipedia = ProcessWikipedia(wikipedia);
-            writer.Write(processedWikipedia);
-        }
+            private readonly ITokenizer tokenizer;
 
-        private IEnumerable<DocumentCollection<Tokens>> ProcessWikipedia(IEnumerable<DocumentCollection<string>> wikipedia)
-        {
-            foreach (var collection in wikipedia)
+            public Transformer(ITokenizer tokenizer)
             {
-                yield return ProcessDocCollection(collection);
+                this.tokenizer = tokenizer;
             }
-        }
 
-        private DocumentCollection<Tokens> ProcessDocCollection(DocumentCollection<string> collection)
-        {
-            return new DocumentCollection<Tokens>(
-                ProcessDocuments(collection.Documents).ToList(), 
-                collection.Metadata);
-        }
-
-        private IEnumerable<Document<Tokens>> ProcessDocuments(IEnumerable<Document<string>> docs)
-        {
-            foreach (var doc in docs)
+            public Document<Tokens> Transform(Document<string> source)
             {
-                yield return new Document<IEnumerable<string>>(
-                    doc.Id, 
-                    doc.Title, 
-                    tokenizer.Tokenize(doc.Data));
+                return new Document<IEnumerable<string>>(
+                    source.Id,
+                    source.Title,
+                    tokenizer.Tokenize(source.Data));
             }
         }
     }
