@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
 using System.IO.Compression;
-using Newtonsoft.Json;
 
 namespace DocumentStorage
 {
@@ -48,14 +46,11 @@ namespace DocumentStorage
             SaveDocuments(archive, collection.Documents);
         }
 
-        private void WriteMetadata(ZipArchive archive, IDictionary<Guid, DocumentProperties> metadata)
+        private void WriteMetadata(ZipArchive archive, DocumentCollectionMetadata metadata)
         {
-            string json = JsonConvert.SerializeObject(metadata, Formatting.Indented);
             ZipArchiveEntry contentsEntry = archive.CreateEntry(METADATA_ENTRY_NAME);
-            using (StreamWriter writer = new StreamWriter(contentsEntry.Open()))
-            {
-                writer.Write(json);
-            }
+            using var stream = contentsEntry.Open();
+            metadata.Serialize(stream);
         }
 
         private void SaveDocuments(ZipArchive archive, IEnumerable<Document<T>> docs)

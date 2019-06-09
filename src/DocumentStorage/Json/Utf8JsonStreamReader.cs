@@ -3,7 +3,7 @@ using System.Buffers;
 using System.IO;
 using System.Text.Json;
 
-namespace NaturalLanguageApp
+namespace DocumentStorage.Json
 {
     public ref struct Utf8JsonStreamReader
     {

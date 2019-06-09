@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DocumentStorage
+﻿namespace DocumentStorage
 {
     /// <summary>
     /// Class represents text document
@@ -10,7 +8,7 @@ namespace DocumentStorage
         /// <summary>
         /// Gets/sets unique ID of the page
         /// </summary>
-        public Guid Id { get; }
+        public DocumentId Id { get; }
 
         /// <summary>
         /// Gets/sets title of the document
@@ -22,7 +20,7 @@ namespace DocumentStorage
         /// </summary>
         public T Data { get; }
 
-        public Document(Guid id, string title, T data)
+        public Document(DocumentId id, string title, T data)
         {
             Id = id;
             Title = title;

@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
 using System.IO.Compression;
 using System.Linq;
-using Newtonsoft.Json;
 
 namespace DocumentStorage
 {
@@ -53,14 +51,15 @@ namespace DocumentStorage
             return new DocumentCollection<T>(ReadDocuments(archive, metadata).ToList(), metadata);
         }
 
-        private IDictionary<Guid, DocumentProperties> ReadMetadata(ZipArchive archive)
+        private DocumentCollectionMetadata ReadMetadata(ZipArchive archive)
         {
             var entry = archive.GetEntry(METADATA_ENTRY_NAME);
+            using var stream = entry.Open();
 
-            return JsonConvert.DeserializeObject<IDictionary<Guid, DocumentProperties>>(ReadStringZipEntry(entry));
+            return DocumentCollectionMetadata.Deserialize(stream);
         }
 
-        private IEnumerable<Document<T>> ReadDocuments(ZipArchive archive, IDictionary<Guid, DocumentProperties> metadata)
+        private IEnumerable<Document<T>> ReadDocuments(ZipArchive archive, DocumentCollectionMetadata metadata)
         {
             foreach (var entry in archive.Entries)
             {
@@ -69,18 +68,10 @@ namespace DocumentStorage
                     using var stream = entry.Open();
 
                     var data = dataSerializer.Deserialize(stream);
-                    var id = Guid.Parse(Path.GetFileNameWithoutExtension(entry.Name));
+                    var id = DocumentId.FromString((Path.GetFileNameWithoutExtension(entry.Name)));
 
                     yield return new Document<T>(id, metadata[id].Title, data);
                 }
-            }
-        }
-
-        protected string ReadStringZipEntry(ZipArchiveEntry entry)
-        {
-            using (var reader = new StreamReader(entry.Open()))
-            {
-                return reader.ReadToEnd();
             }
         }
     }

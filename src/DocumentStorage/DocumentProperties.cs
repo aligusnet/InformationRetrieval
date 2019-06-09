@@ -4,11 +4,11 @@ namespace DocumentStorage
 {
     public class DocumentProperties
     {
-        public Guid Id { get; }
+        public DocumentId Id { get; }
 
         public string Title { get; }
 
-        public DocumentProperties(Guid id, string title)
+        public DocumentProperties(DocumentId id, string title)
         {
             Id = id;
             Title = title;

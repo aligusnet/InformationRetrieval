@@ -13,10 +13,10 @@ namespace Wikidump
 
         private readonly IWikiDumpReader reader;
         private readonly Func<WikiDumpPage, bool> filter;
-        private readonly int collectionSize;
+        private readonly ushort collectionSize;
         private readonly int count;
 
-        public WikipediaReader(IWikiDumpReader reader, Func<WikiDumpPage, bool> filter, int collectionSize = 1000, int count = int.MaxValue)
+        public WikipediaReader(IWikiDumpReader reader, Func<WikiDumpPage, bool> filter, ushort collectionSize = 1000, int count = int.MaxValue)
         {
             this.reader = reader;
             this.filter = filter;
@@ -33,16 +33,16 @@ namespace Wikidump
             return reader.ReadPages().Where(filter).Take(count).Batch(collectionSize).Select(ToCollection);
         }
 
-        private static DocumentCollection<string> ToCollection(IEnumerable<WikiDumpPage> dumpPages)
+        private static DocumentCollection<string> ToCollection(IEnumerable<WikiDumpPage> dumpPages, int collectionId)
         {
-            var docs = dumpPages.Select(ToDocument).ToList();
+            var docs = dumpPages.Select((dp, lid) => ToDocument(dp, collectionId, lid)).ToList();
 
             return DocumentCollection<string>.Make(docs);
         }
 
-        private static Document<string> ToDocument(WikiDumpPage dp)
+        private static Document<string> ToDocument(WikiDumpPage dp, int collectionId, int localId)
         {
-            return new Document<string>(Guid.NewGuid(), dp.Title, dp.Text);
+            return new Document<string>(new DocumentId((ushort)collectionId, (ushort)localId), dp.Title, dp.Text);
         }
     }
 }
