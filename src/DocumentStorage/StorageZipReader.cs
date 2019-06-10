@@ -68,7 +68,7 @@ namespace DocumentStorage
                     using var stream = entry.Open();
 
                     var data = dataSerializer.Deserialize(stream);
-                    var id = DocumentId.FromString((Path.GetFileNameWithoutExtension(entry.Name)));
+                    var id = DocumentId.Parse((Path.GetFileNameWithoutExtension(entry.Name)));
 
                     yield return new Document<T>(id, metadata[id].Title, data);
                 }

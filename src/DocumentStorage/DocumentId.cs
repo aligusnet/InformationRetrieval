@@ -24,19 +24,21 @@ namespace DocumentStorage
             Id = ((uint)collectionId << offset) + localId;
         }
 
-        public int CompareTo(DocumentId other)
-        {
-            return Id.CompareTo(other.Id);
-        }
+        public int CompareTo(DocumentId other) => Id.CompareTo(other.Id);
 
-        public override string ToString()
-        {
-            return string.Format($"{Id:X8}");
-        }
+        public override string ToString() => string.Format($"{Id:X8}");
 
-        public static DocumentId FromString(string hex)
+        public string CollectionIdString() => string.Format($"{CollectionId:X4}");
+
+        public string LocalIdString() => string.Format($"{LocalId:X4}");
+
+        public static DocumentId Parse(string hex)
         {
             return new DocumentId(Convert.ToUInt32(hex, 16));
         }
+
+        public static ushort ParseCollectionId(string hex) => Convert.ToUInt16(hex, 16);
+
+        public static ushort ParseLocalId(string hex) => Convert.ToUInt16(hex, 16);
     }
 }

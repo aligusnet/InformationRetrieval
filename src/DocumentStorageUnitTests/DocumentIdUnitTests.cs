@@ -30,7 +30,9 @@ namespace DocumentStorageUnitTests
         [InlineData(1458, 33124, "05B28164")]
         public void DocumentIdFormattingTest(ushort collectionId, ushort localId, string formatted)
         {
-            Assert.Equal(formatted, new DocumentId(collectionId, localId).ToString());
+            var docId = new DocumentId(collectionId, localId);
+            Assert.Equal(formatted, docId.ToString());
+            Assert.Equal(formatted, docId.CollectionIdString() + docId.LocalIdString());
         }
 
         [Theory]
@@ -38,13 +40,35 @@ namespace DocumentStorageUnitTests
         [InlineData("00010002", 1, 2)]
         [InlineData("000F0002", 15, 2)]
         [InlineData("05B28164", 1458, 33124)]
-        public void DocumentIdFromStringTest(string hex, ushort collectionId, ushort localId)
+        public void ParseDocumentIdTest(string hex, ushort collectionId, ushort localId)
         {
-            var docId = DocumentId.FromString(hex);
+            var docId = DocumentId.Parse(hex);
             Assert.Equal(collectionId, docId.CollectionId);
             Assert.Equal(localId, docId.LocalId);
         }
-        
+
+        [Theory]
+        [InlineData("0000", 0)]
+        [InlineData("0001", 1)]
+        [InlineData("000F", 15)]
+        [InlineData("05B2", 1458)]
+        public void ParseLocalIdTest(string hex, ushort localId)
+        {
+            var parsedId = DocumentId.ParseLocalId(hex);
+            Assert.Equal(localId, parsedId);
+        }
+
+        [Theory]
+        [InlineData("0000", 0)]
+        [InlineData("0001", 1)]
+        [InlineData("000F", 15)]
+        [InlineData("05B2", 1458)]
+        public void ParseCollectionIdTest(string hex, ushort collectionId)
+        {
+            var parsedId = DocumentId.ParseCollectionId(hex);
+            Assert.Equal(collectionId, parsedId);
+        }
+
         [Fact]
         public void DocumentIdCanBeKeyInDictionary()
         {

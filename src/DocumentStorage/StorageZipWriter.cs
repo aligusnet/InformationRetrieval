@@ -32,7 +32,8 @@ namespace DocumentStorage
             int index = 0;
             foreach (var collection in storage)
             {
-                var collectionPath = Path.Combine(path, $"wiki{index++}.zip");
+                var suffix = string.Format($"{index++:X4}");
+                var collectionPath = Path.Combine(path, $"wiki{suffix}.zip");
                 SaveCollection(collection, collectionPath);
             }
         }
