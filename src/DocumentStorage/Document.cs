@@ -6,24 +6,18 @@
     public class Document<T>
     {
         /// <summary>
-        /// Gets/sets unique ID of the page
+        /// Gets/sets metadata of the document
         /// </summary>
-        public DocumentId Id { get; }
-
-        /// <summary>
-        /// Gets/sets title of the document
-        /// </summary>
-        public string Title { get; }
+        public DocumentMetadata Metadata { get; }
 
         /// <summary>
         /// Gets/sets text data of the document
         /// </summary>
         public T Data { get; }
 
-        public Document(DocumentId id, string title, T data)
+        public Document(DocumentMetadata metadata, T data)
         {
-            Id = id;
-            Title = title;
+            Metadata = metadata;
             Data = data;
         }
     }

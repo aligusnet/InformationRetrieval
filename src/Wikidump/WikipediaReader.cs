@@ -42,7 +42,8 @@ namespace Wikidump
 
         private static Document<string> ToDocument(WikiDumpPage dp, int collectionId, int localId)
         {
-            return new Document<string>(new DocumentId((ushort)collectionId, (ushort)localId), dp.Title, dp.Text);
+            var metadata = new DocumentMetadata(new DocumentId((ushort)collectionId, (ushort)localId), dp.Title);
+            return new Document<string>(metadata, dp.Text);
         }
     }
 }

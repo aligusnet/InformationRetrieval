@@ -16,8 +16,7 @@ namespace NaturalLanguageTools.Transformers
         public Document<TOut> Transform(Document<TIn> source)
         {
             return new Document<TOut>(
-                    source.Id,
-                    source.Title,
+                    source.Metadata,
                     transformData(source.Data));
         }
     }

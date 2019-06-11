@@ -12,9 +12,9 @@ namespace DocumentStorage
         private const string IdPropertyName = "id";
         private const string TitlePropertyName = "title";
 
-        private readonly IDictionary<DocumentId, DocumentProperties> metadata;
+        private readonly IDictionary<DocumentId, DocumentMetadata> metadata;
 
-        public DocumentProperties this[DocumentId key]
+        public DocumentMetadata this[DocumentId key]
         {
             get
             {
@@ -24,23 +24,18 @@ namespace DocumentStorage
 
         public int Count => metadata.Count;
 
-        public DocumentCollectionMetadata() : this(new Dictionary<DocumentId, DocumentProperties>())
+        public DocumentCollectionMetadata() : this(new Dictionary<DocumentId, DocumentMetadata>())
         {
         }
 
-        public DocumentCollectionMetadata(IDictionary<DocumentId, DocumentProperties> metadata)
+        public DocumentCollectionMetadata(IDictionary<DocumentId, DocumentMetadata> metadata)
         {
             this.metadata = metadata;
         }
 
         public static DocumentCollectionMetadata Make<T>(IList<Document<T>> docs)
         {
-            return new DocumentCollectionMetadata(docs.Select(ToProperties).ToDictionary(p => p.Id));
-        }
-
-        private static DocumentProperties ToProperties<T>(Document<T> doc)
-        {
-            return new DocumentProperties(doc.Id, doc.Title);
+            return new DocumentCollectionMetadata(docs.Select(d => d.Metadata).ToDictionary(p => p.Id));
         }
 
         public void Serialize(Stream stream)
@@ -71,9 +66,9 @@ namespace DocumentStorage
             return new DocumentCollectionMetadata(dict);
         }
 
-        private static IDictionary<DocumentId, DocumentProperties> ReadDictionary(ref Utf8JsonStreamReader reader)
+        private static IDictionary<DocumentId, DocumentMetadata> ReadDictionary(ref Utf8JsonStreamReader reader)
         {
-            var dict = new Dictionary<DocumentId, DocumentProperties>();
+            var dict = new Dictionary<DocumentId, DocumentMetadata>();
 
             ReadToken(ref reader, JsonTokenType.StartObject);
 
@@ -94,7 +89,7 @@ namespace DocumentStorage
             return dict;
         }
 
-        private static DocumentProperties ReadDocumentProperties(ref Utf8JsonStreamReader reader)
+        private static DocumentMetadata ReadDocumentProperties(ref Utf8JsonStreamReader reader)
         {
             ReadToken(ref reader, JsonTokenType.StartObject);
 
@@ -118,7 +113,7 @@ namespace DocumentStorage
                 }
             }
 
-            return new DocumentProperties(new DocumentId(id), title);
+            return new DocumentMetadata(new DocumentId(id), title);
         }
 
         private static void Read(ref Utf8JsonStreamReader reader)

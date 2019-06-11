@@ -55,18 +55,18 @@ namespace WikidumpUnitTests
             Assert.Equal(1, storage[0].Documents.Count);
             Assert.Equal(1, storage[0].Metadata.Count);
             var doc1 = storage[0].Documents[0];
-            Assert.Equal("Simple page", doc1.Title);
+            Assert.Equal("Simple page", doc1.Metadata.Title);
             Assert.Equal("=Simple Page=\nSome text", doc1.Data);
-            Assert.Equal("Simple page", storage[0].Metadata[doc1.Id].Title);
-            Assert.Equal(doc1.Id, storage[0].Metadata[doc1.Id].Id);
+            Assert.Equal("Simple page", storage[0].Metadata[doc1.Metadata.Id].Title);
+            Assert.Equal(doc1.Metadata.Id, storage[0].Metadata[doc1.Metadata.Id].Id);
 
             Assert.Equal(1, storage[1].Documents.Count);
             Assert.Equal(1, storage[1].Metadata.Count);
             var doc2 = storage[1].Documents[0];
-            Assert.Equal("Another page", doc2.Title);
+            Assert.Equal("Another page", doc2.Metadata.Title);
             Assert.Equal("Hello world", doc2.Data);
-            Assert.Equal("Another page", storage[1].Metadata[doc2.Id].Title);
-            Assert.Equal(doc2.Id, storage[1].Metadata[doc2.Id].Id);
+            Assert.Equal("Another page", storage[1].Metadata[doc2.Metadata.Id].Title);
+            Assert.Equal(doc2.Metadata.Id, storage[1].Metadata[doc2.Metadata.Id].Id);
         }
 
         private static Stream GetXmlDump()

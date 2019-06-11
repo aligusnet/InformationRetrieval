@@ -12,11 +12,11 @@ namespace DocumentStorageUnitTests
         [Fact]
         public void MetadataSerializationTest()
         {
-            var props = new List<DocumentProperties>
+            var props = new List<DocumentMetadata>
             {
-                new DocumentProperties(new DocumentId(100, 1201), "Title 1"),
-                new DocumentProperties(new DocumentId(100, 1202), "Title 2"),
-                new DocumentProperties(new DocumentId(100, 1203), "Title 3"),
+                new DocumentMetadata(new DocumentId(100, 1201), "Title 1"),
+                new DocumentMetadata(new DocumentId(100, 1202), "Title 2"),
+                new DocumentMetadata(new DocumentId(100, 1203), "Title 3"),
             };
             var metadata = new DocumentCollectionMetadata(props.ToDictionary(p => p.Id));
 

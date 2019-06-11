@@ -73,13 +73,11 @@ namespace NaturalLanguageToolsUnitTests
             var docs = new List<Document<Tokens>>
             {
                 new Document<Tokens> (
-                    new DocumentId(0, 0),
-                    "Title 1",
+                    new DocumentMetadata(new DocumentId(0, 0), "Title 1"),
                     "Title 1 This is the first document".Split()
                 ),
                 new Document<Tokens> (
-                    new DocumentId(0, 1),
-                    "Title 2",
+                    new DocumentMetadata(new DocumentId(0, 1), "Title 2"),
                     "Title 2 This is the second document".Split()
                 ),
             };

@@ -70,7 +70,7 @@ namespace DocumentStorage
                     var data = dataSerializer.Deserialize(stream);
                     var id = DocumentId.Parse((Path.GetFileNameWithoutExtension(entry.Name)));
 
-                    yield return new Document<T>(id, metadata[id].Title, data);
+                    yield return new Document<T>(metadata[id], data);
                 }
             }
         }
