@@ -29,11 +29,9 @@ namespace DocumentStorage
 
         public void Write(IEnumerable<DocumentCollection<T>> storage)
         {
-            int index = 0;
             foreach (var collection in storage)
             {
-                var suffix = string.Format($"{index++:X4}");
-                var collectionPath = Path.Combine(path, $"wiki{suffix}.zip");
+                var collectionPath = Path.Combine(path, $"{collection.Metadata.IdString()}.zip");
                 SaveCollection(collection, collectionPath);
             }
         }

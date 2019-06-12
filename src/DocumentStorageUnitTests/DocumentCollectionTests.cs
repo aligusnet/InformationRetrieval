@@ -27,7 +27,7 @@ namespace DocumentStorageUnitTests
                 ),
             };
 
-            var collection = DocumentCollection<string>.Make(docs);
+            var collection = DocumentCollection<string>.Make(0, docs);
 
             Assert.Equal(docs.Count, collection.Documents.Count);
             Assert.Equal(docs.Count, collection.Metadata.Count);

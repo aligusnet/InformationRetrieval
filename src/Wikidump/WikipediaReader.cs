@@ -37,7 +37,7 @@ namespace Wikidump
         {
             var docs = dumpPages.Select((dp, lid) => ToDocument(dp, collectionId, lid)).ToList();
 
-            return DocumentCollection<string>.Make(docs);
+            return DocumentCollection<string>.Make((ushort)collectionId, docs);
         }
 
         private static Document<string> ToDocument(WikiDumpPage dp, int collectionId, int localId)

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 using Moq;
@@ -32,7 +31,7 @@ namespace NaturalLanguageToolsUnitTests
 
             var storage = new List<DocumentCollection<string>>
             {
-                DocumentCollection<string>.Make(docs),
+                DocumentCollection<string>.Make(0, docs),
             };
 
             var tokenized = new List<IEnumerable<TokenizedCollection>>();

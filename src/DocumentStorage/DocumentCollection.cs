@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 
 namespace DocumentStorage
 {
@@ -28,11 +26,12 @@ namespace DocumentStorage
         /// <summary>
         /// Make new Document collection from a list of documents
         /// </summary>
+        /// <param name="id">The collection's id</param>
         /// <param name="docs">The list of documents</param>
         /// <returns>The new collection</returns>
-        public static DocumentCollection<T> Make(IList<Document<T>> docs)
+        public static DocumentCollection<T> Make(ushort id, IList<Document<T>> docs)
         {
-            return new DocumentCollection<T>(docs, DocumentCollectionMetadata.Make<T>(docs));
+            return new DocumentCollection<T>(docs, DocumentCollectionMetadata.Make<T>(id, docs));
         }
     }
 }

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
@@ -39,8 +38,8 @@ namespace DocumentStorageUnitTests
 
             var storage = new List<DocumentCollection<string>>
             {
-                DocumentCollection<string>.Make(docs1),
-                DocumentCollection<string>.Make(docs2),
+                DocumentCollection<string>.Make(0, docs1),
+                DocumentCollection<string>.Make(1, docs2),
             };
 
             var path = @"C:\path";
@@ -56,6 +55,7 @@ namespace DocumentStorageUnitTests
             var deserializedStorage = reader.Read().ToList();
 
             Assert.Equal(storage.Count, deserializedStorage.Count);
+            Assert.Equal(storage[0].Documents[1].Metadata.Id, deserializedStorage[0].Documents[1].Metadata.Id);
             Assert.Equal(storage[0].Documents[1].Data, deserializedStorage[0].Documents[1].Data);
         }
     }

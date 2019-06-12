@@ -11,6 +11,8 @@ namespace DocumentStorage
     {
         private const int offset = 16;
 
+        public static readonly DocumentId Zero = new DocumentId(0, 0);
+
         public readonly uint Id;
 
         public ushort CollectionId => (ushort)(Id >> offset);

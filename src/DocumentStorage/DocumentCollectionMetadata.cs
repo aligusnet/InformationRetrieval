@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -9,33 +10,38 @@ namespace DocumentStorage
 {
     public class DocumentCollectionMetadata
     {
-        private const string IdPropertyName = "id";
+        private const string CollectionIdPropertyName = "id";
+        private const string DocumentMetadataListPropertyName = "documents";
+        private const string DocumentIdPropertyName = "id";
         private const string TitlePropertyName = "title";
 
-        private readonly IDictionary<DocumentId, DocumentMetadata> metadata;
+        private readonly IList<DocumentMetadata> metadata;
+
+        public static ushort ParseId(string hex) => Convert.ToUInt16(hex, 16);
+
+        public ushort Id { get; }
+
+        public string IdString() => string.Format($"{Id:X4}");
 
         public DocumentMetadata this[DocumentId key]
         {
             get
             {
-                return metadata[key];
+                return metadata[key.LocalId];
             }
         }
 
         public int Count => metadata.Count;
 
-        public DocumentCollectionMetadata() : this(new Dictionary<DocumentId, DocumentMetadata>())
+        public DocumentCollectionMetadata(ushort id, IList<DocumentMetadata> metadata)
         {
-        }
-
-        public DocumentCollectionMetadata(IDictionary<DocumentId, DocumentMetadata> metadata)
-        {
+            this.Id = id;
             this.metadata = metadata;
         }
 
-        public static DocumentCollectionMetadata Make<T>(IList<Document<T>> docs)
+        public static DocumentCollectionMetadata Make<T>(ushort id, IList<Document<T>> docs)
         {
-            return new DocumentCollectionMetadata(docs.Select(d => d.Metadata).ToDictionary(p => p.Id));
+            return new DocumentCollectionMetadata(id, docs.Select(d => d.Metadata).ToArray());
         }
 
         public void Serialize(Stream stream)
@@ -43,15 +49,19 @@ namespace DocumentStorage
             var writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = true });
 
             writer.WriteStartObject();
-            
-            foreach (var kv in metadata)
+
+            writer.WriteString(CollectionIdPropertyName, IdString());
+
+            writer.WriteStartArray(DocumentMetadataListPropertyName);
+            foreach (var dm in metadata)
             {
-                writer.WriteStartObject(kv.Value.Id.ToString());
-                writer.WriteNumber(IdPropertyName, kv.Value.Id.Id);
-                writer.WriteString(TitlePropertyName, kv.Value.Title);
+                writer.WriteStartObject();
+                writer.WriteString(DocumentIdPropertyName, dm.Id.ToString());
+                writer.WriteString(TitlePropertyName, dm.Title);
                 writer.WriteEndObject();
             }
-
+            writer.WriteEndArray();
+            
             writer.WriteEndObject();
 
             writer.Flush();
@@ -61,39 +71,53 @@ namespace DocumentStorage
         {
             var reader = new Utf8JsonStreamReader(stream);
 
-            var dict = ReadDictionary(ref reader);
-
-            return new DocumentCollectionMetadata(dict);
+            return ReadCollectionMetadata(ref reader);
         }
 
-        private static IDictionary<DocumentId, DocumentMetadata> ReadDictionary(ref Utf8JsonStreamReader reader)
+        private static DocumentCollectionMetadata ReadCollectionMetadata(ref Utf8JsonStreamReader reader)
         {
-            var dict = new Dictionary<DocumentId, DocumentMetadata>();
+            ushort id = 0;
+            IList<DocumentMetadata> docs = Array.Empty<DocumentMetadata>();
 
             ReadToken(ref reader, JsonTokenType.StartObject);
 
             while (reader.Read() && reader.TokenType != JsonTokenType.EndObject)
             {
-                var position = reader.Position;
-                var key = reader.GetString();
-                var prop = ReadDocumentProperties(ref reader);
-
-                if (key != prop.Id.ToString())
+                var propertyName = reader.GetString();
+                switch (propertyName)
                 {
-                    throw new InvalidDataException($"Incorrect ket at position {position}");
-                }
+                    case CollectionIdPropertyName:
+                        id = ParseId(ReadString(ref reader));
+                        break;
+                    case DocumentMetadataListPropertyName:
+                        docs = ReadDocumentsMetadata(ref reader);
+                        break;
+                    default:
+                        throw new InvalidDataException($"Unexpected property at position {reader.Position}: {propertyName}");
 
-                dict.Add(prop.Id, prop);
+                }
             }
 
-            return dict;
+            return new DocumentCollectionMetadata(id, docs);
         }
 
-        private static DocumentMetadata ReadDocumentProperties(ref Utf8JsonStreamReader reader)
+        private static IList<DocumentMetadata> ReadDocumentsMetadata(ref Utf8JsonStreamReader reader)
         {
-            ReadToken(ref reader, JsonTokenType.StartObject);
+            var docs = new List<DocumentMetadata>();
 
-            uint id = 0;
+            ReadToken(ref reader, JsonTokenType.StartArray);
+            while (reader.Read() && reader.TokenType != JsonTokenType.EndArray)
+            {
+                var doc = ReadDocumentMetadata(ref reader);
+                docs.Add(doc);
+            }
+
+            return docs;
+        }
+
+        private static DocumentMetadata ReadDocumentMetadata(ref Utf8JsonStreamReader reader)
+        {
+            var id = DocumentId.Zero;
             var title = string.Empty;
 
             while (reader.Read() && reader.TokenType == JsonTokenType.PropertyName)
@@ -101,8 +125,8 @@ namespace DocumentStorage
                 var propertyName = reader.GetString();
                 switch(propertyName)
                 {
-                    case IdPropertyName:
-                        id = ReadUInt32(ref reader);
+                    case DocumentIdPropertyName:
+                        id = DocumentId.Parse(ReadString(ref reader));
                         break;
                     case TitlePropertyName:
                         title = ReadString(ref reader);
@@ -113,7 +137,7 @@ namespace DocumentStorage
                 }
             }
 
-            return new DocumentMetadata(new DocumentId(id), title);
+            return new DocumentMetadata(id, title);
         }
 
         private static void Read(ref Utf8JsonStreamReader reader)
@@ -132,6 +156,12 @@ namespace DocumentStorage
             {
                 throw new InvalidDataException($"Unexpected token at position {reader.Position}: expected {token} but got {reader.TokenType}");
             }
+        }
+
+        private static ushort ReadUInt16(ref Utf8JsonStreamReader reader)
+        {
+            ReadToken(ref reader, JsonTokenType.Number);
+            return (ushort)reader.GetUInt32();
         }
 
         private static uint ReadUInt32(ref Utf8JsonStreamReader reader)

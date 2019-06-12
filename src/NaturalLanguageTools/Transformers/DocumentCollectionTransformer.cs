@@ -15,7 +15,7 @@ namespace NaturalLanguageTools.Transformers
         public DocumentCollection<TOut> Transform(DocumentCollection<TIn> source)
         {
             var target = source.Documents.Select(d => documentTransformer.Transform(d)).ToList();
-            return DocumentCollection<TOut>.Make(target);
+            return DocumentCollection<TOut>.Make(source.Metadata.Id, target);
         }
     }
 }
