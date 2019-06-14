@@ -17,5 +17,7 @@ namespace DocumentStorage
         {
             stringSerializer.Serialize(stream, string.Join(' ', data));
         }
+
+        public string FileExtension => ".txt";
     }
 }

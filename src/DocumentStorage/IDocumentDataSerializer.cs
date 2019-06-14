@@ -7,5 +7,7 @@ namespace DocumentStorage
         void Serialize(Stream stream, T data);
 
         T Deserialize(Stream stream);
+
+        string FileExtension { get; }
     }
 }

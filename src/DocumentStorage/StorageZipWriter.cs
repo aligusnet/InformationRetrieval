@@ -56,7 +56,7 @@ namespace DocumentStorage
         {
             foreach (var doc in docs)
             {
-                var entry = archive.CreateEntry(doc.Metadata.Id.ToString() + ".txt");
+                var entry = archive.CreateEntry(doc.Metadata.Id.ToString() + dataSerializer.FileExtension);
                 using var stream = entry.Open();
                 dataSerializer.Serialize(stream, doc.Data);
             }

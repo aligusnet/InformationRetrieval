@@ -37,11 +37,11 @@ namespace NaturalLanguageApp
             using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = true });
 
             writer.WriteStartArray();
-            foreach (var wc in wordCounts)
+            foreach (var (word, count) in wordCounts)
             {
                 writer.WriteStartObject();
-                writer.WriteString("word", wc.Word);
-                writer.WriteNumber("count", wc.Count);
+                writer.WriteString("word", word);
+                writer.WriteNumber("count", count);
                 writer.WriteEndObject();
             }
             writer.WriteEndArray();

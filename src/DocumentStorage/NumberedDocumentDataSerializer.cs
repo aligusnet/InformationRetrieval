@@ -28,5 +28,7 @@ namespace DocumentStorage
 
             writer.Flush();
         }
+
+        public string FileExtension => "";
     }
 }
