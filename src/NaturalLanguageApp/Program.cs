@@ -53,9 +53,9 @@ namespace NaturalLanguageApp
             using var stream = File.OpenRead(wordCountsPath);
             var wordCounts = VocabularyAssisstant.DeserializeWordCounts(stream);
 
-            foreach (var (word, count) in wordCounts.Take(top))
+            foreach (var wc in wordCounts.Take(top))
             {
-                Console.WriteLine($"{word}: {count}");
+                Console.WriteLine($"{wc.Word}: {wc.Count}");
             }
         }
 
