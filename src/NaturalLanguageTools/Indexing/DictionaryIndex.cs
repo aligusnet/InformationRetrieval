@@ -8,7 +8,7 @@ using System.IO.Compression;
 namespace NaturalLanguageTools.Indexing
 {
     [ProtoContract]
-    public class DictionaryIndex<T> : IBuildableIndex<T>
+    public class DictionaryIndex<T> : IBuildableIndex<T>, ISearchableIndex<T>
     {
         [ProtoMember(1)]
         private readonly IDictionary<T, IList<DocumentIdRangeCollection>> wordIndex;
@@ -45,20 +45,17 @@ namespace NaturalLanguageTools.Indexing
             collection.AppendDocument(id.LocalId);
         }
 
-        public IEnumerable<DocumentId> this[T word]
+        public IEnumerable<DocumentId> Search(T word)
         {
-            get
+            if (wordIndex.TryGetValue(word, out var collectionList))
             {
-                if (wordIndex.TryGetValue(word, out var collectionList))
+                foreach (var collection in collectionList)
                 {
-                    foreach (var collection in collectionList)
+                    foreach (var range in collection.Ranges)
                     {
-                        foreach (var range in collection.Ranges)
+                        for (ushort i = 0; i < range.Length; ++i)
                         {
-                            for (ushort i = 0; i < range.Length; ++i)
-                            {
-                                yield return new DocumentId(collection.CollectionId, (ushort)(range.Start + i));
-                            }
+                            yield return new DocumentId(collection.CollectionId, (ushort)(range.Start + i));
                         }
                     }
                 }

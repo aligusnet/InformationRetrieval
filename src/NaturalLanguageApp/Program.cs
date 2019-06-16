@@ -54,7 +54,7 @@ namespace NaturalLanguageApp
             using var file = File.OpenRead(indexPath);
             var index = DictionaryIndex<int>.Deserialize(file);
 
-            Console.WriteLine($"The: {index[DocumentHasher.CalculateHashCode("the".AsSpan())].Count()}");
+            Console.WriteLine($"The: {index.Search(DocumentHasher.CalculateHashCode("the".AsSpan())).Count()}");
         }
 
         static void CountWords()

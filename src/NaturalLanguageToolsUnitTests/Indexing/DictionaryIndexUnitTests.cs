@@ -12,11 +12,11 @@ namespace NaturalLanguageToolsUnitTests.Indexing
     public class DictionaryIndexUnitTests
     {
         [Fact]
-        public void IndexWordTest()
+        public void IndexSearchTest()
         {
             var index = CreateIndex();
 
-            var actualLargestDocIds = index["largest"].ToArray();
+            var actualLargestDocIds = index.Search("largest").ToArray();
             var expectedLargestDocIds = new[]
             {
                 new DocumentId(0, 0),
@@ -25,7 +25,7 @@ namespace NaturalLanguageToolsUnitTests.Indexing
 
             Assert.Equal(expectedLargestDocIds, actualLargestDocIds);
 
-            var actualTheDocIds = index["the"].ToArray();
+            var actualTheDocIds = index.Search("the").ToArray();
             var expectedTheDocIds = new[]
             {
                 new DocumentId(0, 0), new DocumentId(0, 1), new DocumentId(0, 2),
@@ -34,7 +34,7 @@ namespace NaturalLanguageToolsUnitTests.Indexing
 
             Assert.Equal(expectedTheDocIds, actualTheDocIds);
 
-            var actualMoonDocIds = index["moon"].ToArray();
+            var actualMoonDocIds = index.Search("moon").ToArray();
             var expectedMoonDocIds = Array.Empty<DocumentId>();
 
             Assert.Equal(expectedMoonDocIds, actualMoonDocIds);
@@ -53,7 +53,7 @@ namespace NaturalLanguageToolsUnitTests.Indexing
 
             foreach (var word in new[] { "largest", "the", "moon" })
             {
-                Assert.Equal(index[word], deserializedIndex[word]);
+                Assert.Equal(index.Search(word), deserializedIndex.Search(word));
             }
         }
 
