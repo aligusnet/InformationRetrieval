@@ -38,6 +38,13 @@ namespace NaturalLanguageToolsUnitTests.Indexing
             var expectedMoonDocIds = Array.Empty<DocumentId>();
 
             Assert.Equal(expectedMoonDocIds, actualMoonDocIds);
+
+            var expectedAllDocIds = new[]
+            {
+                new DocumentId(0, 0), new DocumentId(0, 1), new DocumentId(0, 2),
+                new DocumentId(1, 0), new DocumentId(1, 1), new DocumentId(1, 2), new DocumentId(1, 3),
+            };
+            Assert.Equal(expectedAllDocIds, index.AllDocuments());
         }
 
         [Fact]
@@ -55,6 +62,8 @@ namespace NaturalLanguageToolsUnitTests.Indexing
             {
                 Assert.Equal(index.Search(word), deserializedIndex.Search(word));
             }
+
+            Assert.Equal(index.AllDocuments(), deserializedIndex.AllDocuments());
         }
 
         private static DictionaryIndex<string>  CreateIndex()

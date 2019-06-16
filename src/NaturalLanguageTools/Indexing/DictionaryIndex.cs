@@ -4,6 +4,7 @@ using ProtoBuf;
 using DocumentStorage;
 using System.IO;
 using System.IO.Compression;
+using System.Collections;
 
 namespace NaturalLanguageTools.Indexing
 {
@@ -11,55 +12,42 @@ namespace NaturalLanguageTools.Indexing
     public class DictionaryIndex<T> : IBuildableIndex<T>, ISearchableIndex<T>
     {
         [ProtoMember(1)]
-        private readonly IDictionary<T, IList<DocumentIdRangeCollection>> wordIndex;
+        private readonly IDictionary<T, DocumentIdRangeCollectionList> wordIndex;
+
+        [ProtoMember(2)]
+        private readonly DocumentIdRangeCollectionList allDocuments;
 
         public DictionaryIndex()
         {
-            wordIndex = new Dictionary<T, IList<DocumentIdRangeCollection>>();
+            wordIndex = new Dictionary<T, DocumentIdRangeCollectionList>();
+            allDocuments = new DocumentIdRangeCollectionList();
         }
 
         public void IndexWord(DocumentId id, T word, int position)
         {
-            DocumentIdRangeCollection collection;
-            if (wordIndex.TryGetValue(word, out var collectionList))
+            if (!wordIndex.TryGetValue(word, out var collectionList))
             {
-                if (collectionList[^1].CollectionId == id.CollectionId)
-                {
-                    collection = collectionList[^1];
-                }
-                else
-                {
-                    collection = new DocumentIdRangeCollection(id.CollectionId);
-                    collectionList.Add(collection);
-                }
-            }
-            else
-            {
-                collectionList = new List<DocumentIdRangeCollection>();
+                collectionList = new DocumentIdRangeCollectionList();
                 wordIndex.Add(word, collectionList);
-
-                collection = new DocumentIdRangeCollection(id.CollectionId);
-                collectionList.Add(collection);
             }
 
-            collection.AppendDocument(id.LocalId);
+            collectionList.Add(id);
+            allDocuments.Add(id);
         }
 
         public IEnumerable<DocumentId> Search(T word)
         {
             if (wordIndex.TryGetValue(word, out var collectionList))
             {
-                foreach (var collection in collectionList)
-                {
-                    foreach (var range in collection.Ranges)
-                    {
-                        for (ushort i = 0; i < range.Length; ++i)
-                        {
-                            yield return new DocumentId(collection.CollectionId, (ushort)(range.Start + i));
-                        }
-                    }
-                }
+                return collectionList;
             }
+
+            return Array.Empty<DocumentId>();
+        }
+
+        public IEnumerable<DocumentId> AllDocuments()
+        {
+            return allDocuments;
         }
 
         public void Serialize(Stream stream)
@@ -132,6 +120,49 @@ namespace NaturalLanguageTools.Indexing
                     Ranges.Add(new DocumentIdRange(localId));
                 }
             }
+        }
+    }
+
+    [ProtoContract]
+    internal class DocumentIdRangeCollectionList : IEnumerable<DocumentId>
+    {
+        [ProtoMember(1)]
+        private readonly IList<DocumentIdRangeCollection> list = new List<DocumentIdRangeCollection>();
+
+        public void Add(DocumentId id)
+        {
+            DocumentIdRangeCollection collection;
+
+            if (list.Count == 0 || list[^1].CollectionId != id.CollectionId)
+            {
+                collection = new DocumentIdRangeCollection(id.CollectionId);
+                list.Add(collection);
+            }
+            else
+            {
+                collection = list[^1];
+            }
+
+            collection.AppendDocument(id.LocalId);
+        }
+
+        public IEnumerator<DocumentId> GetEnumerator()
+        {
+            foreach (var collection in list)
+            {
+                foreach (var range in collection.Ranges)
+                {
+                    for (ushort i = 0; i < range.Length; ++i)
+                    {
+                        yield return new DocumentId(collection.CollectionId, (ushort)(range.Start + i));
+                    }
+                }
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
         }
     }
 }
