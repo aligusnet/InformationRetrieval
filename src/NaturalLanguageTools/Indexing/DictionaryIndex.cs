@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using ProtoBuf;
 using DocumentStorage;
+using System.IO;
+using System.IO.Compression;
 
 namespace NaturalLanguageTools.Indexing
 {
+    [ProtoContract]
     public class DictionaryIndex<T> : IBuildableIndex<T>
     {
+        [ProtoMember(1)]
         private readonly IDictionary<T, IList<DocumentIdRangeCollection>> wordIndex;
 
         public DictionaryIndex()
@@ -59,12 +64,27 @@ namespace NaturalLanguageTools.Indexing
                 }
             }
         }
+
+        public void Serialize(Stream stream)
+        {
+            using var gzipStream = new GZipStream(stream, CompressionLevel.Optimal, leaveOpen: true);
+            Serializer.Serialize(gzipStream, this);
+        }
+
+        public static DictionaryIndex<T> Deserialize(Stream stream)
+        {
+            using var gzipStream = new GZipStream(stream, CompressionMode.Decompress, leaveOpen: true);
+            return Serializer.Deserialize<DictionaryIndex<T>>(gzipStream);
+        }
     }
 
+    [ProtoContract]
     internal struct DocumentIdRange
     {
+        [ProtoMember(1)]
         public ushort Start { get; }
         public int End => Start + Length;
+        [ProtoMember(2)]
         public ushort Length { get; set; }
 
         public DocumentIdRange(ushort localId)
@@ -74,11 +94,19 @@ namespace NaturalLanguageTools.Indexing
         }
     }
 
+    [ProtoContract]
     internal class DocumentIdRangeCollection
     {
+        [ProtoMember(1)]
         public ushort CollectionId { get; }
 
+        [ProtoMember(2)]
         public IList<DocumentIdRange> Ranges { get; }
+
+        // for protobuf deserialization
+        private DocumentIdRangeCollection() : this(0)
+        {
+        }
 
         public DocumentIdRangeCollection(ushort id)
         {

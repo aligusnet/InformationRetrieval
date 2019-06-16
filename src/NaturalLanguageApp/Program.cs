@@ -6,6 +6,7 @@ using System.Linq;
 
 using DocumentStorage;
 using NaturalLanguageTools;
+using NaturalLanguageTools.Indexing;
 using Wikidump;
 
 namespace NaturalLanguageApp
@@ -18,6 +19,7 @@ namespace NaturalLanguageApp
         static readonly string tokenizedPath = Path.Combine(basePath, "enwiki.tokenized");
         static readonly string hashedPath = Path.Combine(basePath, "enwiki.hashed");
         static readonly string wordCountsPath = Path.Combine(basePath, "word_counts.json");
+        static readonly string indexPath = Path.Combine(basePath, "index.bin");
 
         static readonly IDocumentDataSerializer<string> stringDataSerializer = new StringDocumentDataSerializer();
         static readonly IDocumentDataSerializer<IEnumerable<string>> tokenizedDataSerializer = new TokenizedDocumentDataSerializer();
@@ -28,12 +30,31 @@ namespace NaturalLanguageApp
             var timer = new Stopwatch();
             timer.Start();
 
-            HashWikipedia();
+            IndexWikipedia();
 
             timer.Stop();
             Console.WriteLine("Finished in {0}", timer.Elapsed);
 
             PrintTopWordCounts(10);
+        }
+
+        static void IndexWikipedia()
+        {
+            var reader = new StorageZipReader<int[]>(hashedPath, hashedDataSerializer);
+            var index = new DictionaryIndex<int>();
+            var indexBuilder = new IndexBuilder<int, int[]>(index);
+            indexBuilder.IndexStorage(reader.Read());
+
+            using var file = File.Create(indexPath);
+            index.Serialize(file);
+        }
+
+        static void PrintIndexStats()
+        {
+            using var file = File.OpenRead(indexPath);
+            var index = DictionaryIndex<int>.Deserialize(file);
+
+            Console.WriteLine($"The: {index[DocumentHasher.CalculateHashCode("the".AsSpan())].Count()}");
         }
 
         static void CountWords()

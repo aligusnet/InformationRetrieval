@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 
 using Xunit;
@@ -13,10 +14,7 @@ namespace NaturalLanguageToolsUnitTests.Indexing
         [Fact]
         public void IndexWordTest()
         {
-            var storage = GetTestSentenceCollections();
-
-            var index = new DictionaryIndex<string>();
-            BuildIndex(index, storage);
+            var index = CreateIndex();
 
             var actualLargestDocIds = index["largest"].ToArray();
             var expectedLargestDocIds = new[]
@@ -40,6 +38,33 @@ namespace NaturalLanguageToolsUnitTests.Indexing
             var expectedMoonDocIds = Array.Empty<DocumentId>();
 
             Assert.Equal(expectedMoonDocIds, actualMoonDocIds);
+        }
+
+        [Fact]
+        public void SerializationTest()
+        {
+            using var stream = new MemoryStream();
+
+            var index = CreateIndex();
+            index.Serialize(stream);
+
+            stream.Seek(0, SeekOrigin.Begin);
+            var deserializedIndex = DictionaryIndex<string>.Deserialize(stream);
+
+            foreach (var word in new[] { "largest", "the", "moon" })
+            {
+                Assert.Equal(index[word], deserializedIndex[word]);
+            }
+        }
+
+        private static DictionaryIndex<string>  CreateIndex()
+        {
+            var storage = GetTestSentenceCollections();
+
+            var index = new DictionaryIndex<string>();
+            BuildIndex(index, storage);
+
+            return index;
         }
 
         private static string[][] GetTestSentenceCollections()
