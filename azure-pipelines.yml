@@ -11,8 +11,8 @@ steps:
   inputs:
     version: '3.0.100-preview6-012264'
 
-- powershell: dotnet --version
-  displayName: .NET Core Version
+- powershell: dotnet restore $(solution)
+  displayName: Restore the dependencies
 
 - script: dotnet build --configuration $(buildConfiguration) $(solution)
   displayName: Build the project
