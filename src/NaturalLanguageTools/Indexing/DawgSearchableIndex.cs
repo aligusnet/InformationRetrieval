@@ -1,8 +1,11 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
 using System.Collections.Generic;
+using ProtoBuf;
 
 using DawgSharp;
 using DocumentStorage;
+using System.IO.Compression;
 
 namespace NaturalLanguageTools.Indexing
 {
@@ -25,6 +28,31 @@ namespace NaturalLanguageTools.Indexing
         public IEnumerable<DocumentId> Search(string word)
         {
             return dawg[word] ?? Enumerable.Empty<DocumentId>();
+        }
+
+        public void Serialize(Stream stream)
+        {
+            using var gzipStream = new GZipStream(stream, CompressionLevel.Optimal, leaveOpen: true);
+            Serializer.SerializeWithLengthPrefix(gzipStream, allDocuments, PrefixStyle.Base128);
+            dawg.SaveTo(gzipStream, writePayload: SerializePayload);
+        }
+
+        private static void SerializePayload(BinaryWriter writer, DocumentIdRangeCollectionList payload)
+        {
+            Serializer.SerializeWithLengthPrefix(writer.BaseStream, payload, PrefixStyle.Base128);
+        }
+
+        public static DawgSearchableIndex Deserialize(Stream stream)
+        {
+            using var gzipStream = new GZipStream(stream, CompressionMode.Decompress, leaveOpen: true);
+            var allDocuments = Serializer.DeserializeWithLengthPrefix<DocumentIdRangeCollectionList>(gzipStream, PrefixStyle.Base128);
+            var dawg = Dawg<DocumentIdRangeCollectionList>.Load(gzipStream, readPayload: DeserializePayload);
+            return new DawgSearchableIndex(dawg, allDocuments);
+        }
+
+        private static DocumentIdRangeCollectionList DeserializePayload(BinaryReader reader)
+        {
+            return Serializer.DeserializeWithLengthPrefix<DocumentIdRangeCollectionList>(reader.BaseStream, PrefixStyle.Base128);
         }
     }
 }
