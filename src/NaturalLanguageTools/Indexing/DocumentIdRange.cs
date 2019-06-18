@@ -43,11 +43,14 @@ namespace NaturalLanguageTools.Indexing
             Ranges = new List<DocumentIdRange>();
         }
 
-        public void AppendDocument(ushort localId)
+        public bool Add(ushort localId)
         {
+            bool isAdded = false;
+
             if (Ranges.Count == 0)
             {
                 Ranges.Add(new DocumentIdRange(localId));
+                isAdded = true;
             }
             else
             {
@@ -58,12 +61,16 @@ namespace NaturalLanguageTools.Indexing
                 {
                     lastRange.Length += 1;
                     Ranges[lastIndex] = lastRange;
+                    isAdded = true;
                 }
                 else if (lastRange.End < localId)
                 {
                     Ranges.Add(new DocumentIdRange(localId));
+                    isAdded = true;
                 }
             }
+
+            return isAdded;
         }
     }
 
@@ -72,6 +79,9 @@ namespace NaturalLanguageTools.Indexing
     {
         [ProtoMember(1)]
         private readonly IList<DocumentIdRangeCollection> list = new List<DocumentIdRangeCollection>();
+
+        [ProtoMember(2)]
+        public int DocumentsCount { get; private set; } = 0;
 
         public void Add(DocumentId id)
         {
@@ -87,7 +97,7 @@ namespace NaturalLanguageTools.Indexing
                 collection = list[^1];
             }
 
-            collection.AppendDocument(id.LocalId);
+            if ( collection.Add(id.LocalId) ) DocumentsCount++;
         }
 
         public IEnumerator<DocumentId> GetEnumerator()

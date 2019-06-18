@@ -7,6 +7,10 @@ namespace NaturalLanguageTools.Indexing
     {
         IEnumerable<DocumentId> Search(T word);
 
-        IEnumerable<DocumentId> AllDocuments();
+        int GetCount(T word);
+
+        IEnumerable<DocumentId> GetAll();
+
+        int GetCount();
     }
 }

@@ -23,6 +23,7 @@ namespace NaturalLanguageToolsUnitTests.Indexing
             };
 
             Assert.Equal(expectedLargestDocIds, actualLargestDocIds);
+            Assert.Equal(expectedLargestDocIds.Length, index.GetCount("largest"));
 
             var actualTheDocIds = index.Search("the").ToArray();
             var expectedTheDocIds = new[]
@@ -32,18 +33,33 @@ namespace NaturalLanguageToolsUnitTests.Indexing
             };
 
             Assert.Equal(expectedTheDocIds, actualTheDocIds);
+            Assert.Equal(expectedTheDocIds.Length, index.GetCount("the"));
 
             var actualMoonDocIds = index.Search("moon").ToArray();
             var expectedMoonDocIds = Array.Empty<DocumentId>();
 
             Assert.Equal(expectedMoonDocIds, actualMoonDocIds);
+            Assert.Equal(expectedMoonDocIds.Length, index.GetCount("moon"));
 
             var expectedAllDocIds = new[]
             {
                 new DocumentId(0, 0), new DocumentId(0, 1), new DocumentId(0, 2),
                 new DocumentId(1, 0), new DocumentId(1, 1), new DocumentId(1, 2), new DocumentId(1, 3),
             };
-            Assert.Equal(expectedAllDocIds, index.AllDocuments());
+            Assert.Equal(expectedAllDocIds, index.GetAll());
+            Assert.Equal(expectedAllDocIds.Length, index.GetCount());
+        }
+
+        protected void AssertIndices(ISearchableIndex<string> expected, ISearchableIndex<string> actual)
+        {
+            foreach (var word in new[] { "largest", "the", "moon" })
+            {
+                Assert.Equal(expected.Search(word), actual.Search(word));
+                Assert.Equal(expected.GetCount(word), actual.GetCount(word));
+            }
+
+            Assert.Equal(expected.GetAll(), actual.GetAll());
+            Assert.Equal(expected.GetCount(), actual.GetCount());
         }
 
         protected abstract TIndex CreateIndex(string[][] storage);

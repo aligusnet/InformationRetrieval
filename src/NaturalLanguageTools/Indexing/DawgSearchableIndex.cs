@@ -20,7 +20,7 @@ namespace NaturalLanguageTools.Indexing
             this.allDocuments = allDocuments;
         }
 
-        public IEnumerable<DocumentId> AllDocuments()
+        public IEnumerable<DocumentId> GetAll()
         {
             return allDocuments;
         }
@@ -53,6 +53,16 @@ namespace NaturalLanguageTools.Indexing
         private static DocumentIdRangeCollectionList DeserializePayload(BinaryReader reader)
         {
             return Serializer.DeserializeWithLengthPrefix<DocumentIdRangeCollectionList>(reader.BaseStream, PrefixStyle.Base128);
+        }
+
+        public int GetCount(string word)
+        {
+            return dawg[word]?.DocumentsCount ?? 0;
+        }
+
+        public int GetCount()
+        {
+            return allDocuments.DocumentsCount;
         }
     }
 }

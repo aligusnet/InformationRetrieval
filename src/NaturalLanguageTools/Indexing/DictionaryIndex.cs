@@ -44,7 +44,7 @@ namespace NaturalLanguageTools.Indexing
             return Array.Empty<DocumentId>();
         }
 
-        public IEnumerable<DocumentId> AllDocuments()
+        public IEnumerable<DocumentId> GetAll()
         {
             return allDocuments;
         }
@@ -59,6 +59,21 @@ namespace NaturalLanguageTools.Indexing
         {
             using var gzipStream = new GZipStream(stream, CompressionMode.Decompress, leaveOpen: true);
             return Serializer.Deserialize<DictionaryIndex<T>>(gzipStream);
+        }
+
+        public int GetCount(T word)
+        {
+            if (wordIndex.TryGetValue(word, out var collectionList))
+            {
+                return collectionList.DocumentsCount;
+            }
+
+            return 0;
+        }
+
+        public int GetCount()
+        {
+            return allDocuments.DocumentsCount;
         }
     }
 }

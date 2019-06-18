@@ -19,12 +19,7 @@ namespace NaturalLanguageToolsUnitTests.Indexing
             stream.Seek(0, SeekOrigin.Begin);
             var deserializedIndex = DictionaryIndex<string>.Deserialize(stream);
 
-            foreach (var word in new[] { "largest", "the", "moon" })
-            {
-                Assert.Equal(index.Search(word), deserializedIndex.Search(word));
-            }
-
-            Assert.Equal(index.AllDocuments(), deserializedIndex.AllDocuments());
+            AssertIndices(index, deserializedIndex);
         }
 
         protected override DictionaryIndex<string> CreateIndex(string[][] storage)
