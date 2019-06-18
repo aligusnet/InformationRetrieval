@@ -8,6 +8,7 @@ using DocumentStorage;
 using NaturalLanguageTools;
 using NaturalLanguageTools.Indexing;
 using Wikidump;
+using DawgSharp;
 
 namespace NaturalLanguageApp
 {
@@ -20,6 +21,7 @@ namespace NaturalLanguageApp
         static readonly string hashedPath = Path.Combine(basePath, "enwiki.hashed");
         static readonly string wordCountsPath = Path.Combine(basePath, "word_counts.json");
         static readonly string indexPath = Path.Combine(basePath, "index.bin");
+        static readonly string dawgIndexPath = Path.Combine(basePath, "dawg_index.bin");
 
         static readonly IDocumentDataSerializer<string> stringDataSerializer = new StringDocumentDataSerializer();
         static readonly IDocumentDataSerializer<IEnumerable<string>> tokenizedDataSerializer = new TokenizedDocumentDataSerializer();
@@ -30,12 +32,33 @@ namespace NaturalLanguageApp
             var timer = new Stopwatch();
             timer.Start();
 
-            IndexWikipedia();
+            BuildDawgIndex();
 
             timer.Stop();
             Console.WriteLine("Finished in {0}", timer.Elapsed);
 
-            PrintTopWordCounts(10);
+            PrintDawgIndexStats();
+        }
+
+        static void BuildDawgIndex()
+        {
+            var reader = new StorageZipReader<IEnumerable<string>>(tokenizedPath, tokenizedDataSerializer);
+            var buildableIndex = new DawgBuildableIndex();
+            var indexBuilder = new IndexBuilder<string, IEnumerable<string>>(buildableIndex);
+            indexBuilder.IndexStorage(reader.Read());
+
+            var index = buildableIndex.CreateIndex();
+
+            using var file = File.Create(dawgIndexPath);
+            index.Serialize(file);
+        }
+
+        static void PrintDawgIndexStats()
+        {
+            using var file = File.OpenRead(dawgIndexPath);
+            var index = DawgSearchableIndex.Deserialize(file);
+
+            Console.WriteLine($"The: {index.Search("the").Count()}");
         }
 
         static void IndexWikipedia()
