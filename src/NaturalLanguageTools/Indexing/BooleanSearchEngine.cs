@@ -25,6 +25,8 @@ namespace NaturalLanguageTools.Indexing
                     return ExecuteAnd(opAnd);
                 case BooleanQueryOperationOr<T> opOr:
                     return ExecuteOr(opOr);
+                case BooleanQueryOperationNot<T> opNot:
+                    return ExecuteNot(opNot);
                 default:
                     throw new InvalidOperationException($"Got unexpected Boolean query: {query?.GetType()}");
             }
@@ -63,6 +65,7 @@ namespace NaturalLanguageTools.Indexing
                 if (prev.CompareTo(enumerator.Current) == 0)
                 {
                     counter++;
+
                     if (counter == opAnd.Elements.Count)
                     {
                         yield return prev;
@@ -76,6 +79,11 @@ namespace NaturalLanguageTools.Indexing
                 {
                     prev = enumerator.Current;
                     counter = 1;
+
+                    if (counter == opAnd.Elements.Count)
+                    {
+                        yield return prev;
+                    }
                 }
 
                 if (enumerator.MoveNext())
@@ -124,6 +132,41 @@ namespace NaturalLanguageTools.Indexing
 
                 prev = current;
             }
+        }
+
+        private IEnumerable<DocumentId> ExecuteNot(BooleanQueryOperationNot<T> op)
+        {
+            var docs = ExecuteQuery(op.Element).GetEnumerator();
+            var all = index.GetAll().GetEnumerator();
+
+            if (!all.MoveNext())
+            {
+                yield break;
+            }
+
+            while (docs.MoveNext())
+            {
+                while (all.Current.CompareTo(docs.Current) < 0)
+                {
+                    yield return all.Current;
+
+                    if (!all.MoveNext())
+                    {
+                        yield break;
+                    }
+                }
+
+                if (!all.MoveNext())
+                {
+                    yield break;
+                }
+            }
+
+            do
+            {
+                yield return all.Current;
+            }
+            while (all.MoveNext());
         }
     }
 }
