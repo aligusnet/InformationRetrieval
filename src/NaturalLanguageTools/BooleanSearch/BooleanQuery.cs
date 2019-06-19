@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace NaturalLanguageTools.BooleanSearch
@@ -53,6 +54,11 @@ namespace NaturalLanguageTools.BooleanSearch
         public BooleanQueryOperationAnd(IList<BooleanQuery> elements)
         {
             Elements = elements;
+        }
+
+        internal object Select()
+        {
+            throw new NotImplementedException();
         }
     }
 
