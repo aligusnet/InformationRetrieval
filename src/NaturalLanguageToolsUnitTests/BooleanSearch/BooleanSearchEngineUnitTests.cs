@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-using NaturalLanguageTools.Indexing;
+using NaturalLanguageTools.BooleanSearch;
 using DocumentStorage;
 
-namespace NaturalLanguageToolsUnitTests.Indexing
+using NaturalLanguageToolsUnitTests.Indexing;
+
+namespace NaturalLanguageToolsUnitTests.BooleanSearch
 {
     public class BooleanSearchEngineUnitTests
     {

@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 
 using DocumentStorage;
+using NaturalLanguageTools.Indexing;
 using NaturalLanguageTools.Utility;
 
-namespace NaturalLanguageTools.Indexing
+namespace NaturalLanguageTools.BooleanSearch
 {
     public class BooleanSearchEngine<T>
     {
