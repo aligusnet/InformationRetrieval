@@ -23,10 +23,6 @@ namespace NaturalLanguageToolsUnitTests.Indexing
         }
 
         protected override DictionaryIndex<string> CreateIndex(string[][] storage)
-        {
-            var index = new DictionaryIndex<string>();
-            BuildIndex(index, storage);
-            return index;
-        }
+            => IndexHelper.CreateDictionaryIndex(storage);
     }
 }

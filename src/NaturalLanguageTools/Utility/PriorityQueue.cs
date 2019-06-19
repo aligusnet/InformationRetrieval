@@ -6,34 +6,35 @@ namespace NaturalLanguageTools.Utility
     {
         private readonly IComparer<T> comparer;
         private readonly T[] heap;
-        private int length;
 
         public PriorityQueue(int capacity, IComparer<T> comparer)
         {
             this.comparer = comparer;
             this.heap = new T[capacity];
-            this.length = 0;
+            this.Count = 0;
         }
+
+        public int Count { get; private set; }
 
         public void Push(T value)
         {
-            heap[length] = value;
-            int i = length;
+            heap[Count] = value;
+            int i = Count;
             while (HeapPropertyHolds(i) == false)
             {
                 int p = Parent(i);
                 Swap(i, p);
                 i = p;
             }
-            length++;
+            Count++;
         }
 
         public T Pop()
         {
             T value = heap[0];
 
-            length--;
-            heap[0] = heap[length];
+            Count--;
+            heap[0] = heap[Count];
             Heapify(0);
 
             return value;
@@ -45,12 +46,12 @@ namespace NaturalLanguageTools.Utility
             int r = Right(i);
             int largest = i;
 
-            if (l < length && comparer.Compare(heap[l], heap[largest]) > 0)
+            if (l < Count && comparer.Compare(heap[l], heap[largest]) > 0)
             {
                 largest = l;
             }
 
-            if (r < length && comparer.Compare(heap[r], heap[largest]) > 0)
+            if (r < Count && comparer.Compare(heap[r], heap[largest]) > 0)
             {
                 largest = r;
             }

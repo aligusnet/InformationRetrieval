@@ -36,9 +36,8 @@ namespace NaturalLanguageToolsUnitTests.Indexing
         protected override DawgSearchableIndex CreateIndex(string[][] storage)
         {
             var buildableIndex = new DawgBuildableIndex();
-            BuildIndex(buildableIndex, storage);
+            IndexHelper.BuildIndex(buildableIndex, storage);
             return buildableIndex.CreateIndex();
-
         }
     }
 }

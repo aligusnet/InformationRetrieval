@@ -1,9 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 
 using Xunit;
 
-using DocumentStorage;
 using NaturalLanguageTools.Indexing;
 
 namespace NaturalLanguageToolsUnitTests.Indexing
@@ -15,44 +13,19 @@ namespace NaturalLanguageToolsUnitTests.Indexing
         {
             var index = CreateIndex();
 
-            var actualLargestDocIds = index.Search("largest").ToArray();
-            var expectedLargestDocIds = new[]
+            foreach (var kv in IndexHelper.Results)
             {
-                new DocumentId(0, 0),
-                new DocumentId(1, 2), new DocumentId(1, 3),
-            };
+                Assert.Equal(kv.Value, index.Search(kv.Key).ToArray());
+                Assert.Equal(kv.Value.Length, index.GetCount(kv.Key));
+            }
 
-            Assert.Equal(expectedLargestDocIds, actualLargestDocIds);
-            Assert.Equal(expectedLargestDocIds.Length, index.GetCount("largest"));
-
-            var actualTheDocIds = index.Search("the").ToArray();
-            var expectedTheDocIds = new[]
-            {
-                new DocumentId(0, 0), new DocumentId(0, 1), new DocumentId(0, 2),
-                new DocumentId(1, 0), new DocumentId(1, 1), new DocumentId(1, 2), new DocumentId(1, 3),
-            };
-
-            Assert.Equal(expectedTheDocIds, actualTheDocIds);
-            Assert.Equal(expectedTheDocIds.Length, index.GetCount("the"));
-
-            var actualMoonDocIds = index.Search("moon").ToArray();
-            var expectedMoonDocIds = Array.Empty<DocumentId>();
-
-            Assert.Equal(expectedMoonDocIds, actualMoonDocIds);
-            Assert.Equal(expectedMoonDocIds.Length, index.GetCount("moon"));
-
-            var expectedAllDocIds = new[]
-            {
-                new DocumentId(0, 0), new DocumentId(0, 1), new DocumentId(0, 2),
-                new DocumentId(1, 0), new DocumentId(1, 1), new DocumentId(1, 2), new DocumentId(1, 3),
-            };
-            Assert.Equal(expectedAllDocIds, index.GetAll());
-            Assert.Equal(expectedAllDocIds.Length, index.GetCount());
+            Assert.Equal(IndexHelper.AllDocuments, index.GetAll());
+            Assert.Equal(IndexHelper.AllDocuments.Length, index.GetCount());
         }
 
         protected void AssertIndices(ISearchableIndex<string> expected, ISearchableIndex<string> actual)
         {
-            foreach (var word in new[] { "largest", "the", "moon" })
+            foreach (var word in IndexHelper.Results.Keys)
             {
                 Assert.Equal(expected.Search(word), actual.Search(word));
                 Assert.Equal(expected.GetCount(word), actual.GetCount(word));
@@ -66,48 +39,7 @@ namespace NaturalLanguageToolsUnitTests.Indexing
 
         protected TIndex CreateIndex()
         {
-            return CreateIndex(GetTestSentenceCollections());
-        }
-
-        protected static string[][] GetTestSentenceCollections()
-        {
-            var collection1 = new[]
-            {
-                "The Great Barrier Reef in Australia is the world’s largest reef system",
-                "The waste hierarchy or 3 R’s are in order of importance reduce reuse and recycle",
-                "Around 75% of the volcanoes on Earth are found in the Pacific Ring of Fire an area around the Pacific Ocean where tectonic plates meet",
-            };
-
-            var collection2 = new[]
-            {
-                "Despite it name the Killer Whale Orca is actually a type of dolphin",
-                "Giant water lilies in the Amazon can grow over 6 feet in diameter",
-                "The largest ocean on Earth is the Pacific Ocean",
-                "The largest individual flower on Earth is from a plant called Rafflesia arnoldii Its flowers reach up to 1 metre 3 feet in diameter and weigh around 10kg",
-            };
-
-            return new[]
-            {
-                collection1,
-                collection2,
-            };
-        }
-
-        protected static void BuildIndex(IBuildableIndex<string> index, string[][] sentenceCollections)
-        {
-            for (var collectionId = 0; collectionId < sentenceCollections.Length; ++collectionId)
-            {
-                var collection = sentenceCollections[collectionId];
-                for (var localId = 0; localId < collection.Length; ++localId)
-                {
-                    var doc = collection[localId].ToLower().Split();
-                    var docId = new DocumentId((ushort)collectionId, (ushort)localId);
-                    for (var position = 0; position < doc.Length; ++position)
-                    {
-                        index.IndexWord(docId, doc[position], position);
-                    }
-                }
-            }
+            return CreateIndex(IndexHelper.GetTestSentenceCollections());
         }
     }
 }
