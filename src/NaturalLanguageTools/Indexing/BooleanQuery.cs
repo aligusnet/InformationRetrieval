@@ -14,6 +14,11 @@ namespace NaturalLanguageTools.Indexing
         {
             return new BooleanQueryOperationAnd<T>(words.Select(CreateTerm).ToList());
         }
+
+        public static BooleanQuery<T> CreateOr(params T[] words)
+        {
+            return new BooleanQueryOperationOr<T>(words.Select(CreateTerm).ToList());
+        }
     }
 
     public class BooleanQueryTerm<T> : BooleanQuery<T>
@@ -31,6 +36,16 @@ namespace NaturalLanguageTools.Indexing
         public IList<BooleanQuery<T>> Elements { get; }
 
         public BooleanQueryOperationAnd(IList<BooleanQuery<T>> elements)
+        {
+            Elements = elements;
+        }
+    }
+
+    public class BooleanQueryOperationOr<T> : BooleanQuery<T>
+    {
+        public IList<BooleanQuery<T>> Elements { get; }
+
+        public BooleanQueryOperationOr(IList<BooleanQuery<T>> elements)
         {
             Elements = elements;
         }
