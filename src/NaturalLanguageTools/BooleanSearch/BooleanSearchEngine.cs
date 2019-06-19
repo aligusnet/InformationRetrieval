@@ -10,30 +10,37 @@ namespace NaturalLanguageTools.BooleanSearch
     public class BooleanSearchEngine<T>
     {
         private readonly ISearchableIndex<T> index;
+        private readonly Func<string, T> tokenConvertor;
 
-        public BooleanSearchEngine(ISearchableIndex<T> index)
+        public BooleanSearchEngine(ISearchableIndex<T> index, Func<string, T> tokenConvertor)
         {
             this.index = index;
+            this.tokenConvertor = tokenConvertor;
         }
 
-        public IEnumerable<DocumentId> ExecuteQuery(BooleanQuery<T> query)
+        public IEnumerable<DocumentId> ExecuteQuery(BooleanQuery query)
         {
             switch(query)
             {
-                case BooleanQueryTerm<T> term:
-                    return index.Search(term.Word);
-                case BooleanQueryOperationAnd<T> opAnd:
+                case BooleanQueryTerm term:
+                    return ExecuteTerm(term);
+                case BooleanQueryOperationAnd opAnd:
                     return ExecuteAnd(opAnd);
-                case BooleanQueryOperationOr<T> opOr:
+                case BooleanQueryOperationOr opOr:
                     return ExecuteOr(opOr);
-                case BooleanQueryOperationNot<T> opNot:
+                case BooleanQueryOperationNot opNot:
                     return ExecuteNot(opNot);
                 default:
                     throw new InvalidOperationException($"Got unexpected Boolean query: {query?.GetType()}");
             }
         }
 
-        private IEnumerable<DocumentId> ExecuteAnd(BooleanQueryOperationAnd<T> opAnd)
+        private IEnumerable<DocumentId> ExecuteTerm(BooleanQueryTerm term)
+        {
+            return index.Search(tokenConvertor(term.Word));
+        }
+
+        private IEnumerable<DocumentId> ExecuteAnd(BooleanQueryOperationAnd opAnd)
         {
             var minHeapComparer = Comparer<IEnumerator<DocumentId>>.Create((x, y) 
                 => y.Current.CompareTo(x.Current));
@@ -94,7 +101,7 @@ namespace NaturalLanguageTools.BooleanSearch
             }
         }
 
-        private IEnumerable<DocumentId> ExecuteOr(BooleanQueryOperationOr<T> opOr)
+        private IEnumerable<DocumentId> ExecuteOr(BooleanQueryOperationOr opOr)
         {
             var minHeapComparer = Comparer<IEnumerator<DocumentId>>.Create((x, y)
                 => y.Current.CompareTo(x.Current));
@@ -135,7 +142,7 @@ namespace NaturalLanguageTools.BooleanSearch
             }
         }
 
-        private IEnumerable<DocumentId> ExecuteNot(BooleanQueryOperationNot<T> op)
+        private IEnumerable<DocumentId> ExecuteNot(BooleanQueryOperationNot op)
         {
             var docs = ExecuteQuery(op.Element).GetEnumerator();
             var all = index.GetAll().GetEnumerator();

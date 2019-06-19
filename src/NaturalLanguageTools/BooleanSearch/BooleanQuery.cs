@@ -3,64 +3,74 @@ using System.Linq;
 
 namespace NaturalLanguageTools.BooleanSearch
 {
-    public abstract class BooleanQuery<T>
+    public abstract class BooleanQuery
     {
-        public static BooleanQuery<T> CreateTerm(T word)
+        public static BooleanQuery CreateTerm(string word)
         {
-            return new BooleanQueryTerm<T>(word);
+            return new BooleanQueryTerm(word);
         }
 
-        public static BooleanQuery<T> CreateAnd(params T[] words)
+        public static BooleanQuery CreateAnd(params string[] words)
         {
-            return new BooleanQueryOperationAnd<T>(words.Select(CreateTerm).ToList());
+            return new BooleanQueryOperationAnd(words.Select(CreateTerm).ToList());
         }
 
-        public static BooleanQuery<T> CreateOr(params T[] words)
+        public static BooleanQuery CreateAnd(params BooleanQuery[] elements)
         {
-            return new BooleanQueryOperationOr<T>(words.Select(CreateTerm).ToList());
+            return new BooleanQueryOperationAnd(elements);
         }
 
-        public static BooleanQuery<T> CreateNot(BooleanQuery<T> element)
+        public static BooleanQuery CreateOr(params string[] words)
         {
-            return new BooleanQueryOperationNot<T>(element);
+            return new BooleanQueryOperationOr(words.Select(CreateTerm).ToList());
+        }
+
+        public static BooleanQuery CreateOr(params BooleanQuery[] elements)
+        {
+            return new BooleanQueryOperationOr(elements);
+        }
+
+        public static BooleanQuery CreateNot(BooleanQuery element)
+        {
+            return new BooleanQueryOperationNot(element);
         }
     }
 
-    public class BooleanQueryTerm<T> : BooleanQuery<T>
+    public class BooleanQueryTerm : BooleanQuery
     {
-        public T Word { get; }
+        public string Word { get; }
 
-        public BooleanQueryTerm(T word)
+        public BooleanQueryTerm(string word)
         {
             Word = word;
         }
     }
 
-    public class BooleanQueryOperationAnd<T> : BooleanQuery<T>
+    public class BooleanQueryOperationAnd : BooleanQuery
     {
-        public IList<BooleanQuery<T>> Elements { get; }
+        public IList<BooleanQuery> Elements { get; }
 
-        public BooleanQueryOperationAnd(IList<BooleanQuery<T>> elements)
+        public BooleanQueryOperationAnd(IList<BooleanQuery> elements)
         {
             Elements = elements;
         }
     }
 
-    public class BooleanQueryOperationOr<T> : BooleanQuery<T>
+    public class BooleanQueryOperationOr : BooleanQuery
     {
-        public IList<BooleanQuery<T>> Elements { get; }
+        public IList<BooleanQuery> Elements { get; }
 
-        public BooleanQueryOperationOr(IList<BooleanQuery<T>> elements)
+        public BooleanQueryOperationOr(IList<BooleanQuery> elements)
         {
             Elements = elements;
         }
     }
 
-    public class BooleanQueryOperationNot<T> : BooleanQuery<T>
+    public class BooleanQueryOperationNot : BooleanQuery
     {
-        public BooleanQuery<T> Element { get; }
+        public BooleanQuery Element { get; }
 
-        public BooleanQueryOperationNot(BooleanQuery<T> element)
+        public BooleanQueryOperationNot(BooleanQuery element)
         {
             Element = element;
         }
