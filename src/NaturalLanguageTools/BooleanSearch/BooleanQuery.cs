@@ -55,11 +55,6 @@ namespace NaturalLanguageTools.BooleanSearch
         {
             Elements = elements;
         }
-
-        internal object Select()
-        {
-            throw new NotImplementedException();
-        }
     }
 
     public class BooleanQueryOperationOr : BooleanQuery
