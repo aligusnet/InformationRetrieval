@@ -29,7 +29,7 @@ namespace NaturalLanguageTools.BooleanSearch
 
         private static readonly Parser<BooleanQuery> Operation =
             from open in Parse.Char('(')
-            from op in OperatorIndicator
+            from op in OperatorIndicator.Token()
             from operands in Parse.Ref(() => Expression).AtLeastOnce()
             from close in Parse.Char(')')
             select CreateOperator(op, operands.ToArray());

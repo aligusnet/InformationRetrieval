@@ -35,6 +35,7 @@ namespace NaturalLanguageToolsUnitTests.BooleanSearch
         [Theory]
         [InlineData("(AND hi)", "hi")]
         [InlineData("(AND hello world)", "hello world")]
+        [InlineData(" ( AND karpov chess world ) ", "karpov chess world")]
         public void OperatorAndTakesAtLeastOneArgument(string input, string expected)
         {
             var query = BooleanQueryLanguage.ParseQuery(input);
@@ -42,8 +43,8 @@ namespace NaturalLanguageToolsUnitTests.BooleanSearch
         }
 
         [Theory]
-        [InlineData("(OR hi)", "hi")]
-        [InlineData("(OR hello world)", "hello world")]
+        [InlineData("(OR \t hi)", "hi")]
+        [InlineData(" ( OR hello world)", "hello world")]
         public void OperatorOrTakesAtLeastOneArgument(string input, string expected)
         {
             var query = BooleanQueryLanguage.ParseQuery(input);
@@ -53,7 +54,7 @@ namespace NaturalLanguageToolsUnitTests.BooleanSearch
         [Fact]
         public void NestedQueryTest()
         {
-            var input = "(AND (AND mir da) (NOT me) (OR tra (AND b c)))";
+            var input = " ( AND  (\tAND mir da) (NOT me) (OR tra (AND b c)))";
             var query = (BooleanQueryOperationAnd)BooleanQueryLanguage.ParseQuery(input);
             var orQuery = (BooleanQueryOperationOr)query.Elements[2];
 
