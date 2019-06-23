@@ -10,8 +10,8 @@ namespace NaturalLanguageToolsUnitTests
         public void TokenizerSmokeTest()
         {
             var text = "He is? The dog ran. The sun is out!";
-            var expected = new string[] { "He", "is", "The", "dog", "ran", "The", "sun", "is", "out" };
-            var actual = new WordRegexTokenizer().Tokenize(text);
+            var expected = new string[] { "he", "is", "the", "dog", "ran", "the", "sun", "is", "out" };
+            var actual = new WordRegexTokenizer(lowerCase: true).Tokenize(text);
 
             Assert.Equal(expected, actual);
         }
@@ -42,7 +42,7 @@ namespace NaturalLanguageToolsUnitTests
                  "disambiguation",
                  "Category", "Place", "name", "disambiguation", "pages"};
 
-            var actual = new WordRegexTokenizer().Tokenize(text);
+            var actual = new WordRegexTokenizer(lowerCase: false).Tokenize(text);
 
             Assert.Equal(expected, actual);
         }

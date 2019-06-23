@@ -43,7 +43,7 @@ namespace NaturalLanguageToolsUnitTests
             writer.Setup(w => w.Write(It.IsAny<IEnumerable<TokenizedCollection>>()))
                   .Callback((IEnumerable<TokenizedCollection> d) => tokenized.Add(d));
 
-            var tokenizer = new DocumentTokenizer(new WordRegexTokenizer());
+            var tokenizer = new DocumentTokenizer(new WordRegexTokenizer(lowerCase: false));
             tokenizer.Transform(reader.Object, writer.Object);
 
             Assert.Single(tokenized);

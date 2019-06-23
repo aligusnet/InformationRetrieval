@@ -30,26 +30,26 @@ namespace NaturalLanguageTools.BooleanSearch
         private static readonly Parser<BooleanQuery> Operation =
             from open in Parse.Char('(')
             from op in OperatorIndicator
-            from expressions in Parse.Ref(() => Expression).AtLeastOnce()
+            from operands in Parse.Ref(() => Expression).AtLeastOnce()
             from close in Parse.Char(')')
-            select CreateOperator(op, expressions.ToArray());
+            select CreateOperator(op, operands.ToArray());
 
         private static readonly Parser<BooleanQuery> Expression = Operation.Or(Term).Token();
 
-        private static BooleanQuery CreateOperator(Operator op, BooleanQuery[] elements)
+        private static BooleanQuery CreateOperator(Operator op, BooleanQuery[] operands)
         {
             switch (op)
             {
                 case Operator.And:
-                    return BooleanQuery.CreateAnd(elements);
+                    return BooleanQuery.CreateAnd(operands);
                 case Operator.Or:
-                    return BooleanQuery.CreateOr(elements);
+                    return BooleanQuery.CreateOr(operands);
                 case Operator.Not:
-                    if (elements.Length != 1)
+                    if (operands.Length != 1)
                     {
-                        throw new InvalidOperationException($"Operator NOT expects exctly 1 argument {elements.Length} were given");
+                        throw new InvalidOperationException($"Operator NOT expects exctly 1 argument {operands.Length} were given");
                     }
-                    return BooleanQuery.CreateNot(elements.First());
+                    return BooleanQuery.CreateNot(operands.First());
                 default:
                     throw new InvalidOperationException($"Unknown operation: {op}");
             }

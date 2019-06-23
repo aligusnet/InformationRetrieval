@@ -8,7 +8,6 @@ using DocumentStorage;
 using NaturalLanguageTools;
 using NaturalLanguageTools.Indexing;
 using Wikidump;
-using DawgSharp;
 
 namespace NaturalLanguageApp
 {
@@ -27,17 +26,36 @@ namespace NaturalLanguageApp
         static readonly IDocumentDataSerializer<IEnumerable<string>> tokenizedDataSerializer = new TokenizedDocumentDataSerializer();
         static readonly IDocumentDataSerializer<int[]> hashedDataSerializer = new NumberedDocumentDataSerializer();
 
+        static readonly Stopwatch timer = new Stopwatch();
+
         static void Main(string[] args)
         {
-            var timer = new Stopwatch();
-            timer.Start();
+            var arguments = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+            arguments.UnionWith(args);
 
-            BuildDawgIndex();
+            var actions = new Action[]
+            {
+                TransformWikiDump,
+                TokenizeWikipedia,
+                HashWikipedia,
+                IndexWikipedia,
+            };
 
+            foreach (var action in actions)
+            {
+                if (arguments.Contains(action.Method.Name))
+                {
+                    Run(action);
+                }
+            }
+        }
+
+        static void Run(Action action)
+        {
+            timer.Restart();
+            action();
             timer.Stop();
-            Console.WriteLine("Finished in {0}", timer.Elapsed);
-
-            PrintDawgIndexStats();
+            Console.WriteLine($"{action.Method.Name} completed in {timer.Elapsed:g}\n");
         }
 
         static void BuildDawgIndex()
@@ -125,7 +143,7 @@ namespace NaturalLanguageApp
             var reader = new StorageZipReader<string>(wikiPath, stringDataSerializer);
             var writer = new StorageZipWriter<IEnumerable<string>>(outputWikipediaPath, tokenizedDataSerializer);
 
-            var wikipediaTokenizer = new DocumentTokenizer(new WordRegexTokenizer());
+            var wikipediaTokenizer = new DocumentTokenizer(new WordRegexTokenizer(lowerCase: true));
             wikipediaTokenizer.Transform(reader, writer);
         }
 

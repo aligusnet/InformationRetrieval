@@ -12,12 +12,18 @@ namespace NaturalLanguageTools
         private const string GroupName = "word";
 
         private static readonly Regex reWordTokenize;
+        private readonly bool lowerCase;
 
         static WordRegexTokenizer()
         {
             string nonWordSymbols = @",\.\?\!'"":\[\]\{})=\|";
             var wordTokenize = $@"(?<{GroupName}>[\w\d-]+)[{nonWordSymbols}]*\s*";
             reWordTokenize = new Regex(wordTokenize, RegexOptions.Compiled);
+        }
+
+        public WordRegexTokenizer(bool lowerCase)
+        {
+            this.lowerCase = lowerCase;
         }
 
         /// <summary>
@@ -27,6 +33,7 @@ namespace NaturalLanguageTools
         /// <returns>The list of words</returns>
         public IEnumerable<string> Tokenize(string text)
         {
+            text = lowerCase ? text.ToLower() : text;
             var matches = reWordTokenize.Matches(text);
             var result = new string[matches.Count];
 
