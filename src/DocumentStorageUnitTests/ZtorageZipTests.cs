@@ -42,6 +42,24 @@ namespace DocumentStorageUnitTests
             Assert.Equal(expected.Data, actual.Data);
         }
 
+        [Theory]
+        [InlineData(1, 0)]
+        [InlineData(0, 1)]
+        public void ReadMetadataTest(ushort collectionId, ushort localId)
+        {
+            var storage = GenerateStorageData();
+            var fileSystem = SerializeStorage(storage);
+            var reader = new StorageZipReader<string>(path, new StringDocumentDataSerializer(), fileSystem);
+
+            var docId = new DocumentId(collectionId, localId);
+            var metadata = reader.ReadMetadata();
+            var expected = storage[collectionId].Documents[localId].Metadata;
+            var actual = metadata[docId];
+
+            Assert.Equal(expected.Id, actual.Id);
+            Assert.Equal(expected.Title, actual.Title);
+        }
+
         private static IList<DocumentCollection<string>> GenerateStorageData()
         {
             var docs1 = new List<Document<string>>

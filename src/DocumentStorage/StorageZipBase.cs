@@ -1,5 +1,7 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.IO.Abstractions;
+using System.Linq;
 
 namespace DocumentStorage
 {
@@ -22,9 +24,10 @@ namespace DocumentStorage
             return Path.Combine(path, $"{DocumentCollectionMetadata.IdString(collectionId)}.zip");
         }
 
-        protected string[] GetCollectionsPaths()
+        protected IEnumerable<string> GetCollectionsPaths()
         {
-            return FileSystem.Directory.GetFiles(path, "*.zip");
+            return FileSystem.Directory.GetFiles(path, "*.zip")
+                     .OrderBy(fn => DocumentCollectionMetadata.ParseId(Path.GetFileNameWithoutExtension(fn)));
         }
     }
 }

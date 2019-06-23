@@ -33,6 +33,20 @@ namespace DocumentStorage
             return collection.Documents[docId.LocalId];
         }
 
+        public DocumentStorageMetadata ReadMetadata()
+        {
+            var metadata = GetCollectionsPaths().Select(ReadDocumentCollectionMetadata);
+            return new DocumentStorageMetadata(metadata.ToArray());
+        }
+
+        private DocumentCollectionMetadata ReadDocumentCollectionMetadata(string path)
+        {
+            using var stream = FileSystem.File.OpenRead(path);
+            using var archive = new ZipArchive(stream, ZipArchiveMode.Read);
+
+            return ReadMetadata(archive);
+        }
+
         private DocumentCollection<T> ReadDocumentCollection(string path)
         {
             using var stream = FileSystem.File.OpenRead(path);
