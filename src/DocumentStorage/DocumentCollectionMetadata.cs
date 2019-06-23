@@ -19,9 +19,11 @@ namespace DocumentStorage
 
         public static ushort ParseId(string hex) => Convert.ToUInt16(hex, 16);
 
+        public static string IdString(ushort collectionId) => string.Format($"{collectionId:X4}");
+
         public ushort Id { get; }
 
-        public string IdString() => string.Format($"{Id:X4}");
+        public string IdString() => IdString(Id);
 
         public DocumentMetadata this[DocumentId key]
         {

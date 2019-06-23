@@ -9,39 +9,36 @@ namespace DocumentStorage
     /// <summary>
     /// Implementation of Storage Reader
     /// </summary>
-    public class StorageZipReader<T> : IStorageReader<T>
+    public class StorageZipReader<T> : StorageZipBase, IStorageReader<T>
     {
-        private const string METADATA_ENTRY_NAME = StorageZipWriter<T>.METADATA_ENTRY_NAME;
-
-        private readonly string path;
         private readonly IDocumentDataSerializer<T> dataSerializer;
-        private readonly IFileSystem fileSystem;
 
         public StorageZipReader(string path, IDocumentDataSerializer<T> dataSerializer) : this (path, dataSerializer, new FileSystem())
         {
         }
 
-        public StorageZipReader(string path, IDocumentDataSerializer<T> dataSerializer, IFileSystem fileSystem)
+        public StorageZipReader(string path, IDocumentDataSerializer<T> dataSerializer, IFileSystem fileSystem) : base(path, fileSystem)
         {
-            this.path = path;
             this.dataSerializer = dataSerializer;
-            this.fileSystem = fileSystem;
         }
 
         public IEnumerable<DocumentCollection<T>> Read()
         {
-            return Read(fileSystem.Directory.GetFiles(path, "*.zip"));
+            return GetCollectionsPaths().Select(ReadDocumentCollection);
         }
 
-        private IEnumerable<DocumentCollection<T>> Read(IEnumerable<string> archives)
+        public Document<T> ReadDocument(DocumentId docId)
         {
-            foreach (var archivePath in archives)
-            {
-                using var stream = fileSystem.File.OpenRead(archivePath);
-                using var archive = new ZipArchive(stream, ZipArchiveMode.Read);
+            var collection = ReadDocumentCollection(GetCollectionPath(docId.CollectionId));
+            return collection.Documents[docId.LocalId];
+        }
 
-                yield return ReadArchive(archive);
-            }
+        private DocumentCollection<T> ReadDocumentCollection(string path)
+        {
+            using var stream = FileSystem.File.OpenRead(path);
+            using var archive = new ZipArchive(stream, ZipArchiveMode.Read);
+
+            return ReadArchive(archive);
         }
 
         private DocumentCollection<T> ReadArchive(ZipArchive archive)

@@ -8,37 +8,31 @@ namespace DocumentStorage
     /// <summary>
     /// Implementation of Storage Writer
     /// </summary>
-    public class StorageZipWriter<T> : IStorageWriter<T>
+    public class StorageZipWriter<T> : StorageZipBase, IStorageWriter<T>
     {
-        internal const string METADATA_ENTRY_NAME = "_METADATA_.json";
-
-        private readonly string path;
         private readonly IDocumentDataSerializer<T> dataSerializer;
-        private readonly IFileSystem fileSystem;
 
         public StorageZipWriter(string path, IDocumentDataSerializer<T> dataSerializer) : this(path, dataSerializer, new FileSystem())
         {
         }
 
-        public StorageZipWriter(string path, IDocumentDataSerializer<T> dataSerializer, IFileSystem fileSystem)
+        public StorageZipWriter(string path, IDocumentDataSerializer<T> dataSerializer, IFileSystem fileSystem) : base(path, fileSystem)
         {
-            this.path = path;
             this.dataSerializer = dataSerializer;
-            this.fileSystem = fileSystem;
         }
 
         public void Write(IEnumerable<DocumentCollection<T>> storage)
         {
             foreach (var collection in storage)
             {
-                var collectionPath = Path.Combine(path, $"{collection.Metadata.IdString()}.zip");
+                var collectionPath = GetCollectionPath(collection.Metadata.Id);
                 SaveCollection(collection, collectionPath);
             }
         }
 
         private void SaveCollection(DocumentCollection<T> collection, string path)
         {
-            using var stream = fileSystem.File.OpenWrite(path);
+            using var stream = FileSystem.File.OpenWrite(path);
             using var archive = new ZipArchive(stream, ZipArchiveMode.Create);
 
             WriteMetadata(archive, collection.Metadata);
