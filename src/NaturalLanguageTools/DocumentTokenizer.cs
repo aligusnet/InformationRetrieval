@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 
+using NaturalLanguageTools.Tokenizers;
 using NaturalLanguageTools.Transformers;
 
 namespace NaturalLanguageTools

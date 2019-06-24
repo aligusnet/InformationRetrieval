@@ -6,6 +6,7 @@ using Xunit;
 
 using DocumentStorage;
 using NaturalLanguageTools;
+using NaturalLanguageTools.Tokenizers;
 
 
 namespace NaturalLanguageToolsUnitTests

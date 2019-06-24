@@ -1,8 +1,8 @@
 using Xunit;
 
-using NaturalLanguageTools;
+using NaturalLanguageTools.Tokenizers;
 
-namespace NaturalLanguageToolsUnitTests
+namespace NaturalLanguageToolsUnitTests.Tokenizers
 {
     public class WordSpaceTokenizerTests
     {

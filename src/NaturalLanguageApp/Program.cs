@@ -7,6 +7,7 @@ using System.Linq;
 using DocumentStorage;
 using NaturalLanguageTools;
 using NaturalLanguageTools.Indexing;
+using NaturalLanguageTools.Tokenizers;
 using Wikidump;
 
 namespace NaturalLanguageApp
@@ -155,7 +156,7 @@ namespace NaturalLanguageApp
 
             using var xmlReader = new WikiDumpXmlReader(wikiDumpFilePath);
 
-            IStorageReader<string> reader = new WikipediaReader(xmlReader, WikipediaReader.DefaultFilter, 1000, count: 20_000);
+            IStorageReader<string> reader = new WikipediaReader(xmlReader, WikipediaReader.DefaultFilter, 5000, count: 20_000);
             IStorageWriter<string> writer = new StorageZipWriter<string>(pathToSave, stringDataSerializer);
 
             writer.Write(reader.Read());
