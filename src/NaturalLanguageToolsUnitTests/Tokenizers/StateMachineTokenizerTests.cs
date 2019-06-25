@@ -9,19 +9,19 @@ namespace NaturalLanguageToolsUnitTests.Tokenizers
     public class StateMachineTokenizerTests
     {
         [Theory]
-        [InlineData("U.K.", "UK")]
-        [InlineData("U.Kʼs T.V.", "UK 's TV")]
-        [InlineData("aren't", "are n't")]
-        [InlineData("April O'Neil", "April O'Neil")]
-        [InlineData("I'm the Doctor!", "I 'm the Doctor")]
-        [InlineData("£157.75, ₽11.1. ", "£157.75 ₽11.1")]
-        [InlineData("$1/111.", "$1/111")]
-        [InlineData("Dates: 2010-11-12 11/12/2018 11.12.2018", "Dates 2010-11-12 11/12/2018 11.12.2018")]
-        [InlineData("shouldn't've   -could'ven't", "should n't 've could 've n't")]
-        [InlineData("it's done", "it 's done")]
-        public void SpecialCase(string input, string output)
+        [InlineData("U.K.", "UK", false)]
+        [InlineData("U.Kʼs T.V.", "uk 's tv", true)]
+        [InlineData("aren't", "are n't", false)]
+        [InlineData("April O'Neil", "April O'Neil", false)]
+        [InlineData("I'm the Doctor!", "i 'm the doctor", true)]
+        [InlineData("£157.75, ₽11.1. ", "£157.75 ₽11.1", false)]
+        [InlineData("$1/111.", "$1/111", false)]
+        [InlineData("Dates: 2010-11-12 11/12/2018 11.12.2018", "Dates 2010-11-12 11/12/2018 11.12.2018", false)]
+        [InlineData("shouldn't've   -could'ven't", "should n't 've could 've n't", false)]
+        [InlineData("it's done", "it 's done", false)]
+        public void SpecialCase(string input, string output, bool lowerCase)
         {
-            var result = StateMachineTokenizer.Tokenize(input.ToCharArray());
+            var result = StateMachineTokenizer.Tokenize(input.ToCharArray(), lowerCase);
             var actual = new string(result.ToArray());
 
             Assert.Equal(output, actual);
@@ -33,7 +33,7 @@ namespace NaturalLanguageToolsUnitTests.Tokenizers
         [InlineData(WikipediaAltenberg, TokenizedAltenberg)]
         public void WikipediaCases(string input, string output)
         {
-            var result = StateMachineTokenizer.Tokenize(input.ToCharArray());
+            var result = StateMachineTokenizer.Tokenize(input.ToCharArray(), lowerCase: false);
             var actual = new string(result.ToArray());
 
             Assert.Equal(output, actual);

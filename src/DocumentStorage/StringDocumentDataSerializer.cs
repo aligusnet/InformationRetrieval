@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Text;
 
 namespace DocumentStorage
 {
@@ -6,14 +7,14 @@ namespace DocumentStorage
     {
         public string Deserialize(Stream stream)
         {
-            var reader = new StreamReader(stream);
+            var reader = new StreamReader(stream, Encoding.UTF8);
 
             return reader.ReadToEnd();
         }
 
         public void Serialize(Stream stream, string data)
         {
-            var writer = new StreamWriter(stream);
+            var writer = new StreamWriter(stream, Encoding.UTF8);
 
             writer.Write(data);
 

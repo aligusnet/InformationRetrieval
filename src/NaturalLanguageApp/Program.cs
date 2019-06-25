@@ -8,6 +8,7 @@ using DocumentStorage;
 using NaturalLanguageTools;
 using NaturalLanguageTools.Indexing;
 using NaturalLanguageTools.Tokenizers;
+using NaturalLanguageTools.Transformers;
 using Wikidump;
 
 namespace NaturalLanguageApp
@@ -26,6 +27,7 @@ namespace NaturalLanguageApp
         static readonly IDocumentDataSerializer<string> stringDataSerializer = new StringDocumentDataSerializer();
         static readonly IDocumentDataSerializer<IEnumerable<string>> tokenizedDataSerializer = new TokenizedDocumentDataSerializer();
         static readonly IDocumentDataSerializer<int[]> hashedDataSerializer = new NumberedDocumentDataSerializer();
+        static readonly IDocumentDataSerializer<IList<char>> charDataSerializer = new CharDocumentDataSerializer();
 
         static readonly Stopwatch timer = new Stopwatch();
 
@@ -33,6 +35,8 @@ namespace NaturalLanguageApp
         {
             var arguments = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
             arguments.UnionWith(args);
+
+            Console.WriteLine("Arguments: {0:G}\n", args);
 
             var actions = new Action[]
             {
@@ -53,6 +57,7 @@ namespace NaturalLanguageApp
 
         static void Run(Action action)
         {
+            Console.WriteLine($"Running {action.Method.Name}");
             timer.Restart();
             action();
             timer.Stop();
@@ -141,11 +146,11 @@ namespace NaturalLanguageApp
 
             PrepareOutputDirectory(outputWikipediaPath);
 
-            var reader = new StorageZipReader<string>(wikiPath, stringDataSerializer);
-            var writer = new StorageZipWriter<IEnumerable<string>>(outputWikipediaPath, tokenizedDataSerializer);
+            var reader = new StorageZipReader<IList<char>>(wikiPath, charDataSerializer);
+            var writer = new StorageZipWriter<IList<char>>(outputWikipediaPath, charDataSerializer);
 
-            var wikipediaTokenizer = new DocumentTokenizer(new WordRegexTokenizer(lowerCase: true));
-            wikipediaTokenizer.Transform(reader, writer);
+            var tokenizer = new StorageTransformer<IList<char>, IList<char>>(t => StateMachineTokenizer.Tokenize(t, lowerCase: true));
+            tokenizer.Transform(reader, writer);
         }
 
         static void TransformWikiDump()
@@ -156,7 +161,7 @@ namespace NaturalLanguageApp
 
             using var xmlReader = new WikiDumpXmlReader(wikiDumpFilePath);
 
-            IStorageReader<string> reader = new WikipediaReader(xmlReader, WikipediaReader.DefaultFilter, 5000, count: 20_000);
+            IStorageReader<string> reader = new WikipediaReader(xmlReader, WikipediaReader.DefaultFilter, 1000, count: 20_000);
             IStorageWriter<string> writer = new StorageZipWriter<string>(pathToSave, stringDataSerializer);
 
             writer.Write(reader.Read());

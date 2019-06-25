@@ -8,9 +8,9 @@ namespace NaturalLanguageTools.Tokenizers
 {
     public class StateMachineTokenizer
     {
-        public static IList<char> Tokenize(IList<char> input)
+        public static IList<char> Tokenize(IList<char> input, bool lowerCase)
         {
-            using var tokenizer = new Tokenizer(input);
+            using var tokenizer = new Tokenizer(input, lowerCase);
             return tokenizer.Tokenize();
         }
 
@@ -43,10 +43,12 @@ namespace NaturalLanguageTools.Tokenizers
             char[] buffer;
             State state;
             int position;
+            private readonly bool lowerCase;
 
-            public Tokenizer(IList<char> input)
+            public Tokenizer(IList<char> input, bool lowerCase)
             {
                 this.input = input;
+                this.lowerCase = lowerCase;
                 this.output = new List<char>(input.Count);
                 this.buffer = ArrayPool<char>.Shared.Rent(BufferSize);
                 this.state = State.None;
@@ -87,14 +89,19 @@ namespace NaturalLanguageTools.Tokenizers
                 switch (char.GetUnicodeCategory(ch))
                 {
                     case UnicodeCategory.UppercaseLetter:
+                        Add(lowerCase ? char.ToLower(ch) : ch);
+                        return State.Word;
+
                     case UnicodeCategory.LowercaseLetter:
                     case UnicodeCategory.ConnectorPunctuation:
                         Add(ch);
                         return State.Word;
+
                     case UnicodeCategory.DecimalDigitNumber:
                     case UnicodeCategory.CurrencySymbol:
                         Add(ch);
                         return State.Number;
+
                     default:
                         return State.None;
                 }
@@ -114,6 +121,9 @@ namespace NaturalLanguageTools.Tokenizers
                         return State.Abbriviation;
 
                     case UnicodeCategory.UppercaseLetter:
+                        Add(lowerCase ? char.ToLower(ch) : ch);
+                        return State.Word;
+
                     case UnicodeCategory.LowercaseLetter:
                     case UnicodeCategory.DashPunctuation:
                     case UnicodeCategory.ConnectorPunctuation:
@@ -150,7 +160,7 @@ namespace NaturalLanguageTools.Tokenizers
                         {
                             Commit();
                         }
-                        Add(ch);
+                        Add(lowerCase ? char.ToLower(ch) : ch);
                         return State.Word;
 
                     default:
@@ -171,6 +181,9 @@ namespace NaturalLanguageTools.Tokenizers
                 switch (char.GetUnicodeCategory(ch))
                 {
                     case UnicodeCategory.UppercaseLetter:
+                        Add(lowerCase ? char.ToLower(ch) : ch);
+                        return State.Abbriviation;
+
                     case UnicodeCategory.LowercaseLetter:
                         Add(ch);
                         return State.Abbriviation;
@@ -259,12 +272,22 @@ namespace NaturalLanguageTools.Tokenizers
 
             private void Add(char ch)
             {
+                if (position == buffer.Length)
+                {
+                    Resize();
+                }
+
                 buffer[position] = ch;
                 ++position;
             }
 
             private void Insert(int index, char ch)
             {
+                if (position == buffer.Length)
+                {
+                    Resize();
+                }
+
                 for (int i = position; i > index; --i)
                 {
                     buffer[i] = buffer[i - 1];
@@ -272,6 +295,16 @@ namespace NaturalLanguageTools.Tokenizers
 
                 buffer[index] = ch;
                 ++position;
+            }
+
+            private void Resize()
+            {
+                var tmp = buffer;
+                buffer = ArrayPool<char>.Shared.Rent(tmp.Length * 2);
+
+                Array.Copy(tmp, 0, buffer, 0, tmp.Length);
+
+                ArrayPool<char>.Shared.Return(tmp);
             }
 
             private bool EndsWith(params char[] chs)
