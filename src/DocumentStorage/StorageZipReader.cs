@@ -27,10 +27,24 @@ namespace DocumentStorage
             return GetCollectionsPaths().Select(ReadDocumentCollection);
         }
 
-        public Document<T> ReadDocument(DocumentId docId)
+        public Document<T> ReadDocument(DocumentId docId, bool skipMetadata)
         {
-            var collection = ReadDocumentCollection(GetCollectionPath(docId.CollectionId));
-            return collection.Documents[docId.LocalId];
+            var path = GetCollectionPath(docId.CollectionId);
+            using var archive = new ZipArchive(FileSystem.File.OpenRead(path), ZipArchiveMode.Read);
+            var entry = archive.GetEntry(docId.ToString() + dataSerializer.FileExtension);
+
+            using var stream = entry.Open();
+            var data = dataSerializer.Deserialize(stream);
+
+            if (skipMetadata)
+            {
+                return new Document<T>(new DocumentMetadata(docId, string.Empty), data);
+            }
+            else
+            {
+                var metadata = ReadMetadata(archive);
+                return new Document<T>(metadata[docId], data);
+            }
         }
 
         public DocumentStorageMetadata ReadMetadata()

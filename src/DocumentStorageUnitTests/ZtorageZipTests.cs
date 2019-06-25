@@ -26,20 +26,24 @@ namespace DocumentStorageUnitTests
         }
 
         [Theory]
-        [InlineData(1, 0)]
-        [InlineData(0, 1)]
-        public void ReadDocumentTest(ushort collectionId, ushort localId)
+        [InlineData(1, 0, true)]
+        [InlineData(0, 1, false)]
+        public void ReadDocumentTest(ushort collectionId, ushort localId, bool skipMetadata)
         {
             var storage = GenerateStorageData();
             var fileSystem = SerializeStorage(storage);
             var reader = new StorageZipReader<string>(path, new StringDocumentDataSerializer(), fileSystem);
 
             var docId = new DocumentId(collectionId, localId);
-            var actual = reader.ReadDocument(docId);
+            var actual = reader.ReadDocument(docId, skipMetadata);
             var expected = storage[collectionId].Documents[localId];
 
             Assert.Equal(expected.Metadata.Id, actual.Metadata.Id);
             Assert.Equal(expected.Data, actual.Data);
+            if (!skipMetadata)
+            {
+                Assert.Equal(expected.Metadata.Title, actual.Metadata.Title);
+            }
         }
 
         [Theory]
