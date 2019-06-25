@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NaturalLanguageTools.WPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="700" Width="1100">
+        Title="Boolean Search" Height="700" Width="1100">
     <Grid>
         <TextBox x:Name="QueryTextBox" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,10,150,10" />
         <Button x:Name="SearchButton" HorizontalAlignment="Right" VerticalAlignment="Top" Content="Search" Margin="10,10,10,10"  Width="130" Click="SearchButton_Click"/>

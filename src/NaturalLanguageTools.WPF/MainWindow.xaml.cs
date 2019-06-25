@@ -29,29 +29,19 @@ namespace NaturalLanguageTools.WPF
         static readonly string wikiPath = IO::Path.Combine(basePath, "enwiki");
         static readonly string indexPath = IO::Path.Combine(basePath, "index.bin");
 
-        private readonly BooleanSearchEngine<int> engine;
+        private readonly Lazy<BooleanSearchEngine<int>> engine;
+        private readonly Lazy<DocumentStorageMetadata> metadata;
         private readonly StorageZipReader<string> reader;
-        private readonly DocumentStorageMetadata metadata;
+        
         Stopwatch timer = new Stopwatch();
 
         public MainWindow()
         {
             InitializeComponent();
 
-            using var file = IO::File.OpenRead(indexPath);
-            timer.Restart();
-            var index = DictionaryIndex<int>.Deserialize(file);
-            timer.Stop();
-            Log($"Index loaded in {timer.Elapsed:g}");
-
-            engine = new BooleanSearchEngine<int>(index, s => DocumentHasher.CalculateHashCode(s.ToLower().AsSpan()));
-
+            engine = new Lazy<BooleanSearchEngine<int>>(LoadSearchEngine);
             reader = new StorageZipReader<string>(wikiPath, new StringDocumentDataSerializer());
-
-            timer.Restart();
-            metadata = reader.ReadMetadata();
-            timer.Stop();
-            Log($"Metadata loaded in {timer.Elapsed:g}");
+            metadata = new Lazy<DocumentStorageMetadata>(LoadMetadata);
         }
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
@@ -60,10 +50,10 @@ namespace NaturalLanguageTools.WPF
             {
                 timer.Restart();
                 var query = BooleanQueryLanguage.ParseQuery(QueryTextBox.Text);
-                var results = engine.ExecuteQuery(query).ToList();
+                var results = engine.Value.ExecuteQuery(query).ToList();
                 timer.Stop();
                 Log($"Search of '{QueryTextBox.Text}' took {timer.Elapsed:g}, found {results.Count} documents");
-                DocumentIDsListBox.ItemsSource = results.Select(id => new DocumentIdTemplate(id, metadata));
+                DocumentIDsListBox.ItemsSource = results.Select(id => new DocumentIdTemplate(id, metadata.Value));
             }
             catch (Exception ex)
             {
@@ -108,6 +98,28 @@ namespace NaturalLanguageTools.WPF
             public DocumentId Id { get; }
 
             public override string ToString() => title;
+        }
+
+        private BooleanSearchEngine<int> LoadSearchEngine()
+        {
+            using var file = IO::File.OpenRead(indexPath);
+            var timer = new Stopwatch();
+            timer.Start();
+            var index = DictionaryIndex<int>.Deserialize(file);
+            timer.Stop();
+            Log($"Index loaded in {timer.Elapsed:g}");
+
+            return new BooleanSearchEngine<int>(index, s => DocumentHasher.CalculateHashCode(s.ToLower().AsSpan()));
+        }
+
+        private DocumentStorageMetadata LoadMetadata()
+        {
+            var timer = new Stopwatch();
+            timer.Start();
+            var metadata = reader.ReadMetadata();
+            timer.Stop();
+            Log($"Metadata loaded in {timer.Elapsed:g}");
+            return metadata;
         }
     }
 }
