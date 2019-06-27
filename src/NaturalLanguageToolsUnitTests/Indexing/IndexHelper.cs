@@ -84,7 +84,7 @@ namespace NaturalLanguageToolsUnitTests.Indexing
 
         public static DictionaryIndex<string> CreateDictionaryIndex(string[][] storage)
         {
-            var index = new DictionaryIndex<string>();
+            var index = new DictionaryIndex<string>(rareWordThreshold: 3);
             IndexHelper.BuildIndex(index, storage);
             return index;
         }

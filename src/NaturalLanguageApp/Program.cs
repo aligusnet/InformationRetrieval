@@ -88,7 +88,7 @@ namespace NaturalLanguageApp
         static void IndexWikipedia()
         {
             var reader = new StorageZipReader<int[]>(hashedPath, hashedDataSerializer);
-            var index = new DictionaryIndex<int>();
+            var index = new DictionaryIndex<int>(rareWordThreshold: 5);
             var indexBuilder = new IndexBuilder<int, int[]>(index);
             indexBuilder.IndexStorage(reader.Read());
 
