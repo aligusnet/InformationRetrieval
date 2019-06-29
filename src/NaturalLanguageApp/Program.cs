@@ -9,6 +9,7 @@ using NaturalLanguageTools;
 using NaturalLanguageTools.Indexing;
 using NaturalLanguageTools.Tokenizers;
 using NaturalLanguageTools.Transformers;
+using NaturalLanguageTools.Wikitext;
 using Wikidump;
 
 namespace NaturalLanguageApp
@@ -18,6 +19,7 @@ namespace NaturalLanguageApp
         static readonly string basePath = @"F:\wikipedia";
         static readonly string wikiDumpFilePath = Path.Combine(basePath, "enwiki-20190101-pages-articles-multistream.xml");
         static readonly string wikiPath = Path.Combine(basePath, "enwiki");
+        static readonly string cleanedPath = Path.Combine(basePath, "enwiki.cleaned");
         static readonly string tokenizedPath = Path.Combine(basePath, "enwiki.tokenized");
         static readonly string hashedPath = Path.Combine(basePath, "enwiki.hashed");
         static readonly string wordCountsPath = Path.Combine(basePath, "word_counts.json");
@@ -41,6 +43,7 @@ namespace NaturalLanguageApp
             var actions = new Action[]
             {
                 TransformWikiDump,
+                CleanWikitext,
                 TokenizeWikipedia,
                 HashWikipedia,
                 IndexWikipedia,
@@ -146,11 +149,24 @@ namespace NaturalLanguageApp
 
             PrepareOutputDirectory(outputWikipediaPath);
 
-            var reader = new StorageZipReader<IList<char>>(wikiPath, charDataSerializer);
+            var reader = new StorageZipReader<IList<char>>(cleanedPath, charDataSerializer);
             var writer = new StorageZipWriter<IList<char>>(outputWikipediaPath, charDataSerializer);
 
             var tokenizer = new StorageTransformer<IList<char>, IList<char>>(t => StateMachineTokenizer.Tokenize(t, lowerCase: true));
             tokenizer.Transform(reader, writer);
+        }
+
+        static void CleanWikitext()
+        {
+            var outputWikipediaPath = cleanedPath;
+
+            PrepareOutputDirectory(outputWikipediaPath);
+
+            var reader = new StorageZipReader<IList<char>>(wikiPath, charDataSerializer);
+            var writer = new StorageZipWriter<IList<char>>(outputWikipediaPath, charDataSerializer);
+
+            var cleaner = new StorageTransformer<IList<char>, IList<char>>(WikitextCleaner.Clean);
+            cleaner.Transform(reader, writer);
         }
 
         static void TransformWikiDump()

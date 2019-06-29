@@ -1,0 +1,46 @@
+﻿using System.Linq;
+using Xunit;
+
+using NaturalLanguageTools.Wikitext;
+
+
+namespace NaturalLanguageToolsUnitTests.Wikitext
+{
+    public class WikitextCleanerTests
+    {
+        [Theory]
+        [InlineData("[[simple link]]", "simple link")]
+        [InlineData("[[some link| some text]]", " some text")]
+        public void CleanLinksTest(string input, string expected)
+        {
+            AssertClean(input, expected);
+        }
+
+        [Theory]
+        [InlineData("{{template}}", "")]
+        [InlineData("{{template: [[link]]}}hi", "hi")]
+        public void CleanTemplatesTest(string input, string expected)
+        {
+            AssertClean(input, expected);
+        }
+
+        [Theory]
+        [InlineData("<tag>Hello world</tag> after", "Hello world after")]
+        [InlineData("<br  />", "")]
+        [InlineData("<tag><template>{{template}}pss</template><link>[[ Hi there]]</link></tag> after", "pss Hi there after")]
+        [InlineData("<a href=\"http://there.com/page.html?d=rt&rt=d\">there</a>", "there")]
+        [InlineData("a < 5 && b > 6", "a < 5 && b > 6")]
+        [InlineData("oops: a<5 && b> 6", "oops: a 6")]
+        public void CleanTagsTest(string input, string expected)
+        {
+            AssertClean(input, expected);
+        }
+
+        private void AssertClean(string input, string expected)
+        {
+            var actual = WikitextCleaner.Clean(input.ToCharArray());
+
+            Assert.Equal(expected.ToCharArray(), actual);
+        }
+    }
+}

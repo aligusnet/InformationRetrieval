@@ -3,7 +3,6 @@ using Xunit;
 
 using NaturalLanguageTools.Wikitext;
 
-
 namespace NaturalLanguageToolsUnitTests.Wikitext
 {
     public class WikitextParserTests
