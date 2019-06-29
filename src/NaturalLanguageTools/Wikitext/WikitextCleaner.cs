@@ -217,7 +217,8 @@ namespace NaturalLanguageTools.Wikitext
                         return State.Tag;
 
                     default:
-                        buffer.Add(ch);
+                        buffer.Commit(output);
+                        output.Add(ch);
                         return State.NormalText;
                 }
             }
