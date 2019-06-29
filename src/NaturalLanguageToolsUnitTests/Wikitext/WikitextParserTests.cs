@@ -1,10 +1,10 @@
 ﻿using System.Linq;
 using Xunit;
 
-using NaturalLanguageTools;
+using NaturalLanguageTools.Wikitext;
 
 
-namespace NaturalLanguageToolsUnitTests
+namespace NaturalLanguageToolsUnitTests.Wikitext
 {
     public class WikitextParserTests
     {

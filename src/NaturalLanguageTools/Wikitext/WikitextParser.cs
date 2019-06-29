@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace NaturalLanguageTools
+namespace NaturalLanguageTools.Wikitext
 {
     public static class WikitextParser
     {

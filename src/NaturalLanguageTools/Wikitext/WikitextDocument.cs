@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace NaturalLanguageTools
+namespace NaturalLanguageTools.Wikitext
 {
     /// <summary>
     /// Represent Wikitext Document
