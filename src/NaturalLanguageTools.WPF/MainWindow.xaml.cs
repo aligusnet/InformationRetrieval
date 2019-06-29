@@ -69,7 +69,7 @@ namespace NaturalLanguageTools.WPF
                 var docId = ((DocumentIdTemplate)e.AddedItems[0]).Id;
                 var doc = reader.ReadDocument(docId, skipMetadata: true);
                 timer.Stop();
-                Log($"Document '{docId} - {doc.Metadata.Title}' loaded in {timer.Elapsed:g}");
+                Log($"Document '{docId} - {metadata.Value[docId]?.Title}' loaded in {timer.Elapsed:g}");
                 DocumentTextBox.Text = doc.Data;
             }
             else
