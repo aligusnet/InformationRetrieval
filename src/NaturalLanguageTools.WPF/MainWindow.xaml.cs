@@ -13,10 +13,12 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Diagnostics;
+
 using DocumentStorage;
 using NaturalLanguageTools.BooleanSearch;
 using NaturalLanguageTools.Indexing;
-using System.Diagnostics;
+using NaturalLanguageTools.Utility;
 
 namespace NaturalLanguageTools.WPF
 {
@@ -109,7 +111,7 @@ namespace NaturalLanguageTools.WPF
             timer.Stop();
             Log($"Index loaded in {timer.Elapsed:g}");
 
-            return new BooleanSearchEngine<int>(index, s => DocumentHasher.CalculateHashCode(s.ToLower().AsSpan()));
+            return new BooleanSearchEngine<int>(index, s => TextHasher.CalculateHashCode(s.ToLower().AsSpan()));
         }
 
         private DocumentStorageMetadata LoadMetadata()

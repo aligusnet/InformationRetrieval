@@ -9,6 +9,7 @@ using NaturalLanguageTools;
 using NaturalLanguageTools.Indexing;
 using NaturalLanguageTools.Tokenizers;
 using NaturalLanguageTools.Transformers;
+using NaturalLanguageTools.Utility;
 using NaturalLanguageTools.Wikitext;
 using Wikidump;
 
@@ -38,7 +39,12 @@ namespace NaturalLanguageApp
             var arguments = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
             arguments.UnionWith(args);
 
-            Console.WriteLine("Arguments: {0:G}\n", args);
+            Console.Write("Arguments:");
+            foreach (var arg in args)
+            {
+                Console.Write(" {0}", arg);
+            }
+            Console.WriteLine("\n");
 
             var actions = new Action[]
             {
@@ -104,7 +110,7 @@ namespace NaturalLanguageApp
             using var file = File.OpenRead(indexPath);
             var index = DictionaryIndex<int>.Deserialize(file);
 
-            Console.WriteLine($"The: {index.Search(DocumentHasher.CalculateHashCode("the".AsSpan())).Count()}");
+            Console.WriteLine($"The: {index.Search(TextHasher.CalculateHashCode("the".AsSpan())).Count()}");
         }
 
         static void CountWords()
