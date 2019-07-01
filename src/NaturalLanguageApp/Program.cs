@@ -53,6 +53,7 @@ namespace NaturalLanguageApp
                 TokenizeWikipedia,
                 HashWikipedia,
                 IndexWikipedia,
+                ProcessAndIndexWikipedia,
             };
 
             foreach (var action in actions)
@@ -71,6 +72,18 @@ namespace NaturalLanguageApp
             action();
             timer.Stop();
             Console.WriteLine($"{action.Method.Name} completed in {timer.Elapsed:g}\n");
+        }
+
+        static void ProcessAndIndexWikipedia()
+        {
+            var reader = new StorageZipReader<IList<char>>(wikiPath, charDataSerializer);
+            var index = new DictionaryIndex<int>(rareWordThreshold: 5);
+            var indexBuilder = new IndexBuilder<int, IEnumerable<int>>(index);
+            var processor = new WikitextProcessor();
+            indexBuilder.IndexStorage(processor.Transform(reader.Read()));
+
+            using var file = File.Create(indexPath);
+            index.Serialize(file);
         }
 
         static void BuildDawgIndex()
