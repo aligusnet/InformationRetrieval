@@ -7,30 +7,36 @@ using DocumentStorage;
 
 namespace NaturalLanguageTools.Indexing
 {
-    [ProtoContract]
-    public struct DocumentIdRange
+    static class DocumentIdRange
     {
-        [ProtoMember(1)]
-        public ushort Start { get; }
-        public int End => Start + Length;
-        [ProtoMember(2)]
-        public ushort Length { get; set; }
+        private const int offset = 16;
 
-        public DocumentIdRange(ushort localId)
+        public static uint Make(ushort localId)
         {
-            Start = localId;
-            Length = 1;
+            return ((uint)localId << offset) + 1;
+        }
+
+        public static uint End(uint range)
+        {
+            return (range >> offset) + (ushort)range;
+        }
+
+        public static (ushort Start, ushort Length) Decompose(uint range)
+        {
+            return ((ushort)(range >> offset), (ushort)range);
         }
     }
 
-    [ProtoContract]
+    [ProtoContract(Name = "RangeList")]
     public class DocumentIdRangeCollection
     {
+        private const int DefaultCapacity = 8;
+
         [ProtoMember(1)]
         public ushort CollectionId { get; }
 
         [ProtoMember(2)]
-        public IList<DocumentIdRange> Ranges { get; }
+        public IList<uint> Ranges { get; }
 
         // for protobuf deserialization
         private DocumentIdRangeCollection() : this(0)
@@ -40,7 +46,7 @@ namespace NaturalLanguageTools.Indexing
         public DocumentIdRangeCollection(ushort id)
         {
             CollectionId = id;
-            Ranges = new List<DocumentIdRange>();
+            Ranges = new List<uint>(DefaultCapacity);
         }
 
         public bool Add(ushort localId)
@@ -49,7 +55,7 @@ namespace NaturalLanguageTools.Indexing
 
             if (Ranges.Count == 0)
             {
-                Ranges.Add(new DocumentIdRange(localId));
+                Ranges.Add(DocumentIdRange.Make(localId));
                 isAdded = true;
             }
             else
@@ -57,15 +63,16 @@ namespace NaturalLanguageTools.Indexing
                 Index lastIndex = ^1;
 
                 var lastRange = Ranges[lastIndex];
-                if (lastRange.End == localId)
+                var nextLocalId = DocumentIdRange.End(lastRange);
+                if (nextLocalId == localId)
                 {
-                    lastRange.Length += 1;
+                    lastRange += 1;
                     Ranges[lastIndex] = lastRange;
                     isAdded = true;
                 }
-                else if (lastRange.End < localId)
+                else if (nextLocalId < localId)
                 {
-                    Ranges.Add(new DocumentIdRange(localId));
+                    Ranges.Add(DocumentIdRange.Make(localId));
                     isAdded = true;
                 }
             }
@@ -74,11 +81,13 @@ namespace NaturalLanguageTools.Indexing
         }
     }
 
-    [ProtoContract]
+    [ProtoContract(Name = "CollectionList")]
     public class DocumentIdRangeCollectionList : IEnumerable<DocumentId>
     {
+        private const int DefaultCapacity = 8;
+
         [ProtoMember(1)]
-        private readonly IList<DocumentIdRangeCollection> list = new List<DocumentIdRangeCollection>();
+        private readonly IList<DocumentIdRangeCollection> list = new List<DocumentIdRangeCollection>(DefaultCapacity);
 
         [ProtoMember(2)]
         public int DocumentsCount { get; private set; } = 0;
@@ -100,12 +109,18 @@ namespace NaturalLanguageTools.Indexing
             if ( collection.Add(id.LocalId) ) DocumentsCount++;
         }
 
+        public void Add(uint id)
+        {
+            Add(new DocumentId(id));
+        }
+
         public IEnumerator<DocumentId> GetEnumerator()
         {
             foreach (var collection in list)
             {
-                foreach (var range in collection.Ranges)
+                foreach (var r in collection.Ranges)
                 {
+                    var range = DocumentIdRange.Decompose(r);
                     for (ushort i = 0; i < range.Length; ++i)
                     {
                         yield return new DocumentId(collection.CollectionId, (ushort)(range.Start + i));

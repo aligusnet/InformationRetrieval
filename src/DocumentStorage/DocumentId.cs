@@ -1,5 +1,4 @@
 ﻿using System;
-using ProtoBuf;
 
 namespace DocumentStorage
 {
@@ -8,14 +7,12 @@ namespace DocumentStorage
     /// consists of 2 parts: if of the collections 
     /// and local id which is the document's id in the collection
     /// </summary>
-    [ProtoContract]
     public readonly struct DocumentId : IComparable<DocumentId>
     {
         private const int offset = 16;
 
         public static readonly DocumentId Zero = new DocumentId(0, 0);
 
-        [ProtoMember(1)]
         public readonly uint Id;
 
         public ushort CollectionId => (ushort)(Id >> offset);

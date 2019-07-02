@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using ProtoBuf;
 using DocumentStorage;
 using System.IO;
 using System.IO.Compression;
+using ProtoBuf;
+using System.Linq;
 
 namespace NaturalLanguageTools.Indexing
 {
@@ -14,13 +15,15 @@ namespace NaturalLanguageTools.Indexing
         private readonly IDictionary<T, DocumentIdRangeCollectionList> wordIndex;
 
         [ProtoMember(2)]
-        private readonly IDictionary<T, IList<DocumentId>> rareWordIndex;
+        private readonly IDictionary<T, IList<uint>> rareWordIndex;
 
         [ProtoMember(3)]
         private readonly DocumentIdRangeCollectionList allDocuments;
 
         [ProtoMember(4)]
         private readonly int rareWordThreshold;
+
+        private const int DefaultCapacity = 8;
 
         // for protobuf deserialization
         private DictionaryIndex() : this(0)
@@ -30,7 +33,7 @@ namespace NaturalLanguageTools.Indexing
         public DictionaryIndex(int rareWordThreshold)
         {
             wordIndex = new Dictionary<T, DocumentIdRangeCollectionList>();
-            rareWordIndex = new Dictionary<T, IList<DocumentId>>();
+            rareWordIndex = new Dictionary<T, IList<uint>>();
             allDocuments = new DocumentIdRangeCollectionList();
             this.rareWordThreshold = rareWordThreshold;
         }
@@ -45,17 +48,17 @@ namespace NaturalLanguageTools.Indexing
             {
                 if (!rareWordIndex.TryGetValue(word, out var ids))
                 {
-                    ids = new List<DocumentId>();
+                    ids = new List<uint>(DefaultCapacity);
                     rareWordIndex.Add(word, ids);
-                    ids.Add(id);
+                    ids.Add(id.Id);
                 }
-                else if (ids[^1].CompareTo(id) != 0)
+                else if (ids[^1] != id.Id)
                 {
-                    ids.Add(id);
+                    ids.Add(id.Id);
                 }
 
                 int count = ids.Count;
-                if (count >= rareWordThreshold && id.Id - ids[count-rareWordThreshold].Id == (rareWordThreshold-1))
+                if (count >= rareWordThreshold && id.Id - ids[count-rareWordThreshold] == (rareWordThreshold-1))
                 {
                     MoveToIndex(word, ids);
                 }
@@ -64,7 +67,7 @@ namespace NaturalLanguageTools.Indexing
             allDocuments.Add(id);
         }
 
-        private void MoveToIndex(T word, IList<DocumentId> ids)
+        private void MoveToIndex(T word, IList<uint> ids)
         {
             rareWordIndex.Remove(word);
 
@@ -86,7 +89,7 @@ namespace NaturalLanguageTools.Indexing
 
             if (rareWordIndex.TryGetValue(word, out var ids))
             {
-                return ids;
+                return ids.Select(id => new DocumentId(id));
             }
 
             return Array.Empty<DocumentId>();
