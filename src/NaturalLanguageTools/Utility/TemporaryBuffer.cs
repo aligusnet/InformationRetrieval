@@ -50,7 +50,17 @@ namespace NaturalLanguageTools.Utility
             ++Count;
         }
 
-        public bool EndsWith(params T[] chs)
+        public bool EndsWith(T ch)
+        {
+            if (Count < 1)
+            {
+                return false;
+            }
+
+            return buffer[Count - 1].CompareTo(ch) == 0;
+        }
+
+        public bool EndsWith(T[] chs)
         {
             if (Count < chs.Length)
             {

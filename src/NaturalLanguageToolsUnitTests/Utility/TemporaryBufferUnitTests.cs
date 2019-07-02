@@ -20,30 +20,30 @@ namespace NaturalLanguageToolsUnitTests.Utility
             buffer.Add(100);
             Assert.Equal(1, buffer.Count);
             Assert.True(buffer.EndsWith(100));
-            Assert.False(buffer.EndsWith(100, 200));
-            Assert.False(buffer.EndsWith(100, 200, 300));
+            Assert.False(buffer.EndsWith(new [] { 100, 200 }));
+            Assert.False(buffer.EndsWith(new [] { 100, 200, 300 }));
             Assert.Equal(100, buffer.Last());
 
             buffer.Add(200);
             Assert.Equal(2, buffer.Count);
             Assert.False(buffer.EndsWith(100));
-            Assert.True(buffer.EndsWith(100, 200));
-            Assert.False(buffer.EndsWith(100, 200, 300));
+            Assert.True(buffer.EndsWith(new [] { 100, 200 }));
+            Assert.False(buffer.EndsWith(new [] { 100, 200, 300 }));
             Assert.Equal(200, buffer.Last());
 
             buffer.DiscardLast();
             Assert.Equal(1, buffer.Count);
             Assert.True(buffer.EndsWith(100));
-            Assert.False(buffer.EndsWith(100, 200));
-            Assert.False(buffer.EndsWith(100, 200, 300));
+            Assert.False(buffer.EndsWith(new [] { 100, 200 }));
+            Assert.False(buffer.EndsWith(new [] { 100, 200, 300 }));
             Assert.Equal(100, buffer.Last());
 
             buffer.Add(200);
             buffer.Add(300);
             Assert.Equal(3, buffer.Count);
             Assert.False(buffer.EndsWith(100));
-            Assert.True(buffer.EndsWith(200, 300));
-            Assert.True(buffer.EndsWith(100, 200, 300));
+            Assert.True(buffer.EndsWith(new [] { 200, 300 }));
+            Assert.True(buffer.EndsWith(new [] { 100, 200, 300 }));
             Assert.Equal(300, buffer.Last());
         }
 
@@ -93,7 +93,7 @@ namespace NaturalLanguageToolsUnitTests.Utility
 
             buffer.Insert(2, 700);
 
-            Assert.True(buffer.EndsWith(700, 300));
+            Assert.True(buffer.EndsWith(new [] { 700, 300 }));
         }
 
         [Fact]

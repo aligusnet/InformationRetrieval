@@ -35,6 +35,7 @@ namespace NaturalLanguageTools.Wikitext
             private readonly IList<char> output;
             private State state;
             private int templateNestingLevel;
+            private readonly Action<char[], int> actionCommitLink;
 
             public Cleaner(IList<char> input)
             {
@@ -43,6 +44,7 @@ namespace NaturalLanguageTools.Wikitext
                 this.input = input;
                 output = new List<char>(input.Count);
                 templateNestingLevel = 0;
+                actionCommitLink = CommitLink;
             }
 
             public IList<char> Clean()
@@ -145,7 +147,7 @@ namespace NaturalLanguageTools.Wikitext
                 switch (ch)
                 {
                     case ']' when buffer.Last() == ']':
-                        buffer.Apply(CommitLink);
+                        buffer.Apply(actionCommitLink);
                         buffer.Discard();
                         return State.NormalText;
 

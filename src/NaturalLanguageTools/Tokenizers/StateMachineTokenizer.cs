@@ -38,11 +38,20 @@ namespace NaturalLanguageTools.Tokenizers
                 (new [] {Apostrophe, 'm'}, new []{ 2 }),
             };
 
+            private static readonly Func<char[], int, bool> funcIsValidWord;
+
+            static Tokenizer()
+            {
+                funcIsValidWord = IsValidWord;
+            }
+
+
             IList<char> input;
             IList<char> output;
             TemporaryBuffer<char> buffer;
             State state;
             private readonly bool lowerCase;
+            
 
             public Tokenizer(IList<char> input, bool lowerCase)
             {
@@ -263,9 +272,9 @@ namespace NaturalLanguageTools.Tokenizers
                 buffer.Commit(output);
             }
 
-            private bool IsValidWord() => buffer.Apply(IsValidWord);
+            private bool IsValidWord() => buffer.Apply(funcIsValidWord);
 
-            private bool IsValidWord(char[] buffer, int position)
+            private static bool IsValidWord(char[] buffer, int position)
             {
                 for (int i = 0; i < position; ++i)
                 {
