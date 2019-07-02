@@ -2,7 +2,7 @@
 using System.Linq;
 
 using NaturalLanguageTools.Tokenizers;
-using NaturalLanguageTools.Transformers;
+using NaturalLanguageTools.Transformers.Parallel;
 using NaturalLanguageTools.Utility;
 
 namespace NaturalLanguageTools.Wikitext
