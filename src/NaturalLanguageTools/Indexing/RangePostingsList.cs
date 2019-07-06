@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using ProtoBuf;
 
-using DocumentStorage;
+using Corpus;
 
 namespace NaturalLanguageTools.Indexing
 {
@@ -17,26 +17,26 @@ namespace NaturalLanguageTools.Indexing
         private const int DefaultCapacity = 8;
 
         [ProtoMember(1)]
-        private readonly IList<DocumentIdRangeCollection> list = new List<DocumentIdRangeCollection>(DefaultCapacity);
+        private readonly IList<DocumentIdRangeBlock> list = new List<DocumentIdRangeBlock>(DefaultCapacity);
 
         [ProtoMember(2)]
         public int DocumentsCount { get; private set; } = 0;
 
         public void Add(DocumentId id)
         {
-            DocumentIdRangeCollection collection;
+            DocumentIdRangeBlock block;
 
-            if (list.Count == 0 || list[^1].CollectionId != id.CollectionId)
+            if (list.Count == 0 || list[^1].BlockId != id.BlockId)
             {
-                collection = new DocumentIdRangeCollection(id.CollectionId);
-                list.Add(collection);
+                block = new DocumentIdRangeBlock(id.BlockId);
+                list.Add(block);
             }
             else
             {
-                collection = list[^1];
+                block = list[^1];
             }
 
-            if (collection.Add(id.LocalId)) DocumentsCount++;
+            if (block.Add(id.LocalId)) DocumentsCount++;
         }
 
         public void Add(uint id)
@@ -46,14 +46,14 @@ namespace NaturalLanguageTools.Indexing
 
         public IEnumerator<DocumentId> GetEnumerator()
         {
-            foreach (var collection in list)
+            foreach (var block in list)
             {
-                foreach (var r in collection.Ranges)
+                foreach (var r in block.Ranges)
                 {
                     var range = DocumentIdRange.Decompose(r);
                     for (ushort i = 0; i < range.Length; ++i)
                     {
-                        yield return new DocumentId(collection.CollectionId, (ushort)(range.Start + i));
+                        yield return new DocumentId(block.BlockId, (ushort)(range.Start + i));
                     }
                 }
             }
@@ -85,25 +85,25 @@ namespace NaturalLanguageTools.Indexing
         }
     }
 
-    [ProtoContract(Name = "RangeList")]
-    public class DocumentIdRangeCollection
+    [ProtoContract]
+    public class DocumentIdRangeBlock
     {
         private const int DefaultCapacity = 8;
 
         [ProtoMember(1)]
-        public ushort CollectionId { get; }
+        public ushort BlockId { get; }
 
         [ProtoMember(2)]
         public IList<uint> Ranges { get; }
 
         // for protobuf deserialization
-        private DocumentIdRangeCollection() : this(0)
+        private DocumentIdRangeBlock() : this(0)
         {
         }
 
-        public DocumentIdRangeCollection(ushort id)
+        public DocumentIdRangeBlock(ushort id)
         {
-            CollectionId = id;
+            BlockId = id;
             Ranges = new List<uint>(DefaultCapacity);
         }
 

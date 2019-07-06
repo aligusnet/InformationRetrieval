@@ -1,4 +1,4 @@
-﻿using DocumentStorage;
+﻿using Corpus;
 
 namespace NaturalLanguageTools.Transformers
 {

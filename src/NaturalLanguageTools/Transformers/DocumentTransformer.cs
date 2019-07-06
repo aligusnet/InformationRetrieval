@@ -1,6 +1,6 @@
 ﻿using System;
 
-using DocumentStorage;
+using Corpus;
 
 namespace NaturalLanguageTools.Transformers
 {

@@ -1,4 +1,4 @@
-﻿using DocumentStorage;
+﻿using Corpus;
 using System.Collections.Generic;
 
 namespace NaturalLanguageTools.Indexing

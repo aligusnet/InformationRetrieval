@@ -3,27 +3,27 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28922.388
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NaturalLanguageApp", "NaturalLanguageApp\NaturalLanguageApp.csproj", "{294DEB40-1D8F-44B1-A545-53FD8D44CAE3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NaturalLanguage.App", "NaturalLanguage.App\NaturalLanguage.App.csproj", "{294DEB40-1D8F-44B1-A545-53FD8D44CAE3}"
 	ProjectSection(ProjectDependencies) = postProject
 		{9254A2EF-3D4E-4A5C-8798-C59FDB72A5A8} = {9254A2EF-3D4E-4A5C-8798-C59FDB72A5A8}
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NaturalLanguageToolsUnitTests", "NaturalLanguageToolsUnitTests\NaturalLanguageToolsUnitTests.csproj", "{5FDF1543-6575-4670-AAC2-1A1017F91E32}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NaturalLanguageTools.Test", "NaturalLanguageTools.Test\NaturalLanguageTools.Test.csproj", "{5FDF1543-6575-4670-AAC2-1A1017F91E32}"
 	ProjectSection(ProjectDependencies) = postProject
 		{9254A2EF-3D4E-4A5C-8798-C59FDB72A5A8} = {9254A2EF-3D4E-4A5C-8798-C59FDB72A5A8}
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wikidump", "Wikidump\Wikidump.csproj", "{35041E2C-42D7-40E9-A70D-68DFBEC09820}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocumentStorage", "DocumentStorage\DocumentStorage.csproj", "{60C72AA7-EDC3-4687-BE4A-31D87A80263B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Corpus", "Corpus\Corpus.csproj", "{60C72AA7-EDC3-4687-BE4A-31D87A80263B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocumentStorageUnitTests", "DocumentStorageUnitTests\DocumentStorageUnitTests.csproj", "{3003364B-24DB-40DC-B4BE-956A70C38F2C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Corpus.Test", "Corpus.Test\Corpus.Test.csproj", "{3003364B-24DB-40DC-B4BE-956A70C38F2C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WikidumpUnitTests", "WikidumpUnitTests\WikidumpUnitTests.csproj", "{8773EBE7-535D-498A-A942-5154598E3392}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wikidump.Test", "Wikidump.Test\Wikidump.Test.csproj", "{8773EBE7-535D-498A-A942-5154598E3392}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NaturalLanguageTools", "NaturalLanguageTools\NaturalLanguageTools.csproj", "{9254A2EF-3D4E-4A5C-8798-C59FDB72A5A8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NaturalLanguageTools.WPF", "NaturalLanguageTools.WPF\NaturalLanguageTools.WPF.csproj", "{8188B7A2-C11C-45E5-9EB3-C66BB3BF7B32}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NaturalLanguage.WPF", "NaturalLanguage.WPF\NaturalLanguage.WPF.csproj", "{8188B7A2-C11C-45E5-9EB3-C66BB3BF7B32}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,4 +1,4 @@
-﻿using DocumentStorage;
+﻿using Corpus;
 using DawgSharp;
 
 namespace NaturalLanguageTools.Indexing
@@ -17,15 +17,15 @@ namespace NaturalLanguageTools.Indexing
 
         public void IndexTerm(DocumentId id, string word, int position)
         {
-            builder.TryGetValue(word, out var collectionList);
+            builder.TryGetValue(word, out var blockList);
 
-            if (collectionList == null)
+            if (blockList == null)
             {
-                collectionList = new RangePostingsList();
-                builder.Insert(word, collectionList);
+                blockList = new RangePostingsList();
+                builder.Insert(word, blockList);
             }
 
-            collectionList.Add(id);
+            blockList.Add(id);
             allDocuments.Add(id);
         }
 

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using ProtoBuf;
 
 using DawgSharp;
-using DocumentStorage;
+using Corpus;
 using System.IO.Compression;
 
 namespace NaturalLanguageTools.Indexing

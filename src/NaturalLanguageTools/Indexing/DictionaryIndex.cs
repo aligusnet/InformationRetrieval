@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using DocumentStorage;
+using Corpus;
 using System.IO;
 using System.IO.Compression;
 using ProtoBuf;
@@ -45,9 +45,9 @@ namespace NaturalLanguageTools.Indexing
 
         public void IndexTerm(DocumentId id, T word, int position)
         {
-            if (wordIndex.TryGetValue(word, out var collectionList))
+            if (wordIndex.TryGetValue(word, out var blockList))
             {
-                collectionList.Add(id);
+                blockList.Add(id);
             }
             else
             {
@@ -87,9 +87,9 @@ namespace NaturalLanguageTools.Indexing
 
         public IEnumerable<DocumentId> Search(T word)
         {
-            if (wordIndex.TryGetValue(word, out var collectionList))
+            if (wordIndex.TryGetValue(word, out var blockList))
             {
-                return collectionList;
+                return blockList;
             }
 
             if (rareWordIndex.TryGetValue(word, out var ids))
@@ -119,9 +119,9 @@ namespace NaturalLanguageTools.Indexing
 
         public int GetCount(T word)
         {
-            if (wordIndex.TryGetValue(word, out var collectionList))
+            if (wordIndex.TryGetValue(word, out var blockList))
             {
-                return collectionList.DocumentsCount;
+                return blockList.DocumentsCount;
             }
 
             if (rareWordIndex.TryGetValue(word, out var ids))

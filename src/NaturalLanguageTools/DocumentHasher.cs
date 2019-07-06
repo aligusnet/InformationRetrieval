@@ -6,7 +6,7 @@ using NaturalLanguageTools.Transformers;
 
 namespace NaturalLanguageTools
 {
-    public class DocumentHasher : StorageTransformer<IEnumerable<string>, int[]>
+    public class DocumentHasher : CorpusTransformer<IEnumerable<string>, int[]>
     {
         public DocumentHasher() : base(TransformData)
         {

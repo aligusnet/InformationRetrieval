@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-using DocumentStorage;
+using Corpus;
 
 namespace NaturalLanguageTools.Indexing
 {
@@ -13,17 +13,17 @@ namespace NaturalLanguageTools.Indexing
             Index = index;
         }
 
-        public void IndexStorage(IEnumerable<DocumentCollection<TSequence>> storage)
+        public void IndexCorpus(IEnumerable<Block<TSequence>> corpus)
         {
-            foreach (var collection in storage)
+            foreach (var block in corpus)
             {
-                IndexCollection(collection);
+                IndexBlock(block);
             }
         }
 
-        public void IndexCollection(DocumentCollection<TSequence> collection)
+        public void IndexBlock(Block<TSequence> block)
         {
-            foreach (var doc in collection.Documents)
+            foreach (var doc in block.Documents)
             {
                 IndexDocument(doc);
             }

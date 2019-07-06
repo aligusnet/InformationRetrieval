@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using DocumentStorage;
+using Corpus;
 using NaturalLanguageTools.Indexing;
 using NaturalLanguageTools.Utility;
 

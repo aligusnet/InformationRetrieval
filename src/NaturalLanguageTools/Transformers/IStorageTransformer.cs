@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 
-using DocumentStorage;
+using Corpus;
 
 namespace NaturalLanguageTools.Transformers
 {
-    public interface IStorageTransformer<TIn, TOut> : ITransformer<IEnumerable<DocumentCollection<TIn>>, IEnumerable<DocumentCollection<TOut>>>
+    public interface ICorpusTransformer<TIn, TOut> : ITransformer<IEnumerable<Block<TIn>>, IEnumerable<Block<TOut>>>
     {
-        void Transform(IStorageReader<TIn> reader, IStorageWriter<TOut> writer);
+        void Transform(ICorpusReader<TIn> reader, ICorpusWriter<TOut> writer);
     }
 }

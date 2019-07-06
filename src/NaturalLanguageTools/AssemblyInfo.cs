@@ -1,3 +1,3 @@
 ﻿using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleToAttribute("NaturalLanguageToolsUnitTests")]
+[assembly: InternalsVisibleToAttribute("NaturalLanguageTools.Test")]

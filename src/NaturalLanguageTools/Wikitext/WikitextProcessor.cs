@@ -10,7 +10,7 @@ namespace NaturalLanguageTools.Wikitext
     /// <summary>
     /// Clean, tokenize, and hash wikitext documents.
     /// </summary>
-    public class WikitextProcessor : StorageTransformer<IList<char>, IEnumerable<int>>
+    public class WikitextProcessor : CorpusTransformer<IList<char>, IEnumerable<int>>
     {
         public WikitextProcessor() : base(Process)
         {

@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DocumentStorage\DocumentStorage.csproj" />
+    <ProjectReference Include="..\Corpus\Corpus.csproj" />
   </ItemGroup>
  
 </Project>
