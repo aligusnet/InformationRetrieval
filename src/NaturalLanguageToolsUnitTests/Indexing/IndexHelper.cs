@@ -73,7 +73,7 @@ namespace NaturalLanguageToolsUnitTests.Indexing
                     var docId = new DocumentId((ushort)collectionId, (ushort)localId);
                     for (var position = 0; position < doc.Length; ++position)
                     {
-                        index.IndexWord(docId, doc[position], position);
+                        index.IndexTerm(docId, doc[position], position);
                     }
                 }
             }

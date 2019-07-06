@@ -5,23 +5,23 @@ namespace NaturalLanguageTools.Indexing
 {
     public class DawgBuildableIndex : IBuildableIndex<string>
     {
-        private readonly DawgBuilder<DocumentIdRangeCollectionList> builder;
+        private readonly DawgBuilder<RangePostingsList> builder;
 
-        private readonly DocumentIdRangeCollectionList allDocuments;
+        private readonly RangePostingsList allDocuments;
 
         public DawgBuildableIndex()
         {
-            builder = new DawgBuilder<DocumentIdRangeCollectionList>();
-            allDocuments = new DocumentIdRangeCollectionList();
+            builder = new DawgBuilder<RangePostingsList>();
+            allDocuments = new RangePostingsList();
         }
 
-        public void IndexWord(DocumentId id, string word, int position)
+        public void IndexTerm(DocumentId id, string word, int position)
         {
             builder.TryGetValue(word, out var collectionList);
 
             if (collectionList == null)
             {
-                collectionList = new DocumentIdRangeCollectionList();
+                collectionList = new RangePostingsList();
                 builder.Insert(word, collectionList);
             }
 
@@ -29,9 +29,14 @@ namespace NaturalLanguageTools.Indexing
             allDocuments.Add(id);
         }
 
-        public DawgSearchableIndex CreateIndex()
+        public DawgSearchableIndex Build()
         {
             return new DawgSearchableIndex(builder.BuildDawg(), allDocuments);
+        }
+
+        ISearchableIndex<string> IBuildableIndex<string>.Build()
+        {
+            return this.Build();
         }
     }
 }

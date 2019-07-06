@@ -82,6 +82,7 @@ namespace NaturalLanguageApp
             var processor = new WikitextProcessor();
             indexBuilder.IndexStorage(processor.Transform(reader.Read()));
 
+            Console.WriteLine("Serializing index...");
             using var file = File.Create(indexPath);
             index.Serialize(file);
         }
@@ -93,7 +94,7 @@ namespace NaturalLanguageApp
             var indexBuilder = new IndexBuilder<string, IEnumerable<string>>(buildableIndex);
             indexBuilder.IndexStorage(reader.Read());
 
-            var index = buildableIndex.CreateIndex();
+            var index = buildableIndex.Build();
 
             using var file = File.Create(dawgIndexPath);
             index.Serialize(file);

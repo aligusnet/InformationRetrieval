@@ -37,7 +37,7 @@ namespace NaturalLanguageToolsUnitTests.Indexing
         {
             var buildableIndex = new DawgBuildableIndex();
             IndexHelper.BuildIndex(buildableIndex, storage);
-            return buildableIndex.CreateIndex();
+            return buildableIndex.Build();
         }
     }
 }

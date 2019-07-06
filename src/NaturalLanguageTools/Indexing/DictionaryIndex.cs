@@ -8,17 +8,22 @@ using System.Linq;
 
 namespace NaturalLanguageTools.Indexing
 {
+    /// <summary>
+    /// In-memory index,
+    /// stores posting list in dictionary.
+    /// </summary>
+    /// <typeparam name="T">The term's type</typeparam>
     [ProtoContract]
     public class DictionaryIndex<T> : IBuildableIndex<T>, ISearchableIndex<T>
     {
         [ProtoMember(1)]
-        private readonly IDictionary<T, DocumentIdRangeCollectionList> wordIndex;
+        private readonly IDictionary<T, RangePostingsList> wordIndex;
 
         [ProtoMember(2)]
         private readonly IDictionary<T, IList<uint>> rareWordIndex;
 
         [ProtoMember(3)]
-        private readonly DocumentIdRangeCollectionList allDocuments;
+        private readonly RangePostingsList allDocuments;
 
         [ProtoMember(4)]
         private readonly int rareWordThreshold;
@@ -32,13 +37,13 @@ namespace NaturalLanguageTools.Indexing
 
         public DictionaryIndex(int rareWordThreshold)
         {
-            wordIndex = new Dictionary<T, DocumentIdRangeCollectionList>();
+            wordIndex = new Dictionary<T, RangePostingsList>();
             rareWordIndex = new Dictionary<T, IList<uint>>();
-            allDocuments = new DocumentIdRangeCollectionList();
+            allDocuments = new RangePostingsList();
             this.rareWordThreshold = rareWordThreshold;
         }
 
-        public void IndexWord(DocumentId id, T word, int position)
+        public void IndexTerm(DocumentId id, T word, int position)
         {
             if (wordIndex.TryGetValue(word, out var collectionList))
             {
@@ -71,7 +76,7 @@ namespace NaturalLanguageTools.Indexing
         {
             rareWordIndex.Remove(word);
 
-            var list = new DocumentIdRangeCollectionList();
+            var list = new RangePostingsList();
             foreach (var id in ids)
             {
                 list.Add(id);
@@ -130,6 +135,16 @@ namespace NaturalLanguageTools.Indexing
         public int GetCount()
         {
             return allDocuments.DocumentsCount;
+        }
+
+        public DictionaryIndex<T> Build()
+        {
+            return this;
+        }
+
+        ISearchableIndex<T> IBuildableIndex<T>.Build()
+        {
+            return Build();
         }
     }
 }

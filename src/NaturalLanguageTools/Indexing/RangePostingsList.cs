@@ -7,6 +7,64 @@ using DocumentStorage;
 
 namespace NaturalLanguageTools.Indexing
 {
+    /// <summary>
+    /// Compressed Postings List.
+    /// Stores documents ids as ranges.
+    /// </summary>
+    [ProtoContract]
+    public class RangePostingsList : IEnumerable<DocumentId>
+    {
+        private const int DefaultCapacity = 8;
+
+        [ProtoMember(1)]
+        private readonly IList<DocumentIdRangeCollection> list = new List<DocumentIdRangeCollection>(DefaultCapacity);
+
+        [ProtoMember(2)]
+        public int DocumentsCount { get; private set; } = 0;
+
+        public void Add(DocumentId id)
+        {
+            DocumentIdRangeCollection collection;
+
+            if (list.Count == 0 || list[^1].CollectionId != id.CollectionId)
+            {
+                collection = new DocumentIdRangeCollection(id.CollectionId);
+                list.Add(collection);
+            }
+            else
+            {
+                collection = list[^1];
+            }
+
+            if (collection.Add(id.LocalId)) DocumentsCount++;
+        }
+
+        public void Add(uint id)
+        {
+            Add(new DocumentId(id));
+        }
+
+        public IEnumerator<DocumentId> GetEnumerator()
+        {
+            foreach (var collection in list)
+            {
+                foreach (var r in collection.Ranges)
+                {
+                    var range = DocumentIdRange.Decompose(r);
+                    for (ushort i = 0; i < range.Length; ++i)
+                    {
+                        yield return new DocumentId(collection.CollectionId, (ushort)(range.Start + i));
+                    }
+                }
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
+        }
+    }
+
     static class DocumentIdRange
     {
         private const int offset = 16;
@@ -78,60 +136,6 @@ namespace NaturalLanguageTools.Indexing
             }
 
             return isAdded;
-        }
-    }
-
-    [ProtoContract(Name = "CollectionList")]
-    public class DocumentIdRangeCollectionList : IEnumerable<DocumentId>
-    {
-        private const int DefaultCapacity = 8;
-
-        [ProtoMember(1)]
-        private readonly IList<DocumentIdRangeCollection> list = new List<DocumentIdRangeCollection>(DefaultCapacity);
-
-        [ProtoMember(2)]
-        public int DocumentsCount { get; private set; } = 0;
-
-        public void Add(DocumentId id)
-        {
-            DocumentIdRangeCollection collection;
-
-            if (list.Count == 0 || list[^1].CollectionId != id.CollectionId)
-            {
-                collection = new DocumentIdRangeCollection(id.CollectionId);
-                list.Add(collection);
-            }
-            else
-            {
-                collection = list[^1];
-            }
-
-            if ( collection.Add(id.LocalId) ) DocumentsCount++;
-        }
-
-        public void Add(uint id)
-        {
-            Add(new DocumentId(id));
-        }
-
-        public IEnumerator<DocumentId> GetEnumerator()
-        {
-            foreach (var collection in list)
-            {
-                foreach (var r in collection.Ranges)
-                {
-                    var range = DocumentIdRange.Decompose(r);
-                    for (ushort i = 0; i < range.Length; ++i)
-                    {
-                        yield return new DocumentId(collection.CollectionId, (ushort)(range.Start + i));
-                    }
-                }
-            }
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return this.GetEnumerator();
         }
     }
 }

@@ -42,8 +42,8 @@ namespace NaturalLanguageToolsUnitTests.Indexing
             var indexedWords = new List<(DocumentId, char, int)>();
 
             var index = new Mock<IBuildableIndex<char>>();
-            index.Setup(x => x.IndexWord(It.IsAny<DocumentId>(), It.IsAny<char>(), It.IsAny<int>()))
-                 .Callback<DocumentId, char, int>((id, word, pos) => indexedWords.Add((id, word, pos)));
+            index.Setup(x => x.IndexTerm(It.IsAny<DocumentId>(), It.IsAny<char>(), It.IsAny<int>()))
+                 .Callback<DocumentId, char, int>((id, term, pos) => indexedWords.Add((id, term, pos)));
 
             var indexer = new IndexBuilder<char, string>(index.Object);
             indexer.IndexStorage(storage);

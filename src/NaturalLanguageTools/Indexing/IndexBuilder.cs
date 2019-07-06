@@ -4,11 +4,11 @@ using DocumentStorage;
 
 namespace NaturalLanguageTools.Indexing
 {
-    public class IndexBuilder<TWord, TSequence> where TSequence : IEnumerable<TWord>
+    public class IndexBuilder<TTerm, TSequence> where TSequence : IEnumerable<TTerm>
     {
-        public IBuildableIndex<TWord> Index { get; }
+        public IBuildableIndex<TTerm> Index { get; }
 
-        public IndexBuilder(IBuildableIndex<TWord> index)
+        public IndexBuilder(IBuildableIndex<TTerm> index)
         {
             Index = index;
         }
@@ -32,10 +32,15 @@ namespace NaturalLanguageTools.Indexing
         public void IndexDocument(Document<TSequence> doc)
         {
             int position = 0;
-            foreach (var word in doc.Data)
+            foreach (var term in doc.Data)
             {
-                Index.IndexWord(doc.Metadata.Id, word, position++);
+                Index.IndexTerm(doc.Metadata.Id, term, position++);
             }
+        }
+
+        public ISearchableIndex<TTerm> Build()
+        {
+            return Index.Build();
         }
     }
 }

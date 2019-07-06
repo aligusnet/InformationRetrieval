@@ -4,6 +4,8 @@ namespace NaturalLanguageTools.Indexing
 {
     public interface IBuildableIndex<T>
     {
-        void IndexWord(DocumentId id, T word, int position);
+        void IndexTerm(DocumentId id, T term, int position);
+
+        ISearchableIndex<T> Build();
     }
 }

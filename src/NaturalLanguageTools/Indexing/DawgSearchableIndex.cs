@@ -11,10 +11,10 @@ namespace NaturalLanguageTools.Indexing
 {
     public class DawgSearchableIndex : ISearchableIndex<string>
     {
-        private readonly Dawg<DocumentIdRangeCollectionList> dawg;
-        private readonly DocumentIdRangeCollectionList allDocuments;
+        private readonly Dawg<RangePostingsList> dawg;
+        private readonly RangePostingsList allDocuments;
 
-        public DawgSearchableIndex(Dawg<DocumentIdRangeCollectionList> dawg, DocumentIdRangeCollectionList allDocuments)
+        public DawgSearchableIndex(Dawg<RangePostingsList> dawg, RangePostingsList allDocuments)
         {
             this.dawg = dawg;
             this.allDocuments = allDocuments;
@@ -37,7 +37,7 @@ namespace NaturalLanguageTools.Indexing
             dawg.SaveTo(gzipStream, writePayload: SerializePayload);
         }
 
-        private static void SerializePayload(BinaryWriter writer, DocumentIdRangeCollectionList payload)
+        private static void SerializePayload(BinaryWriter writer, RangePostingsList payload)
         {
             Serializer.SerializeWithLengthPrefix(writer.BaseStream, payload, PrefixStyle.Base128);
         }
@@ -45,14 +45,14 @@ namespace NaturalLanguageTools.Indexing
         public static DawgSearchableIndex Deserialize(Stream stream)
         {
             using var gzipStream = new GZipStream(stream, CompressionMode.Decompress, leaveOpen: true);
-            var allDocuments = Serializer.DeserializeWithLengthPrefix<DocumentIdRangeCollectionList>(gzipStream, PrefixStyle.Base128);
-            var dawg = Dawg<DocumentIdRangeCollectionList>.Load(gzipStream, readPayload: DeserializePayload);
+            var allDocuments = Serializer.DeserializeWithLengthPrefix<RangePostingsList>(gzipStream, PrefixStyle.Base128);
+            var dawg = Dawg<RangePostingsList>.Load(gzipStream, readPayload: DeserializePayload);
             return new DawgSearchableIndex(dawg, allDocuments);
         }
 
-        private static DocumentIdRangeCollectionList DeserializePayload(BinaryReader reader)
+        private static RangePostingsList DeserializePayload(BinaryReader reader)
         {
-            return Serializer.DeserializeWithLengthPrefix<DocumentIdRangeCollectionList>(reader.BaseStream, PrefixStyle.Base128);
+            return Serializer.DeserializeWithLengthPrefix<RangePostingsList>(reader.BaseStream, PrefixStyle.Base128);
         }
 
         public int GetCount(string word)
