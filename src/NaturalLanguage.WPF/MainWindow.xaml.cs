@@ -30,10 +30,13 @@ namespace NaturalLanguage.WPF
         static readonly string basePath = @"F:\wikipedia";
         static readonly string wikiPath = IO::Path.Combine(basePath, "enwiki");
         static readonly string indexPath = IO::Path.Combine(basePath, "index.bin");
+        static readonly string externalIndexPath = IO::Path.Combine(basePath, "external_index");
 
         private readonly Lazy<BooleanSearchEngine<int>> engine;
         private readonly Lazy<CorpusMetadata> metadata;
         private readonly CorpusZipReader<string> reader;
+
+        private bool useExternalIndex = true;
         
         Stopwatch timer = new Stopwatch();
 
@@ -102,12 +105,35 @@ namespace NaturalLanguage.WPF
             public override string ToString() => title;
         }
 
-        private BooleanSearchEngine<int> LoadSearchEngine()
+        private ISearchableIndex<int> LoadInMemoryIndex()
         {
             using var file = IO::File.OpenRead(indexPath);
+            return DictionaryIndex<int>.Deserialize(file);
+        }
+
+        private ISearchableIndex<int> LoadExternalIndex()
+        {
+            var serializer = new ExternalIndexSerializer<int>();
+            return serializer.Deserialize(externalIndexPath);
+        }
+
+        private ISearchableIndex<int> LoadIndex()
+        {
+            if (useExternalIndex)
+            {
+                return LoadExternalIndex();
+            }
+            else
+            {
+                return LoadInMemoryIndex();
+            }
+        }
+
+        private BooleanSearchEngine<int> LoadSearchEngine()
+        {
             var timer = new Stopwatch();
             timer.Start();
-            var index = DictionaryIndex<int>.Deserialize(file);
+            var index = LoadIndex();
             timer.Stop();
             Log($"Index loaded in {timer.Elapsed:g}");
 

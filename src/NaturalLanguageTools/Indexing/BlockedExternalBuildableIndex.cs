@@ -17,7 +17,6 @@ namespace NaturalLanguageTools.Indexing
         where T : IComparable<T>
     {
         private readonly BuildableIndexManager indexManager;
-        private readonly IFileSystem fileSystem;
         private readonly Stream stream;
 
         public BlockedExternalBuildableIndex(string basePath) : this(basePath, new FileSystem()) { }
@@ -25,8 +24,7 @@ namespace NaturalLanguageTools.Indexing
         public BlockedExternalBuildableIndex(string basePath, IFileSystem fileSystem)
         {
             this.indexManager = new BuildableIndexManager(basePath, fileSystem);
-            this.fileSystem = fileSystem;
-            string indexPath = Path.Combine(basePath, "corpus.index");
+            string indexPath = Path.Combine(basePath, ExternalIndexSerializer<T>.IndexFileName);
             this.stream = fileSystem.File.Open(indexPath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
         }
 
@@ -36,7 +34,7 @@ namespace NaturalLanguageTools.Indexing
             index.IndexTerm(id, term, position);
         }
 
-        public ISearchableIndex<T> Build()
+        public ExternalIndex<T> Build()
         {
             var composer = new ExternalIndexComposer<T>(stream);
 
@@ -130,6 +128,11 @@ namespace NaturalLanguageTools.Indexing
         public void Dispose()
         {
             indexManager.Dispose();
+        }
+
+        ISearchableIndex<T> IBuildableIndex<T>.Build()
+        {
+            return Build();
         }
 
         private struct IndexInfo

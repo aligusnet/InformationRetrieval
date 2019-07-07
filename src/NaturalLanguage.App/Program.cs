@@ -57,6 +57,7 @@ namespace NaturalLanguage.App
                 ProcessAndIndexWikipedia,
                 PrintIndexStats,
                 BuildExternalIndex,
+                PrintExternalIndexStats,
             };
 
             foreach (var action in actions)
@@ -100,7 +101,17 @@ namespace NaturalLanguage.App
             var processor = new WikitextProcessor();
             indexBuilder.IndexCorpus(processor.Transform(reader.Read()));
 
-            var index = buildableIndex.Build();
+            using var index = buildableIndex.Build();
+
+            var serializer = new ExternalIndexSerializer<int>();
+            serializer.Serialize(externalIndexPath, index);
+        }
+
+        static void PrintExternalIndexStats()
+        {
+            var serializer = new ExternalIndexSerializer<int>();
+            using var index = serializer.Deserialize(externalIndexPath);
+
             Console.WriteLine($"The: {index.Search(TextHasher.CalculateHashCode("the".AsSpan())).Count()}");
         }
 
