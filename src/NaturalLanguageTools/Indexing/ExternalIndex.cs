@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Corpus;
 
 namespace NaturalLanguageTools.Indexing
@@ -12,13 +11,13 @@ namespace NaturalLanguageTools.Indexing
     public class ExternalIndex<T> : ISearchableIndex<T>
     {
         private const long AllDocumentsOffset = 0;
-        private readonly IDictionary<T, long> offsets = new Dictionary<T, long>();
-        private readonly Stream postingsStream;
+        public IDictionary<T, long> Offsets { get; }
+        public Stream PostingsStream { get; }
 
         public ExternalIndex(IDictionary<T, long> offsets, Stream postingsStream)
         {
-            this.offsets = offsets;
-            this.postingsStream = postingsStream;
+            this.Offsets = offsets;
+            this.PostingsStream = postingsStream;
         }
 
         public IEnumerable<DocumentId> GetAll()
@@ -28,7 +27,7 @@ namespace NaturalLanguageTools.Indexing
 
         public int GetCount(T word)
         {
-            if (offsets.TryGetValue(word, out long offset))
+            if (Offsets.TryGetValue(word, out long offset))
             {
                 return ReadCount(offset);
             }
@@ -43,7 +42,7 @@ namespace NaturalLanguageTools.Indexing
 
         public IEnumerable<DocumentId> Search(T word)
         {
-            if (offsets.TryGetValue(word, out long offset))
+            if (Offsets.TryGetValue(word, out long offset))
             {
                 return ReadPostings(offset);
             }
@@ -53,14 +52,14 @@ namespace NaturalLanguageTools.Indexing
 
         private IEnumerable<DocumentId> ReadPostings(long offset)
         {
-            postingsStream.Seek(offset, SeekOrigin.Begin);
-            return NaivePostingsSerializer.Deserialize(postingsStream).Select(id => new DocumentId(id));
+            PostingsStream.Seek(offset, SeekOrigin.Begin);
+            return NaivePostingsSerializer.Deserialize(PostingsStream);
         }
 
         private int ReadCount(long offset)
         {
-            postingsStream.Seek(offset, SeekOrigin.Begin);
-            return NaivePostingsSerializer.DeserializeCount(postingsStream);
+            PostingsStream.Seek(offset, SeekOrigin.Begin);
+            return NaivePostingsSerializer.DeserializeCount(PostingsStream);
         }
     }
 }
