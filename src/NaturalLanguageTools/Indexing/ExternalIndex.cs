@@ -8,7 +8,7 @@ namespace NaturalLanguageTools.Indexing
     /// <summary>
     /// Index that stores data on disk
     /// </summary>
-    public class ExternalIndex<T> : ISearchableIndex<T>
+    public class ExternalIndex<T> : ISearchableIndex<T>, IDisposable
     {
         private const long AllDocumentsOffset = 0;
         public IDictionary<T, long> Offsets { get; }
@@ -60,6 +60,11 @@ namespace NaturalLanguageTools.Indexing
         {
             PostingsStream.Seek(offset, SeekOrigin.Begin);
             return NaivePostingsSerializer.DeserializeCount(PostingsStream);
+        }
+
+        public void Dispose()
+        {
+            this.PostingsStream.Dispose();
         }
     }
 }
