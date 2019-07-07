@@ -31,6 +31,12 @@ namespace NaturalLanguageTools.Utility
 
         public int Count { get; private set; }
 
+        public void Clear()
+        {
+            Count = 0;
+            chain.Clear();
+        }
+
         public IEnumerator<T> GetEnumerator()
         {
             foreach (var node in chain)
