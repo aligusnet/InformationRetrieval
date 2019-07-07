@@ -26,6 +26,7 @@ namespace NaturalLanguage.App
         static readonly string wordCountsPath = Path.Combine(basePath, "word_counts.json");
         static readonly string indexPath = Path.Combine(basePath, "index.bin");
         static readonly string dawgIndexPath = Path.Combine(basePath, "dawg_index.bin");
+        static readonly string externalIndexPath = Path.Combine(basePath, "external_index");
 
         static readonly IDocumentDataSerializer<string> stringDataSerializer = new StringDocumentDataSerializer();
         static readonly IDocumentDataSerializer<IEnumerable<string>> tokenizedDataSerializer = new TokenizedDocumentDataSerializer();
@@ -54,6 +55,8 @@ namespace NaturalLanguage.App
                 HashWikipedia,
                 IndexWikipedia,
                 ProcessAndIndexWikipedia,
+                PrintIndexStats,
+                BuildExternalIndex,
             };
 
             foreach (var action in actions)
@@ -85,6 +88,20 @@ namespace NaturalLanguage.App
             Console.WriteLine("Serializing index...");
             using var file = File.Create(indexPath);
             index.Serialize(file);
+        }
+
+        static void BuildExternalIndex()
+        {
+            PrepareOutputDirectory(externalIndexPath);
+
+            var reader = new CorpusZipReader<IList<char>>(wikiPath, charDataSerializer);
+            var buildableIndex = new BlockedExternalBuildableIndex<int>(externalIndexPath);
+            var indexBuilder = new IndexBuilder<int, IEnumerable<int>>(buildableIndex);
+            var processor = new WikitextProcessor();
+            indexBuilder.IndexCorpus(processor.Transform(reader.Read()));
+
+            var index = buildableIndex.Build();
+            Console.WriteLine($"The: {index.Search(TextHasher.CalculateHashCode("the".AsSpan())).Count()}");
         }
 
         static void BuildDawgIndex()
