@@ -2,7 +2,7 @@ pool:
   vmImage: 'windows-2019'
 
 variables:
-  solution: 'src/NaturalLangugeTools.sln'
+  solution: 'src/InformationRetrieval.sln'
   buildConfiguration: 'Release'
 
 steps:
