@@ -1,6 +1,6 @@
 # Information Retrieval
 
-[![Build Status](https://dev.azure.com/aligusnet/NaturalLanguageTools/_apis/build/status/aligusnet.NaturalLanguageTools?branchName=master)](https://dev.azure.com/aligusnet/NaturalLanguageTools/_build/latest?definitionId=2&branchName=master)
+[![Build Status](https://dev.azure.com/aligusnet/InformationRetrieval/_apis/build/status/aligusnet.InformationRetrieval?branchName=master)](https://dev.azure.com/aligusnet/InformationRetrieval/_build/latest?definitionId=3&branchName=master)
 
 ## Definitions
 
@@ -17,7 +17,7 @@ The project defines the way how the collection of documents is organized in the 
   * _BlockId_ is a unique identifier of the document's block and
   * _LocalId_ is a unique identifier inside the _block_.
 
-### NaturalLanguageTools
+### InformationRetrieval
 
 The projects defines a number of types to process text documents organized in corpus.
 
