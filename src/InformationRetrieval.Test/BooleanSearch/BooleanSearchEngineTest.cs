@@ -4,6 +4,7 @@ using System.Linq;
 using Xunit;
 
 using InformationRetrieval.BooleanSearch;
+using InformationRetrieval.Indexing.InMemory;
 using Corpus;
 
 using InformationRetrieval.Test.Indexing;
@@ -15,7 +16,7 @@ namespace InformationRetrieval.Test.BooleanSearch
         [Fact]
         public void TermSearchTest()
         {
-            var index = IndexHelper.CreateDictionaryIndex();
+            var index = CreateDictionaryIndex();
             var engine = new BooleanSearchEngine<string>(index, s => s.ToLower());
 
             foreach (var kv in IndexHelper.Results)
@@ -28,7 +29,7 @@ namespace InformationRetrieval.Test.BooleanSearch
         [Fact]
         public void OperatorAndSearchTest()
         {
-            var index = IndexHelper.CreateDictionaryIndex();
+            var index = CreateDictionaryIndex();
             var engine = new BooleanSearchEngine<string>(index, s => s.ToLower());
 
             var tests = new List<(BooleanQuery Query, DocumentId[] Result)>
@@ -51,7 +52,7 @@ namespace InformationRetrieval.Test.BooleanSearch
         [Fact]
         public void OperatorOrSearchTest()
         {
-            var index = IndexHelper.CreateDictionaryIndex();
+            var index = CreateDictionaryIndex();
             var engine = new BooleanSearchEngine<string>(index, s => s.ToLower());
 
             var tests = new List<(BooleanQuery Query, DocumentId[] Result)>
@@ -72,7 +73,7 @@ namespace InformationRetrieval.Test.BooleanSearch
         [Fact]
         public void OperatorNotSearchTest()
         {
-            var index = IndexHelper.CreateDictionaryIndex();
+            var index = CreateDictionaryIndex();
             var engine = new BooleanSearchEngine<string>(index, s => s.ToLower());
 
             var tests = new List<(BooleanQuery Query, DocumentId[] Result)>
@@ -87,6 +88,16 @@ namespace InformationRetrieval.Test.BooleanSearch
             {
                 Assert.Equal(test.Result, engine.ExecuteQuery(BooleanQuery.CreateNot(test.Query)).ToArray());
             }
+        }
+
+        private static DictionaryIndex<string> CreateDictionaryIndex()
+            => CreateDictionaryIndex(IndexHelper.GetTestSentenceBlocks());
+
+        public static DictionaryIndex<string> CreateDictionaryIndex(string[][] corpus)
+        {
+            var index = new DictionaryIndex<string>(rareWordThreshold: 3);
+            IndexHelper.BuildIndex(index, corpus);
+            return index;
         }
     }
 }

@@ -2,9 +2,9 @@
 
 using Xunit;
 
-using InformationRetrieval.Indexing;
+using InformationRetrieval.Indexing.InMemory;
 
-namespace InformationRetrieval.Test.Indexing
+namespace InformationRetrieval.Test.Indexing.InMemory
 {
     public class DictionaryIndexUnitTests : IndexUnitTestsBase<DictionaryIndex<string>>
     {
@@ -23,6 +23,10 @@ namespace InformationRetrieval.Test.Indexing
         }
 
         protected override DictionaryIndex<string> CreateIndex(string[][] corpus)
-            => IndexHelper.CreateDictionaryIndex(corpus);
+        {
+            var index = new DictionaryIndex<string>(rareWordThreshold: 3);
+            IndexHelper.BuildIndex(index, corpus);
+            return index;
+        }
     }
 }

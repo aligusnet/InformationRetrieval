@@ -7,6 +7,8 @@ using System.Linq;
 using Corpus;
 using InformationRetrieval;
 using InformationRetrieval.Indexing;
+using InformationRetrieval.Indexing.External;
+using InformationRetrieval.Indexing.InMemory;
 using InformationRetrieval.Tokenizers;
 using InformationRetrieval.Transformers;
 using InformationRetrieval.Utility;

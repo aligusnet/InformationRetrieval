@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace InformationRetrieval.Indexing
+﻿namespace InformationRetrieval.Indexing.External
 {
     public interface IExternalBuildableIndex<T> : IBuildableIndex<T>
     {

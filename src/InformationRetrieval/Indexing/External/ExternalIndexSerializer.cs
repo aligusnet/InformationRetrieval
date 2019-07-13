@@ -4,7 +4,7 @@ using System.IO.Abstractions;
 
 using ProtoBuf;
 
-namespace InformationRetrieval.Indexing
+namespace InformationRetrieval.Indexing.External
 {
     public class ExternalIndexSerializer<T>
     {

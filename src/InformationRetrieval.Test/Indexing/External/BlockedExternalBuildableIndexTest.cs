@@ -2,10 +2,10 @@
 using System.Linq;
 using Xunit;
 
-using InformationRetrieval.Indexing;
+using InformationRetrieval.Indexing.External;
 using Corpus;
 
-namespace InformationRetrieval.Test.Indexing
+namespace InformationRetrieval.Test.Indexing.External
 {
     public class BlockedExternalBuildableIndexTest
     {

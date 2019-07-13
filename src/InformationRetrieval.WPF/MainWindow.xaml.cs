@@ -18,6 +18,8 @@ using System.Diagnostics;
 using Corpus;
 using InformationRetrieval.BooleanSearch;
 using InformationRetrieval.Indexing;
+using InformationRetrieval.Indexing.External;
+using InformationRetrieval.Indexing.InMemory;
 using InformationRetrieval.Utility;
 
 namespace InformationRetrieval.WPF

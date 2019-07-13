@@ -5,7 +5,7 @@ using ProtoBuf;
 
 using Corpus;
 
-namespace InformationRetrieval.Indexing
+namespace InformationRetrieval.Indexing.PostingsList
 {
     /// <summary>
     /// Compressed Postings List.

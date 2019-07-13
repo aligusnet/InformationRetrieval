@@ -6,7 +6,7 @@ using System.Linq;
 using Corpus;
 using InformationRetrieval.Utility;
 
-namespace InformationRetrieval.Indexing
+namespace InformationRetrieval.Indexing.External
 {
     /// <summary>
     /// Buildable ExternalIndex that able to index the corpus block by block

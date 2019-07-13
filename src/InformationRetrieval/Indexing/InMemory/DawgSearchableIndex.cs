@@ -1,13 +1,15 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
-using System.Collections.Generic;
-using ProtoBuf;
 
 using DawgSharp;
-using Corpus;
-using System.IO.Compression;
+using ProtoBuf;
 
-namespace InformationRetrieval.Indexing
+using Corpus;
+using InformationRetrieval.Indexing.PostingsList;
+
+namespace InformationRetrieval.Indexing.InMemory
 {
     public class DawgSearchableIndex : ISearchableIndex<string>
     {

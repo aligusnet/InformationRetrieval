@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using Corpus;
 using System.IO;
 using System.IO.Compression;
-using ProtoBuf;
 using System.Linq;
+using ProtoBuf;
 
-namespace InformationRetrieval.Indexing
+using Corpus;
+using InformationRetrieval.Indexing.PostingsList;
+
+namespace InformationRetrieval.Indexing.InMemory
 {
     /// <summary>
     /// In-memory index,

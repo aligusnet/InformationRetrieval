@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Corpus;
 
-namespace InformationRetrieval.Indexing
+namespace InformationRetrieval.Indexing.External
 {
     public class DictonaryBasedExternalBuildableIndex<T> : IExternalBuildableIndex<T>
     {

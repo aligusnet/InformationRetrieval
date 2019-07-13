@@ -3,24 +3,25 @@ using System.Linq;
 
 using Xunit;
 
-using InformationRetrieval.Indexing;
+using InformationRetrieval.Indexing.External;
 using Corpus;
 
-namespace InformationRetrieval.Test.Indexing
+
+namespace InformationRetrieval.Test.Indexing.External
 {
-    public class DictionaryBasedExternalBuildableIndexTests : IndexUnitTestsBase<ExternalIndex<string>>
+    public class SortBasedExternalBuildableIndexTests : IndexUnitTestsBase<ExternalIndex<string>>
     {
         [Fact]
         public void ExternalIndexBuildTest()
         {
             var stream = new MemoryStream();
-            var buildableIndex = new DictonaryBasedExternalBuildableIndex<string>(stream);
+            var buildableIndex = new SortBasedExternalBuildableIndex<string>(stream);
 
             var docs = new (DocumentId Id, string[] Text)[]
             {
+                (new DocumentId(2), "d e f a".Split()),
                 (new DocumentId(0), "a b c d".Split()),
                 (new DocumentId(1), "e e f d".Split()),
-                (new DocumentId(2), "d e f a".Split()),
             };
 
             foreach (var doc in docs)
@@ -52,7 +53,7 @@ namespace InformationRetrieval.Test.Indexing
         protected override ExternalIndex<string> CreateIndex(string[][] corpus)
         {
             var stream = new MemoryStream();
-            var buildableIndex = new DictonaryBasedExternalBuildableIndex<string>(stream);
+            var buildableIndex = new SortBasedExternalBuildableIndex<string>(stream);
             IndexHelper.BuildIndex(buildableIndex, corpus);
             return buildableIndex.BuildExternalIndex();
         }

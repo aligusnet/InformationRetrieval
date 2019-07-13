@@ -1,7 +1,8 @@
 ﻿using Corpus;
 using DawgSharp;
+using InformationRetrieval.Indexing.PostingsList;
 
-namespace InformationRetrieval.Indexing
+namespace InformationRetrieval.Indexing.InMemory
 {
     public class DawgBuildableIndex : IBuildableIndex<string>
     {

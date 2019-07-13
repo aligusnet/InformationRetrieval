@@ -1,10 +1,11 @@
-﻿using Corpus;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace InformationRetrieval.Indexing
+using Corpus;
+
+namespace InformationRetrieval.Indexing.PostingsList
 {
     public class PostingsListWriter : IDisposable
     {

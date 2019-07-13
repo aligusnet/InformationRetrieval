@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 using Corpus;
+using InformationRetrieval.Indexing.PostingsList;
 
-namespace InformationRetrieval.Indexing
+namespace InformationRetrieval.Indexing.External
 {
     /// <summary>
     ///  Compose External Index using precomputed postings lists.

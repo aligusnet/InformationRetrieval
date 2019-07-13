@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using Corpus;
+using InformationRetrieval.Indexing.PostingsList;
 
-namespace InformationRetrieval.Indexing
+namespace InformationRetrieval.Indexing.External
 {
     /// <summary>
     /// Index that stores data on disk

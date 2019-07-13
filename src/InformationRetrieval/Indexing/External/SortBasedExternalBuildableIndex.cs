@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using Corpus;
 
-namespace InformationRetrieval.Indexing
+namespace InformationRetrieval.Indexing.External
 {
     public class SortBasedExternalBuildableIndex<T> : IExternalBuildableIndex<T>
     {

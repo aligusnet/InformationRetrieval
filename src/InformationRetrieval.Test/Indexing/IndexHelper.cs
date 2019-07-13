@@ -78,15 +78,5 @@ namespace InformationRetrieval.Test.Indexing
                 }
             }
         }
-
-        public static DictionaryIndex<string> CreateDictionaryIndex()
-            => CreateDictionaryIndex(GetTestSentenceBlocks());
-
-        public static DictionaryIndex<string> CreateDictionaryIndex(string[][] corpus)
-        {
-            var index = new DictionaryIndex<string>(rareWordThreshold: 3);
-            IndexHelper.BuildIndex(index, corpus);
-            return index;
-        }
     }
 }

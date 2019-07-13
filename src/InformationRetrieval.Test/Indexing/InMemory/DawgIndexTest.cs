@@ -1,10 +1,10 @@
 ﻿using Xunit;
 using DawgSharp;
 
-using InformationRetrieval.Indexing;
+using InformationRetrieval.Indexing.InMemory;
 using System.IO;
 
-namespace InformationRetrieval.Test.Indexing
+namespace InformationRetrieval.Test.Indexing.InMemory
 {
     public class DawgBuildableIndexUnitTests : IndexUnitTestsBase<DawgSearchableIndex>
     {
