@@ -17,23 +17,31 @@ namespace InformationRetrieval.Indexing.PostingsList
         private const int DefaultCapacity = 8;
 
         [ProtoMember(1)]
-        private readonly IList<DocumentIdRangeBlock> list = new List<DocumentIdRangeBlock>(DefaultCapacity);
+        public IList<DocumentIdRangeBlock> Blocks { get; }
 
         [ProtoMember(2)]
-        public int Count { get; private set; } = 0;
+        public int Count { get; private set; }
+
+        public RangePostingsList() : this(0, new List<DocumentIdRangeBlock>(DefaultCapacity)) { }
+
+        public RangePostingsList(int count, IList<DocumentIdRangeBlock> blocks)
+        {
+            this.Count = count;
+            this.Blocks = blocks;
+        }
 
         public void Add(DocumentId id)
         {
             DocumentIdRangeBlock block;
 
-            if (list.Count == 0 || list[^1].BlockId != id.BlockId)
+            if (Blocks.Count == 0 || Blocks[^1].BlockId != id.BlockId)
             {
                 block = new DocumentIdRangeBlock(id.BlockId);
-                list.Add(block);
+                Blocks.Add(block);
             }
             else
             {
-                block = list[^1];
+                block = Blocks[^1];
             }
 
             if (block.Add(id.LocalId)) Count++;
@@ -46,7 +54,7 @@ namespace InformationRetrieval.Indexing.PostingsList
 
         public IEnumerator<DocumentId> GetEnumerator()
         {
-            foreach (var block in list)
+            foreach (var block in Blocks)
             {
                 foreach (var r in block.Ranges)
                 {
@@ -97,14 +105,14 @@ namespace InformationRetrieval.Indexing.PostingsList
         public IList<uint> Ranges { get; }
 
         // for protobuf deserialization
-        private DocumentIdRangeBlock() : this(0)
-        {
-        }
+        private DocumentIdRangeBlock() : this(0) { }
 
-        public DocumentIdRangeBlock(ushort id)
+        public DocumentIdRangeBlock(ushort id) : this(id, new List<uint>(DefaultCapacity)) { }
+
+        public DocumentIdRangeBlock(ushort id, IList<uint> ranges)
         {
             BlockId = id;
-            Ranges = new List<uint>(DefaultCapacity);
+            Ranges = ranges;
         }
 
         public bool Add(ushort localId)
