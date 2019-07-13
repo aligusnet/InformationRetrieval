@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 
 using Corpus;
+using InformationRetrieval.Utility;
 
 namespace InformationRetrieval.Indexing.PostingsList
 {
@@ -25,6 +26,10 @@ namespace InformationRetrieval.Indexing.PostingsList
 
             switch (postings)
             {
+                case ListChain<DocumentId> chain:
+                    WriteChained(chain);
+                    break;
+
                 case RangePostingsList range:
                     writer.Write((byte)PostingsListType.Ranged);
                     WriteRanged(range.Blocks);
@@ -80,6 +85,84 @@ namespace InformationRetrieval.Indexing.PostingsList
             {
                 writer.Write(val);
             }
+        }
+
+        /// <summary>
+        /// This complicated logis below was implemented for the sake of performance only.
+        /// We can always process ListChain as uncompressed list of Ids.
+        /// </summary>
+        /// <param name="chain">List of chains</param>
+        private void WriteChained(ListChain<DocumentId> chain)
+        {
+            switch (DetectType(chain))
+            {
+                case PostingsListType.Ranged:
+                    writer.Write((byte)PostingsListType.Ranged);
+                    WriteChainedRanges(chain);
+                    break;
+
+                default:
+                    writer.Write((byte)PostingsListType.Uncompressed);
+                    WriteUncompressed(chain);
+                    break;
+            }
+        }
+
+        private static PostingsListType DetectType(ListChain<DocumentId> chain)
+        {
+            if (chain.Chains.Count > 0 && chain.Chains[0] is RangePostingsList)
+            {
+                return PostingsListType.Ranged;
+            }
+
+            if (chain.Chains.Count > 1 && chain.Chains[1] is RangePostingsList)
+            {
+                return PostingsListType.Ranged;
+            }
+
+            return PostingsListType.Uncompressed;
+        }
+
+        private void WriteChainedRanges(ListChain<DocumentId> chain)
+        {
+            var start = stream.Position;
+            ushort numBlocks = 0;
+            writer.Write(numBlocks);  // we do not know a number of block at the moment
+
+            foreach (var c in chain.Chains)
+            {
+                var range = GetRange(c);
+                foreach (var block in range.Blocks)
+                {
+                    WriteBlock(block);
+                    ++numBlocks;
+                }
+            }
+
+            var finish = stream.Position;
+
+            stream.Seek(start, SeekOrigin.Begin);
+            writer.Write(numBlocks);                // write correct number of blocks
+            stream.Seek(finish, SeekOrigin.Begin);  // go back
+        }
+
+        private RangePostingsList GetRange(IReadOnlyCollection<DocumentId> chain)
+        {
+            return chain switch
+            {
+                RangePostingsList range => range,
+                _ => ConvertToRange(chain)
+            };
+        }
+
+        private RangePostingsList ConvertToRange(IReadOnlyCollection<DocumentId> chain)
+        {
+            var newRange = new RangePostingsList();
+            foreach (var id in chain)
+            {
+                newRange.Add(id);
+            }
+            return newRange;
         }
     }
 }
