@@ -123,7 +123,7 @@ namespace InformationRetrieval.Indexing.InMemory
         {
             if (wordIndex.TryGetValue(word, out var blockList))
             {
-                return blockList.DocumentsCount;
+                return blockList.Count;
             }
 
             if (rareWordIndex.TryGetValue(word, out var ids))
@@ -136,7 +136,7 @@ namespace InformationRetrieval.Indexing.InMemory
 
         public int GetCount()
         {
-            return allDocuments.DocumentsCount;
+            return allDocuments.Count;
         }
 
         public DictionaryIndex<T> Build()

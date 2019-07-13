@@ -59,12 +59,12 @@ namespace InformationRetrieval.Indexing.InMemory
 
         public int GetCount(string word)
         {
-            return dawg[word]?.DocumentsCount ?? 0;
+            return dawg[word]?.Count ?? 0;
         }
 
         public int GetCount()
         {
-            return allDocuments.DocumentsCount;
+            return allDocuments.Count;
         }
     }
 }

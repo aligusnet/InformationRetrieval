@@ -12,7 +12,7 @@ namespace InformationRetrieval.Indexing.PostingsList
     /// Stores documents ids as ranges.
     /// </summary>
     [ProtoContract]
-    public class RangePostingsList : IEnumerable<DocumentId>
+    public class RangePostingsList : IReadOnlyCollection<DocumentId>
     {
         private const int DefaultCapacity = 8;
 
@@ -20,7 +20,7 @@ namespace InformationRetrieval.Indexing.PostingsList
         private readonly IList<DocumentIdRangeBlock> list = new List<DocumentIdRangeBlock>(DefaultCapacity);
 
         [ProtoMember(2)]
-        public int DocumentsCount { get; private set; } = 0;
+        public int Count { get; private set; } = 0;
 
         public void Add(DocumentId id)
         {
@@ -36,7 +36,7 @@ namespace InformationRetrieval.Indexing.PostingsList
                 block = list[^1];
             }
 
-            if (block.Add(id.LocalId)) DocumentsCount++;
+            if (block.Add(id.LocalId)) Count++;
         }
 
         public void Add(uint id)
