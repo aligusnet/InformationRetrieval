@@ -10,11 +10,13 @@ namespace InformationRetrieval.Test.Indexing.External
 {
     public class DictionaryBasedExternalBuildableIndexTests : IndexUnitTestsBase<ExternalIndex<string>>
     {
+        private const int RangeThreshold = 2;
+
         [Fact]
         public void ExternalIndexBuildTest()
         {
             var stream = new MemoryStream();
-            var buildableIndex = new DictonaryBasedExternalBuildableIndex<string>(stream);
+            var buildableIndex = new DictonaryBasedExternalBuildableIndex<string>(RangeThreshold, stream);
 
             var docs = new (DocumentId Id, string[] Text)[]
             {
@@ -52,7 +54,7 @@ namespace InformationRetrieval.Test.Indexing.External
         protected override ExternalIndex<string> CreateIndex(string[][] corpus)
         {
             var stream = new MemoryStream();
-            var buildableIndex = new DictonaryBasedExternalBuildableIndex<string>(stream);
+            var buildableIndex = new DictonaryBasedExternalBuildableIndex<string>(RangeThreshold, stream);
             IndexHelper.BuildIndex(buildableIndex, corpus);
             return buildableIndex.BuildExternalIndex();
         }

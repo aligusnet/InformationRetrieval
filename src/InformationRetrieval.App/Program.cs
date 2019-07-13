@@ -19,6 +19,7 @@ namespace NaturalLanguage.App
 {
     class Program
     {
+        private const int RangeThreshold = 5;
         static readonly string basePath = @"F:\wikipedia";
         static readonly string wikiDumpFilePath = Path.Combine(basePath, "enwiki-20190101-pages-articles-multistream.xml");
         static readonly string wikiPath = Path.Combine(basePath, "enwiki");
@@ -98,8 +99,8 @@ namespace NaturalLanguage.App
             PrepareOutputDirectory(externalIndexPath);
 
             var reader = new CorpusZipReader<IList<char>>(wikiPath, charDataSerializer);
-            var buildableIndex = new BlockedExternalBuildableIndex<int>(
-                DictonaryBasedExternalBuildableIndex<int>.CreateMethod, 
+            using var buildableIndex = new BlockedExternalBuildableIndex<int>(
+                DictonaryBasedExternalBuildableIndex<int>.GetCreateMethod(RangeThreshold), 
                 externalIndexPath);
             var indexBuilder = new IndexBuilder<int, IEnumerable<int>>(buildableIndex);
             var processor = new WikitextProcessor();
@@ -143,7 +144,7 @@ namespace NaturalLanguage.App
         static void IndexWikipedia()
         {
             var reader = new CorpusZipReader<int[]>(hashedPath, hashedDataSerializer);
-            var index = new DictionaryIndex<int>(rareWordThreshold: 5);
+            var index = new DictionaryIndex<int>(rareWordThreshold: RangeThreshold);
             var indexBuilder = new IndexBuilder<int, int[]>(index);
             indexBuilder.IndexCorpus(reader.Read());
 
