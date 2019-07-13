@@ -151,7 +151,7 @@ namespace InformationRetrieval.Indexing
         {
             private readonly string basePath;
             private readonly IFileSystem fileSystem;
-            private SortBasedExternalBuildableIndex<T>? currentIndex;
+            private IExternalBuildableIndex<T>? currentIndex;
             private ushort currentBlockId;
             private readonly IList<ExternalIndex<T>> indices;
 
@@ -207,7 +207,7 @@ namespace InformationRetrieval.Indexing
             {
                 if (currentIndex != null)
                 {
-                    var externalIndex = currentIndex.Build();
+                    var externalIndex = currentIndex.BuildExternalIndex();
                     indices.Add(externalIndex);
                     currentIndex = null;
                 }

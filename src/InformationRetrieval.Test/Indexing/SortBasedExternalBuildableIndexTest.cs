@@ -54,7 +54,7 @@ namespace InformationRetrieval.Test.Indexing
             var stream = new MemoryStream();
             var buildableIndex = new SortBasedExternalBuildableIndex<string>(stream);
             IndexHelper.BuildIndex(buildableIndex, corpus);
-            return buildableIndex.Build();
+            return buildableIndex.BuildExternalIndex();
         }
     }
 }

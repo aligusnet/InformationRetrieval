@@ -5,7 +5,7 @@ using Corpus;
 
 namespace InformationRetrieval.Indexing
 {
-    public class SortBasedExternalBuildableIndex<T> : IBuildableIndex<T>
+    public class SortBasedExternalBuildableIndex<T> : IExternalBuildableIndex<T>
     {
         private readonly IList<(DocumentId Id, T Term)> tokens;
         private readonly Stream postingsStream;
@@ -16,7 +16,7 @@ namespace InformationRetrieval.Indexing
             this.postingsStream = postingsStream;
         }
 
-        public ExternalIndex<T> Build()
+        public ExternalIndex<T> BuildExternalIndex()
         {
             var composer = new ExternalIndexComposer<T>(postingsStream);
 
@@ -39,9 +39,9 @@ namespace InformationRetrieval.Indexing
             tokens.Add((docId, term));
         }
 
-        ISearchableIndex<T> IBuildableIndex<T>.Build()
+        public ISearchableIndex<T> Build()
         {
-            return Build();
+            return BuildExternalIndex();
         }
     }
 }
