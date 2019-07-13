@@ -10,23 +10,23 @@ namespace InformationRetrieval.Utility
     /// <typeparam name="T">The type of elements in the collection.</typeparam>
     public class ListChain<T> : IEnumerable<T>, IReadOnlyCollection<T>
     {
-        private readonly List<IList<T>> chain;
+        private readonly List<IReadOnlyCollection<T>> chain;
 
         public ListChain(): this(0) { }
 
         public ListChain(int capacity)
         {
-            chain = new List<IList<T>>(capacity);
+            chain = new List<IReadOnlyCollection<T>>(capacity);
             Count = 0;
         }
 
-        public void Add(IList<T> node)
+        public void Add(IReadOnlyCollection<T> node)
         {
             chain.Add(node);
             Count += node.Count;
         }
 
-        public void Sort(Comparison<IList<T>> comparison) =>
+        public void Sort(Comparison<IReadOnlyCollection<T>> comparison) =>
             chain.Sort(comparison);
 
         public int Count { get; private set; }

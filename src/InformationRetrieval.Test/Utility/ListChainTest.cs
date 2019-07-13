@@ -33,7 +33,7 @@ namespace InformationRetrieval.Test.Utility
                 new[] { 3 }
             };
 
-            chain.Sort((a, b) => a[0].CompareTo(b[0]));
+            chain.Sort((a, b) => a.First().CompareTo(b.First()));
 
             Assert.Equal(7, chain.Count);
             Assert.Equal(new[] { 1, 2, 3, 4, 5, 6, 7 }, chain.ToArray());
