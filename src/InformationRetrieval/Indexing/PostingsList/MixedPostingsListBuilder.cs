@@ -15,13 +15,13 @@ namespace InformationRetrieval.Indexing.PostingsList
         private readonly int rangeThreshold;
         public RangePostingsList AllDocuments;
         public IDictionary<T, RangePostingsList> RangedPostingsLists;
-        public IDictionary<T, IList<DocumentId>> UncompressedPostingsLists;
+        public IDictionary<T, List<DocumentId>> UncompressedPostingsLists;
 
         public MixedPostingsListBuilder(int rangeThreshold)
         {
             AllDocuments = new RangePostingsList();
             RangedPostingsLists = new Dictionary<T, RangePostingsList>();
-            UncompressedPostingsLists = new Dictionary<T, IList<DocumentId>>();
+            UncompressedPostingsLists = new Dictionary<T, List<DocumentId>>();
             this.rangeThreshold = rangeThreshold;
         }
 

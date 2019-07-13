@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
 
 using DawgSharp;
 using ProtoBuf;
@@ -22,14 +22,14 @@ namespace InformationRetrieval.Indexing.InMemory
             this.allDocuments = allDocuments;
         }
 
-        public IEnumerable<DocumentId> GetAll()
+        public IReadOnlyCollection<DocumentId> GetAll()
         {
             return allDocuments;
         }
 
-        public IEnumerable<DocumentId> Search(string word)
+        public IReadOnlyCollection<DocumentId> Search(string word)
         {
-            return dawg[word] ?? Enumerable.Empty<DocumentId>();
+            return (IReadOnlyCollection<DocumentId>)dawg[word] ?? Array.Empty<DocumentId>();
         }
 
         public void Serialize(Stream stream)

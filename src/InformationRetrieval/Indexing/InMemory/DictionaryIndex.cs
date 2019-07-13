@@ -7,6 +7,7 @@ using ProtoBuf;
 
 using Corpus;
 using InformationRetrieval.Indexing.PostingsList;
+using InformationRetrieval.Utility;
 
 namespace InformationRetrieval.Indexing.InMemory
 {
@@ -87,7 +88,7 @@ namespace InformationRetrieval.Indexing.InMemory
             wordIndex.Add(word, list);
         }
 
-        public IEnumerable<DocumentId> Search(T word)
+        public IReadOnlyCollection<DocumentId> Search(T word)
         {
             if (wordIndex.TryGetValue(word, out var blockList))
             {
@@ -96,13 +97,13 @@ namespace InformationRetrieval.Indexing.InMemory
 
             if (rareWordIndex.TryGetValue(word, out var ids))
             {
-                return ids.Select(id => new DocumentId(id));
+                return new ReadOnlyCollection<DocumentId>(ids.Count, ids.Select(id => new DocumentId(id)));
             }
 
             return Array.Empty<DocumentId>();
         }
 
-        public IEnumerable<DocumentId> GetAll()
+        public IReadOnlyCollection<DocumentId> GetAll()
         {
             return allDocuments;
         }

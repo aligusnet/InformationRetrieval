@@ -44,10 +44,10 @@ namespace InformationRetrieval.Indexing.External
 
             AddAllDocs(composer, indices);
 
-            var minHeapComparer = Comparer<IEnumerator<(T Term, DocumentId[] PostingsList)>>.Create(
+            var minHeapComparer = Comparer<IEnumerator<(T Term, IReadOnlyCollection<DocumentId> PostingsList)>>.Create(
                 (x, y) => ComparePostingLists(y.Current, x.Current));
 
-            var queue = new PriorityQueue<IEnumerator<(T Term, DocumentId[] PostingsList)>>(
+            var queue = new PriorityQueue<IEnumerator<(T Term, IReadOnlyCollection<DocumentId> PostingsList)>>(
                 indices.Length,
                 minHeapComparer);
 
@@ -105,7 +105,7 @@ namespace InformationRetrieval.Indexing.External
             composer.AddAllDocuments(allDocs);
         }
 
-        private static int ComparePostingLists((T Term, DocumentId[] PostingsList) lhs, (T Term, DocumentId[] PostingsList) rhs)
+        private static int ComparePostingLists((T Term, IReadOnlyCollection<DocumentId> PostingsList) lhs, (T Term, IReadOnlyCollection<DocumentId> PostingsList) rhs)
         {
             int cmpTerms = lhs.Term.CompareTo(rhs.Term);
             if (cmpTerms != 0)
@@ -114,15 +114,15 @@ namespace InformationRetrieval.Indexing.External
             }
             else
             {
-                return lhs.PostingsList[0].CompareTo(rhs.PostingsList[0]);
+                return lhs.PostingsList.First().CompareTo(rhs.PostingsList.First());
             }
         }
 
-        private IEnumerator<(T Term, DocumentId[] PostingsList)> ReadIndex(ExternalIndex<T> index)
+        private IEnumerator<(T Term, IReadOnlyCollection<DocumentId> PostingsList)> ReadIndex(ExternalIndex<T> index)
         {
             foreach (var pair in index.Offsets.OrderBy(p => p.Key))
             {
-                yield return (pair.Key, index.Search(pair.Key).ToArray());
+                yield return (pair.Key, index.Search(pair.Key));
             }
         }
 

@@ -24,7 +24,7 @@ namespace InformationRetrieval.Indexing.External
             reader = new PostingsListReader(postingsStream, leaveOpen: true);
         }
 
-        public IEnumerable<DocumentId> GetAll()
+        public IReadOnlyCollection<DocumentId> GetAll()
         {
             return ReadPostings(AllDocumentsOffset);
         }
@@ -44,7 +44,7 @@ namespace InformationRetrieval.Indexing.External
             return ReadCount(AllDocumentsOffset);
         }
 
-        public IEnumerable<DocumentId> Search(T word)
+        public IReadOnlyCollection<DocumentId> Search(T word)
         {
             if (Offsets.TryGetValue(word, out long offset))
             {
@@ -54,7 +54,7 @@ namespace InformationRetrieval.Indexing.External
             return Array.Empty<DocumentId>();
         }
 
-        private IEnumerable<DocumentId> ReadPostings(long offset)
+        private IReadOnlyCollection<DocumentId> ReadPostings(long offset)
         {
             return reader.Read(offset);
         }

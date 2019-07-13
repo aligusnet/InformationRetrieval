@@ -27,7 +27,7 @@ namespace InformationRetrieval.Test.Indexing.PostingsList
                 return this;
             }
 
-            public IEnumerable<DocumentId> GetAll()
+            public IReadOnlyCollection<DocumentId> GetAll()
             {
                 return builder.AllDocuments;
             }
@@ -57,7 +57,7 @@ namespace InformationRetrieval.Test.Indexing.PostingsList
                 builder.Add(id, term);
             }
 
-            public IEnumerable<DocumentId> Search(string word)
+            public IReadOnlyCollection<DocumentId> Search(string word)
             {
                 if (builder.RangedPostingsLists.TryGetValue(word, out var blockList))
                 {
