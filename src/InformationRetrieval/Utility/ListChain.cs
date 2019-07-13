@@ -48,6 +48,8 @@ namespace InformationRetrieval.Utility
             }
         }
 
+        public IReadOnlyList<IReadOnlyCollection<T>> Chains => chain;
+
         IEnumerator IEnumerable.GetEnumerator() =>
             GetEnumerator();
     }

@@ -21,6 +21,7 @@ namespace InformationRetrieval.Test.Utility
 
             Assert.Equal(7, chain.Count);
             Assert.Equal(new[] { 4, 5, 6, 7, 1, 2, 3 }, chain.ToArray());
+            Assert.Equal(3, chain.Chains.Count);
         }
 
         [Fact]
