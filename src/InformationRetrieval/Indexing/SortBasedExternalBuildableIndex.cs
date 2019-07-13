@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Corpus;
@@ -7,6 +8,9 @@ namespace InformationRetrieval.Indexing
 {
     public class SortBasedExternalBuildableIndex<T> : IExternalBuildableIndex<T>
     {
+        public static Func<Stream, IExternalBuildableIndex<T>> CreateMethod =
+            s => new SortBasedExternalBuildableIndex<T>(s);
+
         private readonly IList<(DocumentId Id, T Term)> tokens;
         private readonly Stream postingsStream;
 

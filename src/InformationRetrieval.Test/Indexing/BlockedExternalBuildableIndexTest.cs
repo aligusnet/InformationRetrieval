@@ -30,7 +30,9 @@ namespace InformationRetrieval.Test.Indexing
             var fileSystem = new MockFileSystem();
             fileSystem.Directory.CreateDirectory(path);
 
-            var buildableIndex = new BlockedExternalBuildableIndex<string>(path, fileSystem);
+            var buildableIndex = new BlockedExternalBuildableIndex<string>(
+                SortBasedExternalBuildableIndex<string>.CreateMethod, 
+                path, fileSystem);
 
             foreach (var doc in docs)
             {

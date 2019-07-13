@@ -19,11 +19,12 @@ namespace InformationRetrieval.Indexing
         private readonly BuildableIndexManager indexManager;
         private readonly Stream stream;
 
-        public BlockedExternalBuildableIndex(string basePath) : this(basePath, new FileSystem()) { }
+        public BlockedExternalBuildableIndex(Func<Stream, IExternalBuildableIndex<T>> createIndex, string basePath) : 
+            this(createIndex, basePath, new FileSystem()) { }
 
-        public BlockedExternalBuildableIndex(string basePath, IFileSystem fileSystem)
+        public BlockedExternalBuildableIndex(Func<Stream, IExternalBuildableIndex<T>> createIndex, string basePath, IFileSystem fileSystem)
         {
-            this.indexManager = new BuildableIndexManager(basePath, fileSystem);
+            this.indexManager = new BuildableIndexManager(createIndex, basePath, fileSystem);
             string indexPath = Path.Combine(basePath, ExternalIndexSerializer<T>.IndexFileName);
             this.stream = fileSystem.File.Open(indexPath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
         }
@@ -154,27 +155,29 @@ namespace InformationRetrieval.Indexing
             private IExternalBuildableIndex<T>? currentIndex;
             private ushort currentBlockId;
             private readonly IList<ExternalIndex<T>> indices;
+            private readonly Func<Stream, IExternalBuildableIndex<T>> createIndex;
 
-            public BuildableIndexManager(string basePath, IFileSystem fileSystem)
+            public BuildableIndexManager(Func<Stream, IExternalBuildableIndex<T>> createIndex, string basePath, IFileSystem fileSystem)
             {
                 var dirName = $"run_{DateTime.Now:yyyy-MM-dd_HHmmss.FFFFFFF}";
                 this.basePath = Path.Combine(basePath, dirName);
                 this.fileSystem = fileSystem;
                 this.indices = new List<ExternalIndex<T>>();
                 this.currentBlockId = 0;
+                this.createIndex = createIndex;
             }
 
             public IBuildableIndex<T> Get(ushort blockId)
             {
                 if (currentIndex == null)
                 {
-                    currentIndex = new SortBasedExternalBuildableIndex<T>(OpenIndexStrem(blockId));
+                    currentIndex = createIndex(OpenIndexStrem(blockId));
                     currentBlockId = blockId;
                 }
                 else if (currentBlockId != blockId)
                 {
                     Build();
-                    currentIndex = new SortBasedExternalBuildableIndex<T>(OpenIndexStrem(blockId));
+                    currentIndex = createIndex(OpenIndexStrem(blockId));
                     currentBlockId = blockId;
                 }
 

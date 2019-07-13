@@ -5,8 +5,11 @@ using Corpus;
 
 namespace InformationRetrieval.Indexing
 {
-    class DictonaryBasedExternalBuildableIndex<T> : IExternalBuildableIndex<T>
+    public class DictonaryBasedExternalBuildableIndex<T> : IExternalBuildableIndex<T>
     {
+        public static Func<Stream, IExternalBuildableIndex<T>> CreateMethod = 
+            s => new DictonaryBasedExternalBuildableIndex<T>(s);
+
         private readonly Stream postingsStream;
         private List<DocumentId> allDocuments;
         private Dictionary<T, List<DocumentId>> postingsLists;

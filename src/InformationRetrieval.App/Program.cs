@@ -96,7 +96,9 @@ namespace NaturalLanguage.App
             PrepareOutputDirectory(externalIndexPath);
 
             var reader = new CorpusZipReader<IList<char>>(wikiPath, charDataSerializer);
-            var buildableIndex = new BlockedExternalBuildableIndex<int>(externalIndexPath);
+            var buildableIndex = new BlockedExternalBuildableIndex<int>(
+                DictonaryBasedExternalBuildableIndex<int>.CreateMethod, 
+                externalIndexPath);
             var indexBuilder = new IndexBuilder<int, IEnumerable<int>>(buildableIndex);
             var processor = new WikitextProcessor();
             indexBuilder.IndexCorpus(processor.Transform(reader.Read()));
