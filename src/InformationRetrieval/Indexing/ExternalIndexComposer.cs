@@ -12,36 +12,30 @@ namespace InformationRetrieval.Indexing
     /// </summary>
     public class ExternalIndexComposer<T>
     {
-        private readonly Stream postingsStream;
+        private readonly PostingsListWriter writer;
         public IDictionary<T, long> Offsets { get; }
 
         public ExternalIndexComposer(Stream postingsStream)
         {
-            this.postingsStream = postingsStream;
+            writer = new PostingsListWriter(postingsStream);
             Offsets = new Dictionary<T, long>();
         }
 
         public long AddAllDocuments(IReadOnlyCollection<DocumentId> allDocs)
         {
-            long position = postingsStream.Position;
-            NaivePostingsSerializer.Serialize(postingsStream, allDocs);
-            return position;
+            return writer.Write(allDocs);
         }
 
         public long AddPostingsList(T term, IReadOnlyCollection<DocumentId> postingsList)
         {
-            long position = postingsStream.Position;
-            Offsets.Add(term, postingsStream.Position);
-            NaivePostingsSerializer.Serialize(postingsStream, postingsList);
+            long position = writer.Write(postingsList);
+            Offsets.Add(term, position);
             return position;
         }
 
         public ExternalIndex<T> Compose()
         {
-            postingsStream.Flush();
-            postingsStream.Seek(0, SeekOrigin.Begin);
-
-            return new ExternalIndex<T>(Offsets, postingsStream);
+            return new ExternalIndex<T>(Offsets, writer.Reset());
         }
     }
 }

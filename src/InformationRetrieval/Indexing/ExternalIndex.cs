@@ -14,10 +14,13 @@ namespace InformationRetrieval.Indexing
         public IDictionary<T, long> Offsets { get; }
         public Stream PostingsStream { get; }
 
+        private readonly PostingsListReader reader;
+
         public ExternalIndex(IDictionary<T, long> offsets, Stream postingsStream)
         {
-            this.Offsets = offsets;
-            this.PostingsStream = postingsStream;
+            Offsets = offsets;
+            PostingsStream = postingsStream;
+            reader = new PostingsListReader(postingsStream, leaveOpen: true);
         }
 
         public IEnumerable<DocumentId> GetAll()
@@ -52,19 +55,18 @@ namespace InformationRetrieval.Indexing
 
         private IEnumerable<DocumentId> ReadPostings(long offset)
         {
-            PostingsStream.Seek(offset, SeekOrigin.Begin);
-            return NaivePostingsSerializer.Deserialize(PostingsStream);
+            return reader.Read(offset);
         }
 
         private int ReadCount(long offset)
         {
-            PostingsStream.Seek(offset, SeekOrigin.Begin);
-            return NaivePostingsSerializer.DeserializeCount(PostingsStream);
+            return reader.ReadCount(offset);
         }
 
         public void Dispose()
         {
-            this.PostingsStream.Dispose();
+            reader.Dispose();
+            PostingsStream.Dispose();
         }
     }
 }
