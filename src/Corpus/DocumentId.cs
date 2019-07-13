@@ -39,6 +39,27 @@ namespace Corpus
             return new DocumentId(Convert.ToUInt32(hex, 16));
         }
 
+        public static bool operator ==(DocumentId lhs, DocumentId rhs)
+        {
+            return lhs.Id == rhs.Id;
+        }
+
+        public static bool operator !=(DocumentId lhs, DocumentId rhs)
+        {
+            return lhs.Id != rhs.Id;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is DocumentId id &&
+                   Id == id.Id;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Id);
+        }
+
         public static ushort ParseBlockId(string hex) => Convert.ToUInt16(hex, 16);
 
         public static ushort ParseLocalId(string hex) => Convert.ToUInt16(hex, 16);

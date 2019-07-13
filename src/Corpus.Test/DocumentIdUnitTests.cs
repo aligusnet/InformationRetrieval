@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 using Xunit;
 
@@ -81,6 +82,33 @@ namespace Corpus.Test
             {
                 Assert.Equal(docId.ToString(), dic[docId].ToString());
             }
+        }
+
+        [Fact]
+        public void DocumentIdEqualityTest()
+        {
+            var docId11a = new DocumentId(1, 1);
+            var docId11b = new DocumentId(1, 1);
+            var docId21a = new DocumentId(2, 1);
+
+            Assert.True(docId11a == docId11b);
+            Assert.False(docId11a != docId11b);
+
+            Assert.False(docId11a == docId21a);
+            Assert.True(docId11a != docId21a);
+
+            Assert.True(docId11a.Equals(docId11b));
+            Assert.False(docId11a.Equals(docId21a));
+
+            var hashSet = new HashSet<DocumentId>
+            {
+                docId11a,
+                docId11b,
+            };
+
+            Assert.Single(hashSet);
+            Assert.Contains(docId11b, hashSet);
+            Assert.DoesNotContain(docId21a, hashSet);
         }
     }
 }
