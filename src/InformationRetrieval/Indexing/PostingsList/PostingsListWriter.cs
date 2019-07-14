@@ -35,6 +35,11 @@ namespace InformationRetrieval.Indexing.PostingsList
                     WriteRanged(range.Blocks);
                     break;
 
+                case VarintPostingsList varint:
+                    writer.Write((byte)PostingsListType.Varint);
+                    WriteVarint(varint);
+                    break;
+
                 default:
                     writer.Write((byte)PostingsListType.Uncompressed);
                     WriteUncompressed(postings);
@@ -58,6 +63,13 @@ namespace InformationRetrieval.Indexing.PostingsList
         public void Dispose()
         {
             writer.Dispose();
+        }
+
+        private void WriteVarint(VarintPostingsList varint)
+        {
+            var data = varint.GetReadOnlySpan();
+            writer.Write(data.Length);
+            writer.Write(data);
         }
 
         private void WriteUncompressed(IReadOnlyCollection<DocumentId> postings)

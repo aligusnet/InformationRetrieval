@@ -3,6 +3,7 @@
     public enum PostingsListType : byte
     {
         Uncompressed,
-        Ranged
+        Ranged,
+        Varint
     };
 }
