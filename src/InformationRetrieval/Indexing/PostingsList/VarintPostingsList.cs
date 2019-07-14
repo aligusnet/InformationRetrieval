@@ -39,23 +39,26 @@ namespace InformationRetrieval.Indexing.PostingsList
 
         public int Count { get; private set; }
 
-        public void Add(DocumentId docId)
+        public void Add(uint id)
         {
             if (length + VarintEncoder.BufferLength >= data.Length)
             {
                 Resize(Math.Max(length + VarintEncoder.BufferLength, data.Length * 2));
             }
 
-            if (prevInserted > docId.Id)
+            if (prevInserted > id)
             {
                 throw new ArgumentException("DocumentIds are expected to be in non-decreasing order");
             }
 
-            uint docIdGap = docId.Id - prevInserted;
+            uint docIdGap = id - prevInserted;
             length += VarintEncoder.Encode(docIdGap, data.AsSpan(length));
-            prevInserted = docId.Id;
+            prevInserted = id;
             ++Count;
         }
+
+        public void Add(DocumentId docId)
+            => Add(docId.Id);
 
         public IEnumerator<DocumentId> GetEnumerator()
         {

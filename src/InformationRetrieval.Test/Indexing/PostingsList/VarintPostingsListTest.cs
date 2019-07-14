@@ -17,11 +17,7 @@ namespace InformationRetrieval.Test.Indexing.PostingsList
         {
             var postingsList = new VarintPostingsList()
             {
-                new DocumentId(1),
-                new DocumentId(2),
-                new DocumentId(11),
-                new DocumentId(15),
-                new DocumentId(119),
+                1, 2, 11, 15, 119
             };
 
             Assert.Equal(PostingsListTest.GetDocIds(1, 2, 11, 15, 119), postingsList.ToArray());
@@ -32,11 +28,7 @@ namespace InformationRetrieval.Test.Indexing.PostingsList
         {
             var postingsList = new VarintPostingsList()
             {
-                new DocumentId(1),
-                new DocumentId(2),
-                new DocumentId(11),
-                new DocumentId(15),
-                new DocumentId(119),
+                1, 2, 11, 15, 119
             };
 
             int size = postingsList.GetReadOnlySpan().Length;

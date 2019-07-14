@@ -57,6 +57,30 @@ namespace InformationRetrieval.Test.Indexing.PostingsList
         }
 
         [Fact]
+        public void VarintReadWriteTest()
+        {
+            var stream = new MemoryStream();
+
+            var postings = new VarintPostingsList()
+            {
+                0, 1, 2, 10, 11, 12, 13, 14, 15, 100, 111
+            };
+
+            using var writer = new PostingsListWriter(stream);
+            writer.Write(postings);
+
+            stream.Seek(0, SeekOrigin.Begin);
+
+            using var reader = new PostingsListReader(stream, leaveOpen: false);
+            var count = reader.ReadCount(0);
+            var deserialized = reader.Read(0);
+
+            Assert.Equal(postings.Count, count);
+            Assert.True(deserialized is VarintPostingsList);
+            Assert.Equal(postings, deserialized);
+        }
+
+        [Fact]
         public void ChainedRangeReadWriteTest()
         {
             var stream = new MemoryStream();

@@ -29,6 +29,9 @@ namespace InformationRetrieval.Indexing.PostingsList
                 case PostingsListType.Ranged:
                     return ReadRanged(length);
 
+                case PostingsListType.Varint:
+                    return ReadVarint(length);
+
                 default:
                     return ReadUmcompressed(length);
             }
@@ -43,6 +46,20 @@ namespace InformationRetrieval.Indexing.PostingsList
         public void Dispose()
         {
             reader.Dispose();
+        }
+
+        private VarintPostingsList ReadVarint(int count)
+        {
+            int length = reader.ReadInt32();
+            var buffer = new byte[length];
+
+            int readBytes = reader.Read(buffer, 0, length);
+            if (readBytes != length)
+            {
+                throw new Exception("Failed to read VarintPostingsList");
+            }
+
+            return new VarintPostingsList(buffer);
         }
 
         private IReadOnlyCollection<DocumentId> ReadUmcompressed(int length)
