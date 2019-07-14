@@ -5,9 +5,10 @@ namespace InformationRetrieval.Utility
 {
     public static class VarintEncoder
     {
+        public const int BufferLength = 10;
+
         public static int Encode(ulong n, Span<byte> output)
         {
-            const int BufferLength = 10;
             Span<byte> buffer = stackalloc byte[BufferLength];
             int pos = BufferLength;
             do

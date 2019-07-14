@@ -117,7 +117,7 @@ namespace InformationRetrieval.Test.Indexing.PostingsList
             Assert.Equal(chain, deserialized);
         }
 
-        private DocumentId[] GetDocIds(params uint[] ids)
+        public static DocumentId[] GetDocIds(params uint[] ids)
         {
             return ids.Select(id => new DocumentId(id)).ToArray();
         }
