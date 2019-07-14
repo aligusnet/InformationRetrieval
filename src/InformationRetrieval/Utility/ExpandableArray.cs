@@ -23,8 +23,27 @@ namespace InformationRetrieval.Utility
             buffer = capacity > 0 ? new T[capacity] : Array.Empty<T>();
         }
 
-        public int Length { get; private set; }
+        /// <summary>
+        /// Creates ExpandableArray from buffer.
+        /// ExpandableArray owns the buffer and can freely move it etc.
+        /// </summary>
+        /// <param name="buffer">The buffer</param>
+        public ExpandableArray(T[] buffer) : this (buffer, buffer.Length) { }
 
+        /// <summary>
+        /// Creates ExpandableArray from buffer.
+        /// ExpandableArray owns the buffer and can freely move it etc.
+        /// </summary>
+        /// <param name="buffer">The buffer</param>
+        /// <param name="length">The length</param>
+        public ExpandableArray(T[] buffer, int length)
+        {
+            Length = length;
+            this.buffer = buffer;
+        }
+
+        public int Length { get; private set; }
+         
         public T[] Buffer { get => buffer; }
 
         public int Count => Length;
@@ -51,7 +70,21 @@ namespace InformationRetrieval.Utility
             Length += values.Length;
         }
 
+        public void Add(Span<T> values)
+        {
+            if (Length + values.Length > buffer.Length)
+            {
+                Resize(Math.Max(Length + values.Length, buffer.Length * 2));
+            }
+
+            values.CopyTo(buffer.AsSpan(startIndex: Length));
+            Length += values.Length;
+        }
+
         public ref T this[int index] => ref buffer[index];
+
+        public ReadOnlySpan<T> GetReadOnlySpan() 
+            => buffer.AsSpan(0, Length);
 
         public void Resize(int newSize)
         {
