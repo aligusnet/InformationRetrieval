@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Corpus;
 using InformationRetrieval.Utility;
@@ -16,12 +17,24 @@ namespace InformationRetrieval.Indexing.PostingsList
         private int length;
         private uint prevInserted;
 
-        public VarintPostingsList()
+        public VarintPostingsList() : this(0) { }
+
+        public VarintPostingsList(int capacity)
         {
-            data = new byte[32];
+            data = capacity > 0 ? new byte[capacity] : Array.Empty<byte>();
             length = 0;
             prevInserted = 0;
             Count = 0;
+        }
+
+        public VarintPostingsList(byte[] buffer) : this(buffer, buffer.Length) { }
+
+        public VarintPostingsList(byte[] buffer, int length)
+        {
+            data = buffer;
+            this.length = length;
+            Count = VarintEncoder.GetIntegerCount(buffer.AsSpan(0, length));
+            prevInserted = this.LastOrDefault().Id;
         }
 
         public int Count { get; private set; }
@@ -55,14 +68,13 @@ namespace InformationRetrieval.Indexing.PostingsList
             }
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() 
+            => GetEnumerator();
 
-        private void Resize(int newSize)
-        {
-            Array.Resize(ref data, newSize);
-        }
+        public ReadOnlySpan<byte> GetReadOnlySpan() 
+            => data.AsSpan(0, length);
+
+        private void Resize(int newSize) 
+            => Array.Resize(ref data, newSize);
     }
 }
