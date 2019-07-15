@@ -34,7 +34,7 @@ namespace InformationRetrieval.Indexing.PostingsList
             data = buffer;
             this.length = length;
             Count = VarintEncoder.GetIntegerCount(buffer.AsSpan(0, length));
-            prevInserted = this.LastOrDefault().Id;
+            prevInserted = this.LastOrDefault();
         }
 
         public int Count { get; private set; }
@@ -68,6 +68,19 @@ namespace InformationRetrieval.Indexing.PostingsList
             {
                 prevId += gap;
                 yield return new DocumentId((uint)prevId);
+            }
+        }
+
+        private uint LastOrDefault()
+        {
+            int lastPos = VarintEncoder.FindLast(data.AsSpan(0, length));
+            if (lastPos >= 0)
+            {
+                return (uint)VarintEncoder.Decode(data.AsSpan(lastPos));
+            }
+            else
+            {
+                return 0;
             }
         }
 
