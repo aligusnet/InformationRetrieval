@@ -141,6 +141,38 @@ namespace InformationRetrieval.Test.Indexing.PostingsList
             Assert.Equal(chain, deserialized);
         }
 
+        [Fact]
+        public void ChainedVarintReadWriteTest()
+        {
+            var stream = new MemoryStream();
+
+            var chain = new ListChain<DocumentId>()
+            {
+                new VarintPostingsList()
+                {
+                    0, 1, 2
+                },
+                GetDocIds(10, 11),
+                new VarintPostingsList()
+                {
+                    12, 13, 14, 15, 100, 111
+                },
+            };
+
+            using var writer = new PostingsListWriter(stream);
+            writer.Write(chain);
+
+            stream.Seek(0, SeekOrigin.Begin);
+
+            using var reader = new PostingsListReader(stream, leaveOpen: false);
+            var count = reader.ReadCount(0);
+            var deserialized = reader.Read(0);
+
+            Assert.Equal(chain.Count, count);
+            Assert.True(deserialized is VarintPostingsList);
+            Assert.Equal(chain.ToArray(), deserialized.ToArray());
+        }
+
         public static DocumentId[] GetDocIds(params uint[] ids)
         {
             return ids.Select(id => new DocumentId(id)).ToArray();
