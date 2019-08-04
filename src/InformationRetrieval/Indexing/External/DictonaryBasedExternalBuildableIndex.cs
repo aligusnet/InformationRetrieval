@@ -5,7 +5,7 @@ using InformationRetrieval.Indexing.PostingsList;
 
 namespace InformationRetrieval.Indexing.External
 {
-    public class DictonaryBasedExternalBuildableIndex<T> : IExternalBuildableIndex<T>
+    public class DictonaryBasedExternalBuildableIndex<T> : IExternalBuildableIndex<T> where T : notnull
     {
         public static Func<Stream, IExternalBuildableIndex<T>> GetCreateMethod(int rangeThreshold) 
             => s => new DictonaryBasedExternalBuildableIndex<T>(rangeThreshold, s);

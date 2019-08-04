@@ -6,7 +6,7 @@ using Corpus;
 
 namespace InformationRetrieval.Indexing.External
 {
-    public class SortBasedExternalBuildableIndex<T> : IExternalBuildableIndex<T>
+    public class SortBasedExternalBuildableIndex<T> : IExternalBuildableIndex<T> where T : notnull
     {
         public static Func<Stream, IExternalBuildableIndex<T>> CreateMethod =
             s => new SortBasedExternalBuildableIndex<T>(s);

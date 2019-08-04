@@ -70,7 +70,7 @@ namespace Wikidump.Test
         private static Stream GetXmlDump()
         {
             var assembly = typeof(WikiDumpTests).GetTypeInfo().Assembly;
-            return assembly.GetManifestResourceStream("Wikidump.Test.wikidump.xml");
+            return assembly.GetManifestResourceStream("Wikidump.Test.wikidump.xml")!;
         }
     }
 }

@@ -25,6 +25,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InformationRetrieval", "Inf
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InformationRetrieval.WPF", "InformationRetrieval.WPF\InformationRetrieval.WPF.csproj", "{8188B7A2-C11C-45E5-9EB3-C66BB3BF7B32}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InformationRetrieval.Utility", "InformationRetrieval.Utility\InformationRetrieval.Utility.csproj", "{158DD8FD-A448-44C9-B98E-93975DE95854}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InformationRetrieval.Utility.Test", "InformationRetrieval.Utility.Test\InformationRetrieval.Utility.Test.csproj", "{BB6BB34F-31F1-47FC-B75F-C2A81EAAEF51}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +67,14 @@ Global
 		{8188B7A2-C11C-45E5-9EB3-C66BB3BF7B32}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8188B7A2-C11C-45E5-9EB3-C66BB3BF7B32}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8188B7A2-C11C-45E5-9EB3-C66BB3BF7B32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{158DD8FD-A448-44C9-B98E-93975DE95854}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{158DD8FD-A448-44C9-B98E-93975DE95854}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{158DD8FD-A448-44C9-B98E-93975DE95854}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{158DD8FD-A448-44C9-B98E-93975DE95854}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB6BB34F-31F1-47FC-B75F-C2A81EAAEF51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB6BB34F-31F1-47FC-B75F-C2A81EAAEF51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB6BB34F-31F1-47FC-B75F-C2A81EAAEF51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB6BB34F-31F1-47FC-B75F-C2A81EAAEF51}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

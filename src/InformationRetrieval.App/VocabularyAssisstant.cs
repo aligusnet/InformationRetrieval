@@ -1,11 +1,11 @@
-﻿using Corpus;
-using Corpus.Json;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+
+using Corpus;
+using InformationRetrieval.Utility;
 
 namespace NaturalLanguage.App
 {

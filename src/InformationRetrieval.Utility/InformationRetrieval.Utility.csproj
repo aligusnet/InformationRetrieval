@@ -9,12 +9,4 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="System.IO.Abstractions" Version="6.0.14" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\InformationRetrieval.Utility\InformationRetrieval.Utility.csproj" />
-  </ItemGroup>
- 
 </Project>

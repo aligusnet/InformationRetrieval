@@ -2,7 +2,7 @@
 
 namespace InformationRetrieval.Indexing
 {
-    public interface IBuildableIndex<T>
+    public interface IBuildableIndex<T> where T : notnull
     {
         void IndexTerm(DocumentId id, T term, int position);
 

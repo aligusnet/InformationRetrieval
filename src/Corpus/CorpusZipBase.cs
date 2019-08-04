@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
@@ -27,7 +28,7 @@ namespace Corpus
         protected IEnumerable<string> GetBlocksPaths()
         {
             return FileSystem.Directory.GetFiles(path, "*.zip")
-                     .OrderBy(fn => BlockMetadata.ParseId(Path.GetFileNameWithoutExtension(fn)));
+                     .OrderBy(fn => BlockMetadata.ParseId(Path.GetFileNameWithoutExtension(fn.AsSpan())));
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
 using System.IO.Compression;
@@ -93,7 +94,8 @@ namespace Corpus
                     using var stream = entry.Open();
 
                     var data = dataSerializer.Deserialize(stream);
-                    var id = DocumentId.Parse((Path.GetFileNameWithoutExtension(entry.Name)));
+                    var filename = Path.GetFileNameWithoutExtension(entry.Name.AsSpan());
+                    var id = DocumentId.Parse(filename);
 
                     yield return new Document<T>(metadata[id], data);
                 }
