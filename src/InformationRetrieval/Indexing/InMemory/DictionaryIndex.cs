@@ -17,7 +17,7 @@ namespace InformationRetrieval.Indexing.InMemory
     /// </summary>
     /// <typeparam name="T">The term's type</typeparam>
     [ProtoContract]
-    public class DictionaryIndex<T> : IBuildableIndex<T>, ISearchableIndex<T>
+    public class DictionaryIndex<T> : IBuildableIndex<T>, ISearchableIndex<T> where T : notnull
     {
         [ProtoMember(1)]
         private readonly IDictionary<T, RangePostingsList> wordIndex;

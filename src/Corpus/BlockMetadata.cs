@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 
-using Corpus.Json;
+using InformationRetrieval.Utility;
 
 namespace Corpus
 {
@@ -17,7 +17,7 @@ namespace Corpus
 
         private readonly IList<DocumentMetadata> metadata;
 
-        public static ushort ParseId(string hex) => Convert.ToUInt16(hex, 16);
+        public static ushort ParseId(ReadOnlySpan<char> hex) => NumberParser.ParseUInt16(hex, 16);
 
         public static string IdString(ushort blockId) => string.Format($"{blockId:X4}");
 
@@ -89,7 +89,7 @@ namespace Corpus
                 switch (propertyName)
                 {
                     case BlockIdPropertyName:
-                        id = ParseId(ReadString(ref reader));
+                        id = ParseId(ReadString(ref reader).AsSpan());
                         break;
                     case DocumentMetadataListPropertyName:
                         docs = ReadDocumentsMetadata(ref reader);
@@ -128,7 +128,7 @@ namespace Corpus
                 switch(propertyName)
                 {
                     case DocumentIdPropertyName:
-                        id = DocumentId.Parse(ReadString(ref reader));
+                        id = DocumentId.Parse(ReadString(ref reader).AsSpan());
                         break;
                     case TitlePropertyName:
                         title = ReadString(ref reader);

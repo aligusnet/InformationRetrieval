@@ -51,20 +51,24 @@ namespace InformationRetrieval.WPF
             metadata = new Lazy<CorpusMetadata>(LoadMetadata);
         }
 
-        private void SearchButton_Click(object sender, RoutedEventArgs e)
+        private async void SearchButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
+                Mouse.OverrideCursor = Cursors.Wait;
                 timer.Restart();
-                var query = BooleanQueryLanguage.ParseQuery(QueryTextBox.Text);
-                var results = engine.Value.ExecuteQuery(query).ToList();
+                var results = await ExecuteQuery(QueryTextBox.Text);
                 timer.Stop();
-                Log($"Search of '{QueryTextBox.Text}' took {timer.Elapsed:g}, found {results.Count} documents");
+                Log($"Search of '{QueryTextBox.Text}' took {timer.Elapsed:g}, found {results.Length} documents");
                 DocumentIDsListBox.ItemsSource = results.Select(id => new DocumentIdTemplate(id, metadata.Value));
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                Mouse.OverrideCursor = null;
             }
         }
 
@@ -85,11 +89,27 @@ namespace InformationRetrieval.WPF
             }
         }
 
+        private async Task<DocumentId[]> ExecuteQuery(string query)
+        {
+            var booleanQuery = BooleanQueryLanguage.ParseQuery(query);
+            DocumentId[] documentId = await Task.Run(() =>
+               {
+                   lock (engine)
+                   {
+                       return engine.Value.ExecuteQuery(booleanQuery).ToArray();
+                   }
+               });
+            return documentId;
+        }
+
         private void Log(string message)
         {
             var record = new { Time = DateTime.Now, Message = message };
-            LogListView.Items.Add(record);
-            LogListView.ScrollIntoView(record);
+            Dispatcher.Invoke(() => 
+            {
+                LogListView.Items.Add(record);
+                LogListView.ScrollIntoView(record);
+            });
         }
 
         private class DocumentIdTemplate

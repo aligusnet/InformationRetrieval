@@ -6,7 +6,7 @@ using ProtoBuf;
 
 namespace InformationRetrieval.Indexing.External
 {
-    public class ExternalIndexSerializer<T>
+    public class ExternalIndexSerializer<T> where T : notnull
     {
         public const string IndexFileName = "corpus.index";
         public const string OffsetsFileName = "corpus.offsets";

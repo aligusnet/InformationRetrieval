@@ -10,7 +10,7 @@ namespace InformationRetrieval.Indexing.PostingsList
     /// and uncompressed postings list otherwise.
     /// </summary>
     /// <typeparam name="T">Term's type</typeparam>
-    public class MixedPostingsListBuilder<T>
+    public class MixedPostingsListBuilder<T> where T : notnull
     {
         private readonly int rangeThreshold;
         public RangePostingsList AllDocuments;
