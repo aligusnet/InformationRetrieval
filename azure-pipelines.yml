@@ -9,7 +9,7 @@ steps:
 - task: DotNetCoreInstaller@0
   displayName: Install .NET Core
   inputs:
-    version: '3.0.100-preview7-012821'
+    version: '3.0.100'
 
 - powershell: dotnet restore $(solution)
   displayName: Restore the dependencies
