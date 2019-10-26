@@ -7,8 +7,8 @@ namespace InformationRetrieval.Indexing.External
 {
     public class DictonaryBasedExternalBuildableIndex<T> : IExternalBuildableIndex<T> where T : notnull
     {
-        public static Func<Stream, IExternalBuildableIndex<T>> GetCreateMethod(IPostingsListBuilder<T> postingListBuilder) 
-            => s => new DictonaryBasedExternalBuildableIndex<T>(postingListBuilder, s);
+        public static Func<Stream, IExternalBuildableIndex<T>> GetCreateMethodWithMixedPostingsLists(int rangeThreshold)
+            => s => new DictonaryBasedExternalBuildableIndex<T>(new MixedPostingsListBuilder<T>(rangeThreshold), s);
 
         private readonly Stream postingsStream;
         private readonly IPostingsListBuilder<T> builder;
