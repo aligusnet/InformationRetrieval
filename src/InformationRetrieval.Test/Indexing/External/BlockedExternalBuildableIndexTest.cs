@@ -6,8 +6,6 @@ using Xunit;
 
 using InformationRetrieval.Indexing.External;
 using Corpus;
-using InformationRetrieval.Indexing.PostingsList;
-
 
 namespace InformationRetrieval.Test.Indexing.External
 {
@@ -22,9 +20,15 @@ namespace InformationRetrieval.Test.Indexing.External
         }
 
         [Fact]
-        public void BuildBlockedExternalIndexTest_MixedPostingsList()
+        public void BuildBlockedExternalIndexTest_DictionaryBased_MixedPostingsList()
         {
             BuildBlockedExternalIndexTest(DictonaryBasedExternalBuildableIndex<string>.GetCreateMethodWithMixedPostingsLists(3));
+        }
+
+        [Fact]
+        public void BuildBlockedExternalIndexTest_DictionaryBased_VarintPostingsList()
+        {
+            BuildBlockedExternalIndexTest(DictonaryBasedExternalBuildableIndex<string>.GetCreateMethodWithVarintPostingsLists());
         }
 
         private void BuildBlockedExternalIndexTest(Func<Stream, IExternalBuildableIndex<string>> createIndex)

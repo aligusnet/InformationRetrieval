@@ -10,6 +10,9 @@ namespace InformationRetrieval.Indexing.External
         public static Func<Stream, IExternalBuildableIndex<T>> GetCreateMethodWithMixedPostingsLists(int rangeThreshold)
             => s => new DictonaryBasedExternalBuildableIndex<T>(new MixedPostingsListBuilder<T>(rangeThreshold), s);
 
+        public static Func<Stream, IExternalBuildableIndex<T>> GetCreateMethodWithVarintPostingsLists()
+            => s => new DictonaryBasedExternalBuildableIndex<T>(new VarintPostingsListBuilder<T>(), s);
+
         private readonly Stream postingsStream;
         private readonly IPostingsListBuilder<T> builder;
 
