@@ -9,6 +9,7 @@ using InformationRetrieval;
 using InformationRetrieval.Indexing;
 using InformationRetrieval.Indexing.External;
 using InformationRetrieval.Indexing.InMemory;
+using InformationRetrieval.Indexing.PostingsList;
 using InformationRetrieval.Tokenizers;
 using InformationRetrieval.Transformers;
 using InformationRetrieval.Utility;
@@ -99,8 +100,9 @@ namespace NaturalLanguage.App
             PrepareOutputDirectory(externalIndexPath);
 
             var reader = new CorpusZipReader<IList<char>>(wikiPath, charDataSerializer);
+            var postingListBuilder = new MixedPostingsListBuilder<int>(RangeThreshold);
             using var buildableIndex = new BlockedExternalBuildableIndex<int>(
-                DictonaryBasedExternalBuildableIndex<int>.GetCreateMethod(RangeThreshold), 
+                DictonaryBasedExternalBuildableIndex<int>.GetCreateMethod(postingListBuilder), 
                 externalIndexPath);
             var indexBuilder = new IndexBuilder<int, IEnumerable<int>>(buildableIndex);
             var processor = new WikitextProcessor();

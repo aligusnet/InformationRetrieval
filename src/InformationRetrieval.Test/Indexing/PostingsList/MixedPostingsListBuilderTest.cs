@@ -54,7 +54,7 @@ namespace InformationRetrieval.Test.Indexing.PostingsList
 
             public void IndexTerm(DocumentId id, string term, int position)
             {
-                builder.Add(id, term);
+                builder.AddTerm(id, term);
             }
 
             public IReadOnlyCollection<DocumentId> Search(string word)
