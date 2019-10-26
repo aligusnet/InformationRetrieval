@@ -1,5 +1,7 @@
 ﻿using System;
 
+using InformationRetrieval.Utility;
+
 namespace Corpus
 {
     /// <summary>
@@ -34,9 +36,9 @@ namespace Corpus
 
         public string LocalIdString() => string.Format($"{LocalId:X4}");
 
-        public static DocumentId Parse(string hex)
+        public static DocumentId Parse(ReadOnlySpan<char> hex)
         {
-            return new DocumentId(Convert.ToUInt32(hex, 16));
+            return new DocumentId(NumberParser.ParseUInt32(hex, 16));
         }
 
         public static bool operator ==(DocumentId lhs, DocumentId rhs)
@@ -49,7 +51,7 @@ namespace Corpus
             return lhs.Id != rhs.Id;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is DocumentId id &&
                    Id == id.Id;

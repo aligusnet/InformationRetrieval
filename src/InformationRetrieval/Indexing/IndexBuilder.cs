@@ -4,7 +4,9 @@ using Corpus;
 
 namespace InformationRetrieval.Indexing
 {
-    public class IndexBuilder<TTerm, TSequence> where TSequence : IEnumerable<TTerm>
+    public class IndexBuilder<TTerm, TSequence> 
+        where TTerm : notnull
+        where TSequence : IEnumerable<TTerm>
     {
         public IBuildableIndex<TTerm> Index { get; }
 

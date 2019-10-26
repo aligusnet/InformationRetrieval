@@ -3,7 +3,7 @@ using System.Buffers;
 using System.IO;
 using System.Text.Json;
 
-namespace Corpus.Json
+namespace InformationRetrieval.Utility
 {
     public ref struct Utf8JsonStreamReader
     {
@@ -47,7 +47,7 @@ namespace Corpus.Json
 
             if (dataSize != -1)
             {
-                leftOver = dataSize - (int)jsonReader.CurrentState.BytesConsumed;
+                leftOver = dataSize - (int)jsonReader.BytesConsumed;
 
                 if (leftOver == buffer.Memory.Length)
                 {

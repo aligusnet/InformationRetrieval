@@ -9,7 +9,7 @@ namespace InformationRetrieval.Indexing.External
     /// <summary>
     /// Index that stores data on disk
     /// </summary>
-    public class ExternalIndex<T> : ISearchableIndex<T>, IDisposable
+    public class ExternalIndex<T> : ISearchableIndex<T>, IDisposable where T : notnull
     {
         private const long AllDocumentsOffset = 0;
         public IDictionary<T, long> Offsets { get; }

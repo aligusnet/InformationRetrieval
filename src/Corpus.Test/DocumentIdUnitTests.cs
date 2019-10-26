@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using Xunit;
@@ -39,7 +40,7 @@ namespace Corpus.Test
         [InlineData("05B28164", 1458, 33124)]
         public void ParseDocumentIdTest(string hex, ushort blockId, ushort localId)
         {
-            var docId = DocumentId.Parse(hex);
+            var docId = DocumentId.Parse(hex.AsSpan());
             Assert.Equal(blockId, docId.BlockId);
             Assert.Equal(localId, docId.LocalId);
         }

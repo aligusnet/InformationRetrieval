@@ -9,7 +9,7 @@ namespace InformationRetrieval.Indexing.External
     /// <summary>
     ///  Compose External Index using precomputed postings lists.
     /// </summary>
-    public class ExternalIndexComposer<T>
+    public class ExternalIndexComposer<T> where T : notnull
     {
         private readonly PostingsListWriter writer;
         public IDictionary<T, long> Offsets { get; }
