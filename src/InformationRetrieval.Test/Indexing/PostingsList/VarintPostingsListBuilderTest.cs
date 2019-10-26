@@ -7,10 +7,8 @@ using InformationRetrieval.Indexing.PostingsList;
 
 namespace InformationRetrieval.Test.Indexing.PostingsList
 {
-    public class MixedPostingsListBuilderTest : IndexUnitTestsBase<MixedPostingsListBuilderTest.Index>
+    class VarintPostingsListBuilderTest : IndexUnitTestsBase<VarintPostingsListBuilderTest.Index>
     {
-        private const int rangeThreshold = 3;
-
         protected override Index CreateIndex(string[][] corpus)
         {
             var index = new Index();
@@ -20,7 +18,7 @@ namespace InformationRetrieval.Test.Indexing.PostingsList
 
         public class Index : IBuildableIndex<string>, ISearchableIndex<string>
         {
-            MixedPostingsListBuilder<string> builder = new MixedPostingsListBuilder<string>(rangeThreshold);
+            VarintPostingsListBuilder<string> builder = new VarintPostingsListBuilder<string>();
 
             public ISearchableIndex<string> Build()
             {
@@ -29,19 +27,14 @@ namespace InformationRetrieval.Test.Indexing.PostingsList
 
             public IReadOnlyCollection<DocumentId> GetAll()
             {
-                return builder.AllDocuments;
+                return builder.Documents;
             }
 
             public int GetCount(string word)
             {
-                if (builder.RangedPostingsLists.TryGetValue(word, out var blockList))
+                if (builder.VarintPostingsLists.TryGetValue(word, out var blockList))
                 {
                     return blockList.Count;
-                }
-
-                if (builder.UncompressedPostingsLists.TryGetValue(word, out var ids))
-                {
-                    return ids.Count;
                 }
 
                 return 0;
@@ -49,7 +42,7 @@ namespace InformationRetrieval.Test.Indexing.PostingsList
 
             public int GetCount()
             {
-                return builder.AllDocuments.Count;
+                return builder.Documents.Count;
             }
 
             public void IndexTerm(DocumentId id, string term, int position)
@@ -59,14 +52,9 @@ namespace InformationRetrieval.Test.Indexing.PostingsList
 
             public IReadOnlyCollection<DocumentId> Search(string word)
             {
-                if (builder.RangedPostingsLists.TryGetValue(word, out var blockList))
+                if (builder.VarintPostingsLists.TryGetValue(word, out var ps))
                 {
-                    return blockList;
-                }
-
-                if (builder.UncompressedPostingsLists.TryGetValue(word, out var ids))
-                {
-                    return ids;
+                    return ps;
                 }
 
                 return Array.Empty<DocumentId>();

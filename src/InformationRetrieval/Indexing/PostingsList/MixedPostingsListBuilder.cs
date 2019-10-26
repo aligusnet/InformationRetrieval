@@ -10,7 +10,7 @@ namespace InformationRetrieval.Indexing.PostingsList
     /// and uncompressed postings list otherwise.
     /// </summary>
     /// <typeparam name="T">Term's type</typeparam>
-    public class MixedPostingsListBuilder<T> where T : notnull
+    public class MixedPostingsListBuilder<T> : IPostingsListBuilder<T> where T : notnull
     {
         private readonly int rangeThreshold;
         public RangePostingsList AllDocuments;
@@ -25,7 +25,25 @@ namespace InformationRetrieval.Indexing.PostingsList
             this.rangeThreshold = rangeThreshold;
         }
 
-        public void Add(DocumentId id, T word)
+        public IReadOnlyCollection<DocumentId> Documents => AllDocuments;
+
+        public IEnumerable<KeyValuePair<T, IReadOnlyCollection<DocumentId>>> PostingsLists
+        {
+            get
+            {
+                foreach (var postings in RangedPostingsLists)
+                {
+                    yield return new KeyValuePair<T, IReadOnlyCollection<DocumentId>>(postings.Key, postings.Value);
+                }
+
+                foreach (var postings in UncompressedPostingsLists)
+                {
+                    yield return new KeyValuePair<T, IReadOnlyCollection<DocumentId>>(postings.Key, postings.Value);
+                }
+            }
+        }
+
+        public void AddTerm(DocumentId id, T word)
         {
             if (RangedPostingsLists.TryGetValue(word, out var blockList))
             {

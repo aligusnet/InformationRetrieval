@@ -41,6 +41,11 @@ namespace InformationRetrieval.Indexing.PostingsList
 
         public void Add(uint id)
         {
+            if (Count > 0 && prevInserted == id)
+            {
+                return;
+            }
+
             if (length + VarintEncoder.BufferLength >= data.Length)
             {
                 Resize(Math.Max(length + VarintEncoder.BufferLength, data.Length * 2));
@@ -48,7 +53,7 @@ namespace InformationRetrieval.Indexing.PostingsList
 
             if (prevInserted > id)
             {
-                throw new ArgumentException("DocumentIds are expected to be in non-decreasing order");
+                throw new ArgumentException($"DocumentIds are expected to be in non-decreasing order: {prevInserted} > {id}");
             }
 
             uint docIdGap = id - prevInserted;

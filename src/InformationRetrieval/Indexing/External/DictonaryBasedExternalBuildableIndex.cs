@@ -7,15 +7,18 @@ namespace InformationRetrieval.Indexing.External
 {
     public class DictonaryBasedExternalBuildableIndex<T> : IExternalBuildableIndex<T> where T : notnull
     {
-        public static Func<Stream, IExternalBuildableIndex<T>> GetCreateMethod(int rangeThreshold) 
-            => s => new DictonaryBasedExternalBuildableIndex<T>(rangeThreshold, s);
+        public static Func<Stream, IExternalBuildableIndex<T>> GetCreateMethodWithMixedPostingsLists(int rangeThreshold)
+            => s => new DictonaryBasedExternalBuildableIndex<T>(new MixedPostingsListBuilder<T>(rangeThreshold), s);
+
+        public static Func<Stream, IExternalBuildableIndex<T>> GetCreateMethodWithVarintPostingsLists()
+            => s => new DictonaryBasedExternalBuildableIndex<T>(new VarintPostingsListBuilder<T>(), s);
 
         private readonly Stream postingsStream;
-        private readonly MixedPostingsListBuilder<T> builder;
+        private readonly IPostingsListBuilder<T> builder;
 
-        public DictonaryBasedExternalBuildableIndex(int rangeThreshold, Stream postingsStream)
+        public DictonaryBasedExternalBuildableIndex(IPostingsListBuilder<T> postingListBuilder, Stream postingsStream)
         {
-            builder = new MixedPostingsListBuilder<T>(rangeThreshold);
+            builder = postingListBuilder;
             this.postingsStream = postingsStream;
         }
 
@@ -26,14 +29,9 @@ namespace InformationRetrieval.Indexing.External
         {
             var composer = new ExternalIndexComposer<T>(postingsStream);
 
-            composer.AddAllDocuments(builder.AllDocuments);
+            composer.AddAllDocuments(builder.Documents);
 
-            foreach (var postings in builder.RangedPostingsLists)
-            {
-                composer.AddPostingsList(postings.Key, postings.Value);
-            }
-
-            foreach (var postings in builder.UncompressedPostingsLists)
+            foreach (var postings in builder.PostingsLists)
             {
                 composer.AddPostingsList(postings.Key, postings.Value);
             }
@@ -42,6 +40,6 @@ namespace InformationRetrieval.Indexing.External
         }
 
         public void IndexTerm(DocumentId id, T term, int position) 
-            => builder.Add(id, term);
+            => builder.AddTerm(id, term);
     }
 }

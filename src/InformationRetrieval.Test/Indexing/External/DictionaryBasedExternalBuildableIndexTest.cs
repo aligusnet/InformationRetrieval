@@ -3,8 +3,9 @@ using System.Linq;
 
 using Xunit;
 
-using InformationRetrieval.Indexing.External;
 using Corpus;
+using InformationRetrieval.Indexing.External;
+using InformationRetrieval.Indexing.PostingsList;
 
 namespace InformationRetrieval.Test.Indexing.External
 {
@@ -16,7 +17,8 @@ namespace InformationRetrieval.Test.Indexing.External
         public void ExternalIndexBuildTest()
         {
             var stream = new MemoryStream();
-            var buildableIndex = new DictonaryBasedExternalBuildableIndex<string>(RangeThreshold, stream);
+            var postingsListBuilder = new MixedPostingsListBuilder<string>(RangeThreshold);
+            var buildableIndex = new DictonaryBasedExternalBuildableIndex<string>(postingsListBuilder, stream);
 
             var docs = new (DocumentId Id, string[] Text)[]
             {
@@ -54,7 +56,8 @@ namespace InformationRetrieval.Test.Indexing.External
         protected override ExternalIndex<string> CreateIndex(string[][] corpus)
         {
             var stream = new MemoryStream();
-            var buildableIndex = new DictonaryBasedExternalBuildableIndex<string>(RangeThreshold, stream);
+            var postingsListBuilder = new MixedPostingsListBuilder<string>(RangeThreshold);
+            var buildableIndex = new DictonaryBasedExternalBuildableIndex<string>(postingsListBuilder, stream);
             IndexHelper.BuildIndex(buildableIndex, corpus);
             return buildableIndex.BuildExternalIndex();
         }

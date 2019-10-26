@@ -198,7 +198,10 @@ namespace InformationRetrieval.Indexing.External
                 }
                 indices.Clear();
 
-                fileSystem.Directory.Delete(basePath, recursive: true);
+                if (fileSystem.Directory.Exists(basePath))
+                {
+                    fileSystem.Directory.Delete(basePath, recursive: true);
+                }
             }
 
             public void Dispose()

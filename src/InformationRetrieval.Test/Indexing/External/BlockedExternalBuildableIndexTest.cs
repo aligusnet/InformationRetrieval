@@ -1,4 +1,6 @@
-﻿using System.IO.Abstractions.TestingHelpers;
+﻿using System;
+using System.IO;
+using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
 using Xunit;
 
@@ -12,12 +14,29 @@ namespace InformationRetrieval.Test.Indexing.External
         private const string path = @"C:\path";
 
         [Fact]
-        public void BuildBlockedExternalIndexTest()
+        public void BuildBlockedExternalIndexTest_SortBased()
+        {
+            BuildBlockedExternalIndexTest(SortBasedExternalBuildableIndex<string>.CreateMethod);
+        }
+
+        [Fact]
+        public void BuildBlockedExternalIndexTest_DictionaryBased_MixedPostingsList()
+        {
+            BuildBlockedExternalIndexTest(DictonaryBasedExternalBuildableIndex<string>.GetCreateMethodWithMixedPostingsLists(3));
+        }
+
+        [Fact]
+        public void BuildBlockedExternalIndexTest_DictionaryBased_VarintPostingsList()
+        {
+            BuildBlockedExternalIndexTest(DictonaryBasedExternalBuildableIndex<string>.GetCreateMethodWithVarintPostingsLists());
+        }
+
+        private void BuildBlockedExternalIndexTest(Func<Stream, IExternalBuildableIndex<string>> createIndex)
         {
             var docs = new (DocumentId Id, string[] Text)[]
             {
-                (new DocumentId(0, 1), "d e f a".Split()),
                 (new DocumentId(0, 0), "a b c d".Split()),
+                (new DocumentId(0, 1), "d e f a".Split()),
                 (new DocumentId(0, 2), "e e f d".Split()),
 
                 (new DocumentId(1, 0), "a b".Split()),
@@ -30,9 +49,7 @@ namespace InformationRetrieval.Test.Indexing.External
             var fileSystem = new MockFileSystem();
             fileSystem.Directory.CreateDirectory(path);
 
-            var buildableIndex = new BlockedExternalBuildableIndex<string>(
-                SortBasedExternalBuildableIndex<string>.CreateMethod, 
-                path, fileSystem);
+            var buildableIndex = new BlockedExternalBuildableIndex<string>(createIndex, path, fileSystem);
 
             foreach (var doc in docs)
             {

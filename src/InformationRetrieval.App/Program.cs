@@ -100,7 +100,7 @@ namespace NaturalLanguage.App
 
             var reader = new CorpusZipReader<IList<char>>(wikiPath, charDataSerializer);
             using var buildableIndex = new BlockedExternalBuildableIndex<int>(
-                DictonaryBasedExternalBuildableIndex<int>.GetCreateMethod(RangeThreshold), 
+                DictonaryBasedExternalBuildableIndex<int>.GetCreateMethodWithVarintPostingsLists(), 
                 externalIndexPath);
             var indexBuilder = new IndexBuilder<int, IEnumerable<int>>(buildableIndex);
             var processor = new WikitextProcessor();

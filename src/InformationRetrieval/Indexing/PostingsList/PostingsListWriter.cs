@@ -113,6 +113,11 @@ namespace InformationRetrieval.Indexing.PostingsList
                     WriteChainedRanges(chain);
                     break;
 
+                case PostingsListType.Varint:
+                    writer.Write((byte)PostingsListType.Varint);
+                    WriteChainedVarint(chain);
+                    break;
+
                 default:
                     writer.Write((byte)PostingsListType.Uncompressed);
                     WriteUncompressed(chain);
@@ -122,6 +127,11 @@ namespace InformationRetrieval.Indexing.PostingsList
 
         private static PostingsListType DetectType(ListChain<DocumentId> chain)
         {
+            if (chain.Chains.Count > 0 && chain.Chains[0] is VarintPostingsList)
+            {
+                return PostingsListType.Varint;
+            }
+
             if (chain.Chains.Count > 0 && chain.Chains[0] is RangePostingsList)
             {
                 return PostingsListType.Ranged;
@@ -133,6 +143,17 @@ namespace InformationRetrieval.Indexing.PostingsList
             }
 
             return PostingsListType.Uncompressed;
+        }
+
+        private void WriteChainedVarint(ListChain<DocumentId> chain)
+        {
+            var varint = new VarintPostingsList(32);
+            foreach (var id in chain)
+            {
+                varint.Add(id);
+            }
+
+            WriteVarint(varint);
         }
 
         private void WriteChainedRanges(ListChain<DocumentId> chain)
