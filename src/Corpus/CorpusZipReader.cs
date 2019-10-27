@@ -13,6 +13,7 @@ namespace Corpus
     public class CorpusZipReader<T> : CorpusZipBase, ICorpusReader<T>
     {
         private readonly IDocumentDataSerializer<T> dataSerializer;
+        private readonly CorpusZipMetadata metadata;
 
         public CorpusZipReader(string path, IDocumentDataSerializer<T> dataSerializer) : this (path, dataSerializer, new FileSystem())
         {
@@ -21,6 +22,7 @@ namespace Corpus
         public CorpusZipReader(string path, IDocumentDataSerializer<T> dataSerializer, IFileSystem fileSystem) : base(path, fileSystem)
         {
             this.dataSerializer = dataSerializer;
+            metadata = ReadCorpusZipMetadata();
         }
 
         public IEnumerable<Block<T>> Read()
@@ -30,7 +32,8 @@ namespace Corpus
 
         public Document<T> ReadDocument(DocumentId docId, bool skipMetadata)
         {
-            var path = GetBlockPath(docId.BlockId);
+            ushort blockId = (ushort)metadata.GetBlockId(docId);
+            var path = GetBlockPath(blockId);
             using var archive = new ZipArchive(FileSystem.File.OpenRead(path), ZipArchiveMode.Read);
             var entry = archive.GetEntry(docId.ToString() + dataSerializer.FileExtension);
 
@@ -52,6 +55,12 @@ namespace Corpus
         {
             var metadata = GetBlocksPaths().Select(ReadBlockMetadata);
             return new CorpusMetadata(metadata.ToArray());
+        }
+
+        private CorpusZipMetadata ReadCorpusZipMetadata()
+        {
+            using var stream = FileSystem.File.OpenRead(GetCorpusMetadataPath());
+            return CorpusZipMetadata.Deserialize(stream);
         }
 
         private BlockMetadata ReadBlockMetadata(string path)

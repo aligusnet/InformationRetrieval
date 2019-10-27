@@ -23,11 +23,17 @@ namespace Corpus
 
         public void Write(IEnumerable<Block<T>> corpus)
         {
+            var firstDocumentIdInBlock = new List<DocumentId>();
+
             foreach (var block in corpus)
             {
                 var path = GetBlockPath(block.Metadata.Id);
                 SaveBlock(block, path);
+
+                firstDocumentIdInBlock.Add(block.Documents[0].Metadata.Id);
             }
+
+            SaveCorpusMetadata(new CorpusZipMetadata(firstDocumentIdInBlock));
         }
 
         private void SaveBlock(Block<T> block, string path)
@@ -56,5 +62,10 @@ namespace Corpus
             }
         }
 
+        private void SaveCorpusMetadata(CorpusZipMetadata metadata)
+        {
+            using var stream = FileSystem.File.OpenWrite(GetCorpusMetadataPath());
+            metadata.Serialize(stream);
+        }
     }
 }

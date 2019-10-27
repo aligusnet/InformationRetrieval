@@ -230,7 +230,7 @@ namespace NaturalLanguage.App
 
             using var xmlReader = new WikiDumpXmlReader(wikiDumpFilePath);
 
-            ICorpusReader<string> reader = new WikipediaReader(xmlReader, WikipediaReader.DefaultFilter, 5_000, count: 100_000);
+            ICorpusReader<string> reader = new WikipediaReader(xmlReader, WikipediaReader.DefaultFilter, 500, count: 2_000);
             ICorpusWriter<string> writer = new CorpusZipWriter<string>(pathToSave, stringDataSerializer);
 
             writer.Write(reader.Read());
