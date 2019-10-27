@@ -32,10 +32,6 @@ namespace Corpus
 
         public override string ToString() => string.Format($"{Id:X8}");
 
-        public string BlockIdString() => string.Format($"{BlockId:X4}");
-
-        public string LocalIdString() => string.Format($"{LocalId:X4}");
-
         public static DocumentId Parse(ReadOnlySpan<char> hex)
         {
             return new DocumentId(NumberParser.ParseUInt32(hex, 16));
@@ -61,9 +57,5 @@ namespace Corpus
         {
             return HashCode.Combine(Id);
         }
-
-        public static ushort ParseBlockId(string hex) => Convert.ToUInt16(hex, 16);
-
-        public static ushort ParseLocalId(string hex) => Convert.ToUInt16(hex, 16);
     }
 }
