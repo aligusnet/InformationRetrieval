@@ -75,27 +75,14 @@ namespace InformationRetrieval.Indexing.PostingsList
 
         private RangePostingsList ReadRanged(int count)
         {
-            ushort length = reader.ReadUInt16();
-            var blocks = new List<DocumentIdRangeBlock>(length);
-            for (int i = 0; i < length; ++i)
-            {
-                blocks.Add(ReadBlock());
-            }
-
-            return new RangePostingsList(count, blocks);
-        }
-
-        private DocumentIdRangeBlock ReadBlock()
-        {
-            ushort blockId = reader.ReadUInt16();
-            ushort length = reader.ReadUInt16();
+            int length = reader.ReadInt32();
             var ranges = new List<uint>(length);
             for (int i = 0; i < length; ++i)
             {
                 ranges.Add(reader.ReadUInt32());
             }
 
-            return new DocumentIdRangeBlock(blockId, ranges);
+            return new RangePostingsList(count, ranges);
         }
     }
 }

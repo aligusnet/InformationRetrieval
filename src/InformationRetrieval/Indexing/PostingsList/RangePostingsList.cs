@@ -14,55 +14,53 @@ namespace InformationRetrieval.Indexing.PostingsList
     [ProtoContract]
     public class RangePostingsList : IReadOnlyCollection<DocumentId>
     {
-        private const int DefaultCapacity = 8;
+        private const int DefaultCapacity = 16;
 
+        // every odd number is DocumentId starting the range 
+        // and the next number is length of the range.
         [ProtoMember(1)]
-        public IList<DocumentIdRangeBlock> Blocks { get; }
+        public IList<uint> Ranges { get; }
 
         [ProtoMember(2)]
         public int Count { get; private set; }
 
-        public RangePostingsList() : this(0, new List<DocumentIdRangeBlock>(DefaultCapacity)) { }
+        public RangePostingsList() : this(0, new List<uint>(DefaultCapacity)) { }
 
-        public RangePostingsList(int count, IList<DocumentIdRangeBlock> blocks)
+        public RangePostingsList(int count, IList<uint> postings)
         {
             this.Count = count;
-            this.Blocks = blocks;
+            this.Ranges = postings;
         }
 
         public void Add(DocumentId id)
         {
-            DocumentIdRangeBlock block;
-
-            if (Blocks.Count == 0 || Blocks[^1].BlockId != id.BlockId)
-            {
-                block = new DocumentIdRangeBlock(id.BlockId);
-                Blocks.Add(block);
-            }
-            else
-            {
-                block = Blocks[^1];
-            }
-
-            if (block.Add(id.LocalId)) Count++;
+            Add(id.Id);
         }
 
         public void Add(uint id)
         {
-            Add(new DocumentId(id));
+            if (Ranges.Count > 0 && Ranges[^2] + Ranges[^1] == id)
+            {
+                Ranges[^1] = Ranges[^1] + 1;
+                Count++;
+            }
+            else if (Ranges.Count == 0 || Ranges[^2] + Ranges[^1] < id)
+            {
+                Ranges.Add(id);
+                Ranges.Add(1);
+                Count++;
+            }
         }
 
         public IEnumerator<DocumentId> GetEnumerator()
         {
-            foreach (var block in Blocks)
+            for (int i = 1; i < Ranges.Count; i += 2)
             {
-                foreach (var r in block.Ranges)
+                uint startId = Ranges[i - 1];
+                uint length = Ranges[i];
+                for (uint j = 0; j < length; ++j)
                 {
-                    var range = DocumentIdRange.Decompose(r);
-                    for (ushort i = 0; i < range.Length; ++i)
-                    {
-                        yield return new DocumentId(block.BlockId, (ushort)(range.Start + i));
-                    }
+                    yield return new DocumentId(startId + j);
                 }
             }
         }
@@ -70,80 +68,6 @@ namespace InformationRetrieval.Indexing.PostingsList
         IEnumerator IEnumerable.GetEnumerator()
         {
             return this.GetEnumerator();
-        }
-    }
-
-    static class DocumentIdRange
-    {
-        private const int offset = 16;
-
-        public static uint Make(ushort localId)
-        {
-            return ((uint)localId << offset) + 1;
-        }
-
-        public static uint End(uint range)
-        {
-            return (range >> offset) + (ushort)range;
-        }
-
-        public static (ushort Start, ushort Length) Decompose(uint range)
-        {
-            return ((ushort)(range >> offset), (ushort)range);
-        }
-    }
-
-    [ProtoContract]
-    public class DocumentIdRangeBlock
-    {
-        private const int DefaultCapacity = 8;
-
-        [ProtoMember(1)]
-        public ushort BlockId { get; }
-
-        [ProtoMember(2)]
-        public IList<uint> Ranges { get; }
-
-        // for protobuf deserialization
-        private DocumentIdRangeBlock() : this(0) { }
-
-        public DocumentIdRangeBlock(ushort id) : this(id, new List<uint>(DefaultCapacity)) { }
-
-        public DocumentIdRangeBlock(ushort id, IList<uint> ranges)
-        {
-            BlockId = id;
-            Ranges = ranges;
-        }
-
-        public bool Add(ushort localId)
-        {
-            bool isAdded = false;
-
-            if (Ranges.Count == 0)
-            {
-                Ranges.Add(DocumentIdRange.Make(localId));
-                isAdded = true;
-            }
-            else
-            {
-                Index lastIndex = ^1;
-
-                var lastRange = Ranges[lastIndex];
-                var nextLocalId = DocumentIdRange.End(lastRange);
-                if (nextLocalId == localId)
-                {
-                    lastRange += 1;
-                    Ranges[lastIndex] = lastRange;
-                    isAdded = true;
-                }
-                else if (nextLocalId < localId)
-                {
-                    Ranges.Add(DocumentIdRange.Make(localId));
-                    isAdded = true;
-                }
-            }
-
-            return isAdded;
         }
     }
 }
