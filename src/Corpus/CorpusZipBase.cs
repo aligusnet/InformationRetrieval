@@ -30,5 +30,10 @@ namespace Corpus
             return FileSystem.Directory.GetFiles(path, "*.zip")
                      .OrderBy(fn => BlockMetadata.ParseId(Path.GetFileNameWithoutExtension(fn.AsSpan())));
         }
+
+        protected string GetCorpusMetadataPath()
+        {
+            return Path.Combine(path, METADATA_ENTRY_NAME);
+        }
     }
 }

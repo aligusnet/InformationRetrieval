@@ -29,9 +29,12 @@ namespace Corpus
         {
             get
             {
-                return metadata[key.LocalId];
+                int index = (int)(key.Id - metadata[0].Id.Id);
+                return metadata[index];
             }
         }
+
+        public DocumentMetadata First() => metadata[0];
 
         public int Count => metadata.Count;
 
@@ -81,7 +84,7 @@ namespace Corpus
             ushort id = 0;
             IList<DocumentMetadata> docs = Array.Empty<DocumentMetadata>();
 
-            ReadToken(ref reader, JsonTokenType.StartObject);
+            JsonReaderHelper.ReadToken(ref reader, JsonTokenType.StartObject);
 
             while (reader.Read() && reader.TokenType != JsonTokenType.EndObject)
             {
@@ -89,7 +92,7 @@ namespace Corpus
                 switch (propertyName)
                 {
                     case BlockIdPropertyName:
-                        id = ParseId(ReadString(ref reader).AsSpan());
+                        id = ParseId(JsonReaderHelper.ReadString(ref reader).AsSpan());
                         break;
                     case DocumentMetadataListPropertyName:
                         docs = ReadDocumentsMetadata(ref reader);
@@ -107,7 +110,7 @@ namespace Corpus
         {
             var docs = new List<DocumentMetadata>();
 
-            ReadToken(ref reader, JsonTokenType.StartArray);
+            JsonReaderHelper.ReadToken(ref reader, JsonTokenType.StartArray);
             while (reader.Read() && reader.TokenType != JsonTokenType.EndArray)
             {
                 var doc = ReadDocumentMetadata(ref reader);
@@ -128,10 +131,10 @@ namespace Corpus
                 switch(propertyName)
                 {
                     case DocumentIdPropertyName:
-                        id = DocumentId.Parse(ReadString(ref reader).AsSpan());
+                        id = DocumentId.Parse(JsonReaderHelper.ReadString(ref reader).AsSpan());
                         break;
                     case TitlePropertyName:
-                        title = ReadString(ref reader);
+                        title = JsonReaderHelper.ReadString(ref reader);
                         break;
                     default:
                         throw new InvalidDataException($"Unexpected property at position {reader.Position}: {propertyName}");
@@ -140,42 +143,6 @@ namespace Corpus
             }
 
             return new DocumentMetadata(id, title);
-        }
-
-        private static void Read(ref Utf8JsonStreamReader reader)
-        {
-            if (!reader.Read())
-            {
-                throw new InvalidDataException("Unexpected end of stream");
-            }
-        }
-
-        private static void ReadToken(ref Utf8JsonStreamReader reader, JsonTokenType token)
-        {
-            Read(ref reader);
-
-            if (reader.TokenType != token)
-            {
-                throw new InvalidDataException($"Unexpected token at position {reader.Position}: expected {token} but got {reader.TokenType}");
-            }
-        }
-
-        private static ushort ReadUInt16(ref Utf8JsonStreamReader reader)
-        {
-            ReadToken(ref reader, JsonTokenType.Number);
-            return (ushort)reader.GetUInt32();
-        }
-
-        private static uint ReadUInt32(ref Utf8JsonStreamReader reader)
-        {
-            ReadToken(ref reader, JsonTokenType.Number);
-            return reader.GetUInt32();
-        }
-
-        private static string ReadString(ref Utf8JsonStreamReader reader)
-        {
-            ReadToken(ref reader, JsonTokenType.String);
-            return reader.GetString();
         }
     }
 }

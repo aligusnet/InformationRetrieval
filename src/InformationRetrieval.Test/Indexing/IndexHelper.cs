@@ -38,16 +38,16 @@ namespace InformationRetrieval.Test.Indexing
                 "largest",
                 new[]
                 {
-                    new DocumentId(0, 0),
-                    new DocumentId(1, 2), new DocumentId(1, 3),
+                    new DocumentId(0),
+                    new DocumentId(12), new DocumentId(13),
                 }
             },
             {
                 "the",
                 new[]
                 {
-                    new DocumentId(0, 0), new DocumentId(0, 1), new DocumentId(0, 2),
-                    new DocumentId(1, 0), new DocumentId(1, 1), new DocumentId(1, 2), new DocumentId(1, 3),
+                    new DocumentId(0), new DocumentId(1), new DocumentId(2),
+                    new DocumentId(10), new DocumentId(11), new DocumentId(12), new DocumentId(13),
                 }
             },
             {
@@ -58,8 +58,8 @@ namespace InformationRetrieval.Test.Indexing
 
         public static DocumentId[] AllDocuments = new[]
         {
-            new DocumentId(0, 0), new DocumentId(0, 1), new DocumentId(0, 2),
-            new DocumentId(1, 0), new DocumentId(1, 1), new DocumentId(1, 2), new DocumentId(1, 3),
+            new DocumentId(0), new DocumentId(1), new DocumentId(2),
+            new DocumentId(10), new DocumentId(11), new DocumentId(12), new DocumentId(13),
         };
 
         public static void BuildIndex(IBuildableIndex<string> index, string[][] sentenceBlocks)
@@ -70,7 +70,7 @@ namespace InformationRetrieval.Test.Indexing
                 for (var localId = 0; localId < block.Length; ++localId)
                 {
                     var doc = block[localId].ToLower().Split();
-                    var docId = new DocumentId((ushort)blockId, (ushort)localId);
+                    var docId = new DocumentId((uint)(blockId * 10 + localId));
                     for (var position = 0; position < doc.Length; ++position)
                     {
                         index.IndexTerm(docId, doc[position], position);

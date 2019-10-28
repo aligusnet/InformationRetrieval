@@ -16,11 +16,11 @@ namespace InformationRetrieval.Test.Indexing
             var docs1 = new List<Document<string>>
             {
                 new Document<string> (
-                    new DocumentMetadata(new DocumentId(0, 0), "Title 1"),
+                    new DocumentMetadata(new DocumentId(0), "Title 1"),
                     "abc"
                 ),
                 new Document<string> (
-                    new DocumentMetadata(new DocumentId(0, 1), "Title 2"),
+                    new DocumentMetadata(new DocumentId(1), "Title 2"),
                     "defa"
                 ),
             };
@@ -28,7 +28,7 @@ namespace InformationRetrieval.Test.Indexing
             var docs2 = new List<Document<string>>
             {
                 new Document<string> (
-                    new DocumentMetadata(new DocumentId(1, 0), "Title 3"),
+                    new DocumentMetadata(new DocumentId(10), "Title 3"),
                     "bd"
                 ),
             };
@@ -50,9 +50,9 @@ namespace InformationRetrieval.Test.Indexing
 
             var expectedIndexedWords = new List<(DocumentId, char, int)>
             {
-                (new DocumentId(0, 0), 'a', 0), (new DocumentId(0, 0), 'b', 1), (new DocumentId(0, 0), 'c', 2),
-                (new DocumentId(0, 1), 'd', 0), (new DocumentId(0, 1), 'e', 1), (new DocumentId(0, 1), 'f', 2), (new DocumentId(0, 1), 'a', 3),
-                (new DocumentId(1, 0), 'b', 0), (new DocumentId(1, 0), 'd', 1),
+                (new DocumentId(0), 'a', 0), (new DocumentId(0), 'b', 1), (new DocumentId(0), 'c', 2),
+                (new DocumentId(1), 'd', 0), (new DocumentId(1), 'e', 1), (new DocumentId(1), 'f', 2), (new DocumentId(1), 'a', 3),
+                (new DocumentId(10), 'b', 0), (new DocumentId(10), 'd', 1),
             };
 
             Assert.Equal(expectedIndexedWords, indexedWords);

@@ -34,10 +34,10 @@ namespace InformationRetrieval.Test.BooleanSearch
 
             var tests = new List<(BooleanQuery Query, DocumentId[] Result)>
             {
-                (BooleanQuery.CreateAnd("great", "largest"), new [] { new DocumentId(0, 0) }),
-                (BooleanQuery.CreateAnd("pacific", "ocean", "earth"), new [] { new DocumentId(0, 2), new DocumentId(1, 2) }),
-                (BooleanQuery.CreateAnd("earth", "largest", "ocean"), new [] { new DocumentId(1, 2) }),
-                (BooleanQuery.CreateAnd("earth", "largest", "ocean", "pacific"), new [] { new DocumentId(1, 2) }),
+                (BooleanQuery.CreateAnd("great", "largest"), new [] { new DocumentId(0) }),
+                (BooleanQuery.CreateAnd("pacific", "ocean", "earth"), new [] { new DocumentId(2), new DocumentId(12) }),
+                (BooleanQuery.CreateAnd("earth", "largest", "ocean"), new [] { new DocumentId(12) }),
+                (BooleanQuery.CreateAnd("earth", "largest", "ocean", "pacific"), new [] { new DocumentId(12) }),
                 (BooleanQuery.CreateAnd("earth", "largest", "ocean", "atlantic"), Array.Empty<DocumentId>()),
                 (BooleanQuery.CreateAnd("moon"), Array.Empty<DocumentId>()),
                 (BooleanQuery.CreateAnd("the"), IndexHelper.AllDocuments),
@@ -57,9 +57,9 @@ namespace InformationRetrieval.Test.BooleanSearch
 
             var tests = new List<(BooleanQuery Query, DocumentId[] Result)>
             {
-                (BooleanQuery.CreateOr("great", "largest"), new [] { new DocumentId(0, 0), new DocumentId(1, 2), new DocumentId(1, 3) }),
-                (BooleanQuery.CreateOr("pacific", "ocean", "earth"), new [] { new DocumentId(0, 2), new DocumentId(1, 2), new DocumentId(1, 3) }),
-                (BooleanQuery.CreateOr("earth", "great", "ocean"), new [] { new DocumentId(0, 0), new DocumentId(0, 2), new DocumentId(1, 2), new DocumentId(1, 3), }),
+                (BooleanQuery.CreateOr("great", "largest"), new [] { new DocumentId(0), new DocumentId(12), new DocumentId(13) }),
+                (BooleanQuery.CreateOr("pacific", "ocean", "earth"), new [] { new DocumentId(2), new DocumentId(12), new DocumentId(13) }),
+                (BooleanQuery.CreateOr("earth", "great", "ocean"), new [] { new DocumentId(0), new DocumentId(2), new DocumentId(12), new DocumentId(13), }),
                 (BooleanQuery.CreateOr("moon"), Array.Empty<DocumentId>()),
                 (BooleanQuery.CreateOr("the", "a"), IndexHelper.AllDocuments),
             };
@@ -78,8 +78,8 @@ namespace InformationRetrieval.Test.BooleanSearch
 
             var tests = new List<(BooleanQuery Query, DocumentId[] Result)>
             {
-                (BooleanQuery.CreateOr("earth", "great", "ocean"), new [] { new DocumentId(0, 1), new DocumentId(1, 0), new DocumentId(1, 1), }),
-                (BooleanQuery.CreateOr("pacific", "ocean", "earth"), new [] { new DocumentId(0, 0), new DocumentId(0, 1), new DocumentId(1, 0), new DocumentId(1, 1), }),
+                (BooleanQuery.CreateOr("earth", "great", "ocean"), new [] { new DocumentId(1), new DocumentId(10), new DocumentId(11), }),
+                (BooleanQuery.CreateOr("pacific", "ocean", "earth"), new [] { new DocumentId(0), new DocumentId(1), new DocumentId(10), new DocumentId(11), }),
                 (BooleanQuery.CreateTerm("moon"), IndexHelper.AllDocuments),
                 (BooleanQuery.CreateTerm("the"), Array.Empty<DocumentId>()),
             };

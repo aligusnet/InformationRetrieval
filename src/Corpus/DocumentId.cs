@@ -13,13 +13,9 @@ namespace Corpus
     {
         private const int offset = 16;
 
-        public static readonly DocumentId Zero = new DocumentId(0, 0);
+        public static readonly DocumentId Zero = new DocumentId(0);
 
         public readonly uint Id;
-
-        public ushort BlockId => (ushort)(Id >> offset);
-
-        public ushort LocalId => (ushort)Id;
 
         public DocumentId(uint id) => Id = id;
 
@@ -31,10 +27,6 @@ namespace Corpus
         public int CompareTo(DocumentId other) => Id.CompareTo(other.Id);
 
         public override string ToString() => string.Format($"{Id:X8}");
-
-        public string BlockIdString() => string.Format($"{BlockId:X4}");
-
-        public string LocalIdString() => string.Format($"{LocalId:X4}");
 
         public static DocumentId Parse(ReadOnlySpan<char> hex)
         {
@@ -61,9 +53,5 @@ namespace Corpus
         {
             return HashCode.Combine(Id);
         }
-
-        public static ushort ParseBlockId(string hex) => Convert.ToUInt16(hex, 16);
-
-        public static ushort ParseLocalId(string hex) => Convert.ToUInt16(hex, 16);
     }
 }

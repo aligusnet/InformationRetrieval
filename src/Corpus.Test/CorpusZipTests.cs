@@ -24,17 +24,17 @@ namespace Corpus.Test
         }
 
         [Theory]
-        [InlineData(1, 0, true)]
-        [InlineData(0, 1, false)]
-        public void ReadDocumentTest(ushort blockId, ushort localId, bool skipMetadata)
+        [InlineData(10, true)]
+        [InlineData(1, false)]
+        public void ReadDocumentTest(uint id, bool skipMetadata)
         {
             var corpus = GenerateCorpusData();
             var fileSystem = SerializeCorpus(corpus);
             var reader = new CorpusZipReader<string>(path, new StringDocumentDataSerializer(), fileSystem);
 
-            var docId = new DocumentId(blockId, localId);
+            var docId = new DocumentId(id);
             var actual = reader.ReadDocument(docId, skipMetadata);
-            var expected = corpus[blockId].Documents[localId];
+            var expected = corpus[GetBlockId(id)].Documents[GetLocalId(id)];
 
             Assert.Equal(expected.Metadata.Id, actual.Metadata.Id);
             Assert.Equal(expected.Data, actual.Data);
@@ -45,21 +45,31 @@ namespace Corpus.Test
         }
 
         [Theory]
-        [InlineData(1, 0)]
-        [InlineData(0, 1)]
-        public void ReadMetadataTest(ushort blockId, ushort localId)
+        [InlineData(10)]
+        [InlineData(1)]
+        public void ReadMetadataTest(uint id)
         {
             var corpus = GenerateCorpusData();
             var fileSystem = SerializeCorpus(corpus);
             var reader = new CorpusZipReader<string>(path, new StringDocumentDataSerializer(), fileSystem);
 
-            var docId = new DocumentId(blockId, localId);
+            var docId = new DocumentId(id);
             var metadata = reader.ReadMetadata();
-            var expected = corpus[blockId].Documents[localId].Metadata;
+            var expected = corpus[GetBlockId(id)].Documents[GetLocalId(id)].Metadata;
             var actual = metadata[docId];
 
             Assert.Equal(expected.Id, actual.Id);
             Assert.Equal(expected.Title, actual.Title);
+        }
+
+        private int GetBlockId(uint docId)
+        {
+            return (int)docId / 10;
+        }
+
+        private int GetLocalId(uint docId)
+        {
+            return (int)docId % 10;
         }
 
         private static IList<Block<string>> GenerateCorpusData()
@@ -67,15 +77,15 @@ namespace Corpus.Test
             var docs1 = new List<Document<string>>
             {
                 new Document<string> (
-                    new DocumentMetadata(new DocumentId(0, 0), "Title 1"),
+                    new DocumentMetadata(new DocumentId(0), "Title 1"),
                     "Title 1. This is the first document"
                 ),
                 new Document<string> (
-                    new DocumentMetadata(new DocumentId(0, 1), "Title 2"),
+                    new DocumentMetadata(new DocumentId(1), "Title 2"),
                     "Title 2. This is the second document"
                 ),
                 new Document<string> (
-                    new DocumentMetadata(new DocumentId(0, 2), "Title 3"),
+                    new DocumentMetadata(new DocumentId(2), "Title 3"),
                     "Title 3. This is thethirs document"
                 ),
             };
@@ -83,7 +93,7 @@ namespace Corpus.Test
             var docs2 = new List<Document<string>>
             {
                 new Document<string> (
-                    new DocumentMetadata(new DocumentId(1, 0), "Title 4"),
+                    new DocumentMetadata(new DocumentId(10), "Title 4"),
                     "Title 4. This is the first document from the second block"
                 ),
             };

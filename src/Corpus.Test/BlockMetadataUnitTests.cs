@@ -11,9 +11,9 @@ namespace Corpus.Test
         {
             var props = new []
             {
-                new DocumentMetadata(new DocumentId(100, 0), "Title 1"),
-                new DocumentMetadata(new DocumentId(100, 1), "Title 2"),
-                new DocumentMetadata(new DocumentId(100, 2), "Title 3"),
+                new DocumentMetadata(new DocumentId(1000), "Title 1"),
+                new DocumentMetadata(new DocumentId(1001), "Title 2"),
+                new DocumentMetadata(new DocumentId(1002), "Title 3"),
             };
             var metadata = new BlockMetadata(100, props);
 

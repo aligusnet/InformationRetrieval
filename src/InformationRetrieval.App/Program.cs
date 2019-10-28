@@ -20,6 +20,8 @@ namespace NaturalLanguage.App
     class Program
     {
         private const int RangeThreshold = 5;
+        private const uint BlockSize = 500;
+        private const int CorpusSize = 2000;
         static readonly string basePath = @"F:\wikipedia";
         static readonly string wikiDumpFilePath = Path.Combine(basePath, "enwiki-20190101-pages-articles-multistream.xml");
         static readonly string wikiPath = Path.Combine(basePath, "enwiki");
@@ -101,7 +103,8 @@ namespace NaturalLanguage.App
             var reader = new CorpusZipReader<IList<char>>(wikiPath, charDataSerializer);
             using var buildableIndex = new BlockedExternalBuildableIndex<int>(
                 DictonaryBasedExternalBuildableIndex<int>.GetCreateMethodWithVarintPostingsLists(), 
-                externalIndexPath);
+                externalIndexPath,
+                BlockSize);
             var indexBuilder = new IndexBuilder<int, IEnumerable<int>>(buildableIndex);
             var processor = new WikitextProcessor();
             indexBuilder.IndexCorpus(processor.Transform(reader.Read()));
@@ -230,7 +233,11 @@ namespace NaturalLanguage.App
 
             using var xmlReader = new WikiDumpXmlReader(wikiDumpFilePath);
 
-            ICorpusReader<string> reader = new WikipediaReader(xmlReader, WikipediaReader.DefaultFilter, 5_000, count: 100_000);
+            ICorpusReader<string> reader = new WikipediaReader(
+                xmlReader, 
+                WikipediaReader.DefaultFilter, 
+                (ushort)BlockSize,
+                CorpusSize);
             ICorpusWriter<string> writer = new CorpusZipWriter<string>(pathToSave, stringDataSerializer);
 
             writer.Write(reader.Read());

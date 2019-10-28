@@ -32,7 +32,7 @@ namespace InformationRetrieval.Indexing.PostingsList
 
                 case RangePostingsList range:
                     writer.Write((byte)PostingsListType.Ranged);
-                    WriteRanged(range.Blocks);
+                    WriteRanged(range.Ranges);
                     break;
 
                 case VarintPostingsList varint:
@@ -80,22 +80,12 @@ namespace InformationRetrieval.Indexing.PostingsList
             }
         }
 
-        private void WriteRanged(IList<DocumentIdRangeBlock> list)
+        private void WriteRanged(IList<uint> list)
         {
-            writer.Write((ushort)list.Count);
-            foreach (var block in list)
+            writer.Write(list.Count);
+            foreach (var v in list)
             {
-                WriteBlock(block);
-            }
-        }
-
-        private void WriteBlock(DocumentIdRangeBlock block)
-        {
-            writer.Write(block.BlockId);
-            writer.Write((ushort)block.Ranges.Count);
-            foreach (uint val in block.Ranges)
-            {
-                writer.Write(val);
+                writer.Write(v);
             }
         }
 
@@ -159,15 +149,15 @@ namespace InformationRetrieval.Indexing.PostingsList
         private void WriteChainedRanges(ListChain<DocumentId> chain)
         {
             var start = stream.Position;
-            ushort numBlocks = 0;
+            int numBlocks = 0;
             writer.Write(numBlocks);  // we do not know a number of block at the moment
 
             foreach (var c in chain.Chains)
             {
                 var range = GetRange(c);
-                foreach (var block in range.Blocks)
+                foreach (var v in range.Ranges)
                 {
-                    WriteBlock(block);
+                    writer.Write(v);
                     ++numBlocks;
                 }
             }
