@@ -13,7 +13,7 @@ namespace Corpus
     {
         private const int offset = 16;
 
-        public static readonly DocumentId Zero = new DocumentId(0, 0);
+        public static readonly DocumentId Zero = new DocumentId(0);
 
         public readonly uint Id;
 

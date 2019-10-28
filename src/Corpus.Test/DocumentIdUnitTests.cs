@@ -13,9 +13,9 @@ namespace Corpus.Test
         {
             var docIds = new[]
             {
-                new DocumentId(0, 0),
-                new DocumentId(11, 15),
-                new DocumentId(1000, 738),
+                new DocumentId(0),
+                new DocumentId(1115),
+                new DocumentId(1000738),
             };
 
             var dic = docIds.ToDictionary(d => d, d => d.ToString());
