@@ -51,7 +51,7 @@ namespace InformationRetrieval.Test.Wikitext
         private static Document<Tokens> CreateDocument(string text, ushort index)
         {
             return new Document<Tokens>(
-                    new DocumentMetadata(new DocumentId(0, index), $"Title {index}"),
+                    new DocumentMetadata(new DocumentId(index), $"Title {index}"),
                     text.ToCharArray());
         }
 

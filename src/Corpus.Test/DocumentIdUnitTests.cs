@@ -8,17 +8,6 @@ namespace Corpus.Test
 {
     public class DocumentIdUnitTests
     {
-        [Theory]
-        [InlineData(0, 0, "00000000")]
-        [InlineData(1, 2, "00010002")]
-        [InlineData(15, 2, "000F0002")]
-        [InlineData(1458, 33124, "05B28164")]
-        public void DocumentIdFormattingTest(ushort blockId, ushort localId, string formatted)
-        {
-            var docId = new DocumentId(blockId, localId);
-            Assert.Equal(formatted, docId.ToString());
-        }
-
         [Fact]
         public void DocumentIdCanBeKeyInDictionary()
         {
@@ -40,9 +29,9 @@ namespace Corpus.Test
         [Fact]
         public void DocumentIdEqualityTest()
         {
-            var docId11a = new DocumentId(1, 1);
-            var docId11b = new DocumentId(1, 1);
-            var docId21a = new DocumentId(2, 1);
+            var docId11a = new DocumentId(11);
+            var docId11b = new DocumentId(11);
+            var docId21a = new DocumentId(21);
 
             Assert.True(docId11a == docId11b);
             Assert.False(docId11a != docId11b);
