@@ -29,9 +29,12 @@ namespace Corpus
         {
             get
             {
-                return metadata[key.LocalId];
+                int index = (int)(key.Id - metadata[0].Id.Id);
+                return metadata[index];
             }
         }
+
+        public DocumentMetadata First() => metadata[0];
 
         public int Count => metadata.Count;
 

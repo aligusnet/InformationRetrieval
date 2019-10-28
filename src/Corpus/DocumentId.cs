@@ -19,8 +19,6 @@ namespace Corpus
 
         public ushort BlockId => (ushort)(Id >> offset);
 
-        public ushort LocalId => (ushort)Id;
-
         public DocumentId(uint id) => Id = id;
 
         public DocumentId(ushort blockId, ushort localId)
