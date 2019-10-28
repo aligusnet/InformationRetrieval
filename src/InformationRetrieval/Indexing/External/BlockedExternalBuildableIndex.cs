@@ -18,20 +18,22 @@ namespace InformationRetrieval.Indexing.External
     {
         private readonly BuildableIndexManager indexManager;
         private readonly Stream stream;
+        private readonly uint blockSize;
 
-        public BlockedExternalBuildableIndex(Func<Stream, IExternalBuildableIndex<T>> createIndex, string basePath) : 
-            this(createIndex, basePath, new FileSystem()) { }
+        public BlockedExternalBuildableIndex(Func<Stream, IExternalBuildableIndex<T>> createIndex, string basePath, uint blockSize) : 
+            this(createIndex, basePath, blockSize, new FileSystem()) { }
 
-        public BlockedExternalBuildableIndex(Func<Stream, IExternalBuildableIndex<T>> createIndex, string basePath, IFileSystem fileSystem)
+        public BlockedExternalBuildableIndex(Func<Stream, IExternalBuildableIndex<T>> createIndex, string basePath, uint blockSize, IFileSystem fileSystem)
         {
             this.indexManager = new BuildableIndexManager(createIndex, basePath, fileSystem);
             string indexPath = Path.Combine(basePath, ExternalIndexSerializer<T>.IndexFileName);
             this.stream = fileSystem.File.Open(indexPath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+            this.blockSize = blockSize;
         }
 
         public void IndexTerm(DocumentId id, T term, int position)
         {
-            var index = indexManager.Get(id.BlockId);
+            var index = indexManager.Get(GetBlockId(id));
             index.IndexTerm(id, term, position);
         }
 
@@ -91,6 +93,11 @@ namespace InformationRetrieval.Indexing.External
 
             indexManager.Clear();
             return composer.Compose();
+        }
+
+        private uint GetBlockId(DocumentId docId)
+        {
+            return docId.Id / blockSize;
         }
 
         private void AddAllDocs(ExternalIndexComposer<T> composer, ExternalIndex<T>[] indices)
@@ -153,7 +160,7 @@ namespace InformationRetrieval.Indexing.External
             private readonly string basePath;
             private readonly IFileSystem fileSystem;
             private IExternalBuildableIndex<T>? currentIndex;
-            private ushort currentBlockId;
+            private uint currentBlockId;
             private readonly IList<ExternalIndex<T>> indices;
             private readonly Func<Stream, IExternalBuildableIndex<T>> createIndex;
 
@@ -167,7 +174,7 @@ namespace InformationRetrieval.Indexing.External
                 this.createIndex = createIndex;
             }
 
-            public IBuildableIndex<T> Get(ushort blockId)
+            public IBuildableIndex<T> Get(uint blockId)
             {
                 if (currentIndex == null)
                 {
@@ -219,7 +226,7 @@ namespace InformationRetrieval.Indexing.External
                 }
             }
 
-            private Stream OpenIndexStrem(ushort blockId)
+            private Stream OpenIndexStrem(uint blockId)
             {
                 if (!fileSystem.Directory.Exists(basePath))
                 {
@@ -230,7 +237,7 @@ namespace InformationRetrieval.Indexing.External
                 return fileSystem.File.Open(path, FileMode.OpenOrCreate, FileAccess.ReadWrite);
             }
 
-            private string BuildIndexPath(ushort blockId) =>
+            private string BuildIndexPath(uint blockId) =>
                 Path.Combine(basePath, $"block-{blockId:00000}.index");
         }
     }

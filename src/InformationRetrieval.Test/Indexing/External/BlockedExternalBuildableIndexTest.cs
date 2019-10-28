@@ -33,6 +33,7 @@ namespace InformationRetrieval.Test.Indexing.External
 
         private void BuildBlockedExternalIndexTest(Func<Stream, IExternalBuildableIndex<string>> createIndex)
         {
+            const uint blockSize = 3;
             var docs = new (DocumentId Id, string[] Text)[]
             {
                 (new DocumentId(0), "a b c d".Split()),
@@ -49,7 +50,7 @@ namespace InformationRetrieval.Test.Indexing.External
             var fileSystem = new MockFileSystem();
             fileSystem.Directory.CreateDirectory(path);
 
-            var buildableIndex = new BlockedExternalBuildableIndex<string>(createIndex, path, fileSystem);
+            var buildableIndex = new BlockedExternalBuildableIndex<string>(createIndex, path, blockSize, fileSystem);
 
             foreach (var doc in docs)
             {
