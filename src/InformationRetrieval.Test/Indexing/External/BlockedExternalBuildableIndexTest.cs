@@ -35,15 +35,15 @@ namespace InformationRetrieval.Test.Indexing.External
         {
             var docs = new (DocumentId Id, string[] Text)[]
             {
-                (new DocumentId(0, 0), "a b c d".Split()),
-                (new DocumentId(0, 1), "d e f a".Split()),
-                (new DocumentId(0, 2), "e e f d".Split()),
+                (new DocumentId(0), "a b c d".Split()),
+                (new DocumentId(1), "d e f a".Split()),
+                (new DocumentId(2), "e e f d".Split()),
 
-                (new DocumentId(1, 0), "a b".Split()),
-                (new DocumentId(1, 1), "e e h".Split()),
+                (new DocumentId(10), "a b".Split()),
+                (new DocumentId(11), "e e h".Split()),
 
-                (new DocumentId(2, 0), "d e f".Split()),
-                (new DocumentId(2, 1), "f d g h".Split()),
+                (new DocumentId(20), "d e f".Split()),
+                (new DocumentId(21), "f d g h".Split()),
             };
 
             var fileSystem = new MockFileSystem();
@@ -61,12 +61,12 @@ namespace InformationRetrieval.Test.Indexing.External
 
             var searchableIndex = buildableIndex.Build();
 
-            var allDocs = DocIds((0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (2, 0), (2, 1));
-            var aDocs = DocIds((0, 0), (0, 1), (1, 0));
-            var dDocs = DocIds((0, 0), (0, 1), (0, 2), (2, 0), (2, 1));
-            var eDocs = DocIds((0, 1), (0, 2), (1, 1), (2, 0));
-            var gDocs = DocIds((2, 1));
-            var hDocs = DocIds((1, 1), (2, 1));
+            var allDocs = DocIds(0, 1, 2, 10, 11, 20, 21);
+            var aDocs = DocIds(0, 1, 10);
+            var dDocs = DocIds(0, 1, 2, 20, 21);
+            var eDocs = DocIds(1, 2, 11, 20);
+            var gDocs = DocIds(21);
+            var hDocs = DocIds(11, 21);
 
             Assert.Equal(allDocs, searchableIndex.GetAll().ToArray());
             Assert.Equal(aDocs, searchableIndex.Search("a").ToArray());
@@ -83,9 +83,9 @@ namespace InformationRetrieval.Test.Indexing.External
             Assert.Equal(hDocs.Length, searchableIndex.GetCount("h"));
         }
 
-        private DocumentId[] DocIds(params (ushort blockId, ushort localId)[] ids)
+        private DocumentId[] DocIds(params uint[] ids)
         {
-            return ids.Select(i => new DocumentId(i.blockId, i.localId)).ToArray();
+            return ids.Select(i => new DocumentId(i)).ToArray();
         }
     }
 }
