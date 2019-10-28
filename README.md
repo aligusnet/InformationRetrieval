@@ -13,9 +13,7 @@ The project defines the way how the collection of documents is organized in the 
 * __Corpus__ - collection of text documents organized into _blocks_;
 * __Block__ - subset of corpus, small enough to fit processing in memory;
 * __Document__ - piece of text with metadata, the most important metadata is _DocumentId_;
-* __DocumentId__ - unique identifier of the document. _DocumentId_ consists of 2 IDs: 
-  * _BlockId_ is a unique identifier of the document's block and
-  * _LocalId_ is a unique identifier inside the _block_.
+* __DocumentId__ - unique identifier of the document.
 
 ### InformationRetrieval
 

@@ -33,16 +33,16 @@ namespace Wikidump
             return reader.ReadPages().Where(filter).Take(count).Batch(blockSize).Select(ToBlock);
         }
 
-        private static Block<string> ToBlock(IEnumerable<WikiDumpPage> dumpPages, int blockId)
+        private Block<string> ToBlock(IEnumerable<WikiDumpPage> dumpPages, int blockId)
         {
-            var docs = dumpPages.Select((dp, lid) => ToDocument(dp, blockId, lid)).ToList();
-
+            uint startId = (uint)(blockId * blockSize);
+            var docs = dumpPages.Select((dp, lid) => ToDocument(dp, startId + (uint)lid)).ToList();
             return Block<string>.Make((ushort)blockId, docs);
         }
 
-        private static Document<string> ToDocument(WikiDumpPage dp, int blockId, int localId)
+        private Document<string> ToDocument(WikiDumpPage dp, uint id)
         {
-            var metadata = new DocumentMetadata(new DocumentId((ushort)blockId, (ushort)localId), dp.Title);
+            var metadata = new DocumentMetadata(new DocumentId(id), dp.Title);
             return new Document<string>(metadata, dp.Text);
         }
     }
